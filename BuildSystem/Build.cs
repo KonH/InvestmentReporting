@@ -14,7 +14,7 @@ namespace InvestmentReporting.BuildSystem {
 			{
 				Run("Install api generator tool",
 					RootDirectory,
-					"dotnet", "tool install --global Swashbuckle.AspNetCore.Cli --version 6.0.7",
+					"dotnet", "tool install --global Swashbuckle.AspNetCore.Cli --version 5.4.1",
 					ignoreExitCode: true);
 				DotNetRestore(s => s.SetProjectFile(RootDirectory / "InvestmentReporting.TestService"));
 				Run("Restoring frontend packages",
