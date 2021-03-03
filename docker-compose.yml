@@ -1,0 +1,16 @@
+version: "3.4"
+services:
+  frontend:
+    build: ./Frontend
+    container_name: frontend
+    ports:
+      - 8082:8082
+    depends_on:
+      - test-service
+    links:
+      - test-service
+  test-service:
+    build: ./InvestmentReporting.TestService
+    container_name: test-service
+    ports:
+      - 8083:8083

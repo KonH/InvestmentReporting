@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuildSystem", "BuildSystem\BuildSystem.csproj", "{66D82E51-5FAA-48A7-BED4-B18554BCF629}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InvestmentReporting.Shared", "InvestmentReporting.Shared\InvestmentReporting.Shared.csproj", "{8F2F3712-C903-4674-943D-5A888229B1FE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InvestmentReporting.TestService", "InvestmentReporting.TestService\InvestmentReporting.TestService.csproj", "{995F65E3-04B6-4782-9A95-0E0DCE17FE0A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{66D82E51-5FAA-48A7-BED4-B18554BCF629}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66D82E51-5FAA-48A7-BED4-B18554BCF629}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66D82E51-5FAA-48A7-BED4-B18554BCF629}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66D82E51-5FAA-48A7-BED4-B18554BCF629}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F2F3712-C903-4674-943D-5A888229B1FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F2F3712-C903-4674-943D-5A888229B1FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F2F3712-C903-4674-943D-5A888229B1FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F2F3712-C903-4674-943D-5A888229B1FE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{995F65E3-04B6-4782-9A95-0E0DCE17FE0A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{995F65E3-04B6-4782-9A95-0E0DCE17FE0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{995F65E3-04B6-4782-9A95-0E0DCE17FE0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{995F65E3-04B6-4782-9A95-0E0DCE17FE0A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
