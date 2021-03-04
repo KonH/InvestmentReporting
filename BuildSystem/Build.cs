@@ -50,9 +50,6 @@ namespace InvestmentReporting.BuildSystem {
 				DotNetPublish(s => s
 					.SetProject(RootDirectory / "InvestmentReporting.TestService")
 					.SetConfiguration(Configuration)
-					.SetRuntime($"linux-musl-{dotNetPlatform}")
-					.EnablePublishSingleFile()
-					.EnableSelfContained()
 					.SetOutput(RootDirectory / "InvestmentReporting.TestService" / "publish"));
 
 				Run("Building frontend",
