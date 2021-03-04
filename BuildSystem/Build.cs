@@ -39,13 +39,13 @@ namespace InvestmentReporting.BuildSystem {
 					.SetProjectFile(RootDirectory / "InvestmentReporting.TestService")
 					.SetConfiguration(Configuration));
 
-				var apiDir = RootDirectory / "Frontend" / "api";
+				/*var apiDir = RootDirectory / "Frontend" / "api";
 				EnsureExistingDirectory(apiDir);
 				var swaggerPath = apiDir / "InvestmentReporting.TestService.swagger.json";
 				var dllPath     = RootDirectory / "InvestmentReporting.TestService" / "bin" / Configuration / "net5.0" / "InvestmentReporting.TestService.dll";
 				Run("Generate swagger api file",
 					RootDirectory / "InvestmentReporting.TestService",
-					"swagger", $"tofile --output {swaggerPath} {dllPath} v1");
+					"swagger", $"tofile --output {swaggerPath} {dllPath} v1");*/
 
 				DotNetPublish(s => s
 					.SetProject(RootDirectory / "InvestmentReporting.TestService")
