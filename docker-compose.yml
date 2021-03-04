@@ -10,7 +10,10 @@ services:
     links:
       - test-service
   test-service:
-    build: ./InvestmentReporting.TestService
+    build:
+      context: ./InvestmentReporting.TestService
+      args:
+        - CONTAINER_SUFFIX
     container_name: test-service
     ports:
       - 8083:8083
