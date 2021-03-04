@@ -9,6 +9,15 @@ services:
       - test-service
     links:
       - test-service
+  mongo:
+    build:
+      context: ./Mongo
+      args:
+        - MONGO_IMAGE
+    container_name: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
   test-service:
     build:
       context: ./InvestmentReporting.TestService

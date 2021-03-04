@@ -63,11 +63,13 @@ namespace InvestmentReporting.BuildSystem {
 					"npm", "run lint");
 
 				var dotnetImageSuffix = GetDotnetImageSuffix(architecture);
+				var mongoImage        = GetMongoDockerImage(architecture);
 				Run("Build containers",
 					RootDirectory,
 					"docker-compose",
 					"build " +
-					$"--build-arg DOTNET_IMAGE_SUFFIX={dotnetImageSuffix}");
+					$"--build-arg DOTNET_IMAGE_SUFFIX={dotnetImageSuffix} " +
+					$"--build-arg MONGO_IMAGE={mongoImage} ");
 			});
 
 		Target Start => _ => _
@@ -97,6 +99,12 @@ namespace InvestmentReporting.BuildSystem {
 			architecture switch {
 				Architecture.Arm64 => "arm64v8",
 				_                  => "amd64"
+			};
+
+		string GetMongoDockerImage(Architecture architecture) =>
+			architecture switch {
+				Architecture.Arm64 => "arm64v8/mongo:4.4.4-bionic",
+				_                  => "mongo:4.4.4-bionic"
 			};
 	}
 }
