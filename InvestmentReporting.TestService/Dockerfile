@@ -1,5 +1,5 @@
-ARG CONTAINER_SUFFIX
-FROM mcr.microsoft.com/dotnet/runtime-deps:5.0.3-alpine3.13-$CONTAINER_SUFFIX
+ARG DOTNET_IMAGE_SUFFIX
+FROM mcr.microsoft.com/dotnet/runtime-deps:5.0.3-alpine3.13-$DOTNET_IMAGE_SUFFIX
 
 EXPOSE 8083
 

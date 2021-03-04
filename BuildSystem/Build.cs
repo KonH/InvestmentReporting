@@ -62,10 +62,12 @@ namespace InvestmentReporting.BuildSystem {
 					RootDirectory / "Frontend",
 					"npm", "run lint");
 
-				var dockerPlatform = GetDockerContainerSuffix(architecture);
+				var dotnetImageSuffix = GetDotnetImageSuffix(architecture);
 				Run("Build containers",
 					RootDirectory,
-					"docker-compose", $"build --build-arg CONTAINER_SUFFIX={dockerPlatform}");
+					"docker-compose",
+					"build " +
+					$"--build-arg DOTNET_IMAGE_SUFFIX={dotnetImageSuffix}");
 			});
 
 		Target Start => _ => _
@@ -91,7 +93,7 @@ namespace InvestmentReporting.BuildSystem {
 				_                  => "x64"
 			};
 
-		string GetDockerContainerSuffix(Architecture architecture) =>
+		string GetDotnetImageSuffix(Architecture architecture) =>
 			architecture switch {
 				Architecture.Arm64 => "arm64v8",
 				_                  => "amd64"

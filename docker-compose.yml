@@ -13,7 +13,7 @@ services:
     build:
       context: ./InvestmentReporting.TestService
       args:
-        - CONTAINER_SUFFIX
+        - DOTNET_IMAGE_SUFFIX
     container_name: test-service
     ports:
       - 8083:8083
