@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InvestmentReporting.Shared"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InvestmentReporting.TestService", "InvestmentReporting.TestService\InvestmentReporting.TestService.csproj", "{995F65E3-04B6-4782-9A95-0E0DCE17FE0A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InvestmentReporting.AuthService", "InvestmentReporting.AuthService\InvestmentReporting.AuthService.csproj", "{AEFB1512-F8F2-4A62-9F08-7EA83F0C9DB9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{995F65E3-04B6-4782-9A95-0E0DCE17FE0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{995F65E3-04B6-4782-9A95-0E0DCE17FE0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{995F65E3-04B6-4782-9A95-0E0DCE17FE0A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AEFB1512-F8F2-4A62-9F08-7EA83F0C9DB9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AEFB1512-F8F2-4A62-9F08-7EA83F0C9DB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AEFB1512-F8F2-4A62-9F08-7EA83F0C9DB9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AEFB1512-F8F2-4A62-9F08-7EA83F0C9DB9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

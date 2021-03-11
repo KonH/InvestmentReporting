@@ -21,6 +21,7 @@ namespace InvestmentReporting.BuildSystem {
 					RootDirectory,
 					"dotnet", "tool install --global Swashbuckle.AspNetCore.Cli --version 5.4.1",
 					ignoreExitCode: true);
+				DotNetRestore(s => s.SetProjectFile(RootDirectory / "InvestmentReporting.AuthService"));
 				DotNetRestore(s => s.SetProjectFile(RootDirectory / "InvestmentReporting.TestService"));
 				Run("Restoring frontend packages",
 					RootDirectory / "Frontend",
@@ -36,6 +37,9 @@ namespace InvestmentReporting.BuildSystem {
 
 				var dotNetPlatform = GetDotNetBuildArchitecture(architecture);
 				DotNetBuild(s => s
+					.SetProjectFile(RootDirectory / "InvestmentReporting.AuthService")
+					.SetConfiguration(Configuration));
+				DotNetBuild(s => s
 					.SetProjectFile(RootDirectory / "InvestmentReporting.TestService")
 					.SetConfiguration(Configuration));
 
@@ -46,6 +50,14 @@ namespace InvestmentReporting.BuildSystem {
 				Run("Generate swagger api file",
 					RootDirectory / "InvestmentReporting.TestService",
 					"swagger", $"tofile --output {swaggerPath} {dllPath} v1");*/
+
+				DotNetPublish(s => s
+					.SetProject(RootDirectory / "InvestmentReporting.AuthService")
+					.SetConfiguration(Configuration)
+					.SetRuntime($"linux-musl-{dotNetPlatform}")
+					.EnablePublishSingleFile()
+					.EnableSelfContained()
+					.SetOutput(RootDirectory / "InvestmentReporting.AuthService" / "publish"));
 
 				DotNetPublish(s => s
 					.SetProject(RootDirectory / "InvestmentReporting.TestService")

@@ -18,6 +18,14 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
+  auth-service:
+    build:
+      context: ./InvestmentReporting.AuthService
+      args:
+        - DOTNET_IMAGE_SUFFIX
+    container_name: auth-service
+    ports:
+      - 8083:8083
   test-service:
     build:
       context: ./InvestmentReporting.TestService
@@ -25,4 +33,4 @@ services:
         - DOTNET_IMAGE_SUFFIX
     container_name: test-service
     ports:
-      - 8083:8083
+      - 8084:8084
