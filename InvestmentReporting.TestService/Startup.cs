@@ -1,3 +1,4 @@
+using InvestmentReporting.Shared.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -16,6 +17,7 @@ namespace InvestmentReporting.TestService {
 		public void ConfigureServices(IServiceCollection services) {
 			services.AddControllers();
 			services.AddSwaggerGen(c => c.SwaggerDoc("v1", new OpenApiInfo { Title = "InvestmentReporting.TestService", Version = "v1" }));
+			services.AddSharedAuthentication();
 		}
 
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
@@ -26,6 +28,8 @@ namespace InvestmentReporting.TestService {
 			}
 
 			app.UseRouting();
+			app.UseAuthentication();
+			app.UseAuthorization();
 
 			app.UseEndpoints(endpoints => endpoints.MapControllers());
 		}
