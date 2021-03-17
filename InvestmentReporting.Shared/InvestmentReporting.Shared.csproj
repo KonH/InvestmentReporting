@@ -8,4 +8,9 @@
       <Folder Include="bin" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="AspNetCore.Identity.Mongo" Version="8.0.0" />
+      <PackageReference Include="MongoDB.Driver" Version="2.12.0" />
+    </ItemGroup>
+
 </Project>
