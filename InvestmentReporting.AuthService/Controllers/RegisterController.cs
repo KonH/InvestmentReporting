@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace InvestmentReporting.AuthService.Controllers {
 	[ApiController]
-	[Route("api/auth/v1/[controller]")]
+	[Route("[controller]")]
 	public class RegisterController : ControllerBase {
 		readonly ILogger           _logger;
 		readonly UserManager<User> _userManager;
