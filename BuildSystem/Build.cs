@@ -22,7 +22,7 @@ namespace InvestmentReporting.BuildSystem {
 					"dotnet", "tool install --global Swashbuckle.AspNetCore.Cli --version 5.4.1",
 					ignoreExitCode: true);
 				DotNetRestore(s => s.SetProjectFile(RootDirectory / "InvestmentReporting.AuthService"));
-				DotNetRestore(s => s.SetProjectFile(RootDirectory / "InvestmentReporting.TestService"));
+				DotNetRestore(s => s.SetProjectFile(RootDirectory / "InvestmentReporting.InviteService"));
 				Run("Restoring frontend packages",
 					RootDirectory / "Frontend",
 					"npm", "install");
@@ -40,7 +40,7 @@ namespace InvestmentReporting.BuildSystem {
 					.SetProjectFile(RootDirectory / "InvestmentReporting.AuthService")
 					.SetConfiguration(Configuration));
 				DotNetBuild(s => s
-					.SetProjectFile(RootDirectory / "InvestmentReporting.TestService")
+					.SetProjectFile(RootDirectory / "InvestmentReporting.InviteService")
 					.SetConfiguration(Configuration));
 
 				/*var apiDir = RootDirectory / "Frontend" / "api";
@@ -60,12 +60,12 @@ namespace InvestmentReporting.BuildSystem {
 					.SetOutput(RootDirectory / "InvestmentReporting.AuthService" / "publish"));
 
 				DotNetPublish(s => s
-					.SetProject(RootDirectory / "InvestmentReporting.TestService")
+					.SetProject(RootDirectory / "InvestmentReporting.InviteService")
 					.SetConfiguration(Configuration)
 					.SetRuntime($"linux-musl-{dotNetPlatform}")
 					.EnablePublishSingleFile()
 					.EnableSelfContained()
-					.SetOutput(RootDirectory / "InvestmentReporting.TestService" / "publish"));
+					.SetOutput(RootDirectory / "InvestmentReporting.InviteService" / "publish"));
 
 				Run("Building frontend",
 					RootDirectory / "Frontend",

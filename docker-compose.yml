@@ -6,9 +6,11 @@ services:
     ports:
       - 8082:8082
     depends_on:
-      - test-service
+      - auth-service
+      - invite-service
     links:
-      - test-service
+      - auth-service
+      - invite-service
   mongo:
     build:
       context: ./Mongo
@@ -31,12 +33,12 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: example
     volumes:
     - key_ring_storage:/publish/key_ring_storage
-  test-service:
+  invite-service:
     build:
-      context: ./InvestmentReporting.TestService
+      context: ./InvestmentReporting.InviteService
       args:
         - DOTNET_IMAGE_SUFFIX
-    container_name: test-service
+    container_name: invite-service
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
