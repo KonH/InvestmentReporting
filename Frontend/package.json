@@ -55,10 +55,15 @@
         "warn",
         "single"
       ],
+      "indent": [
+        "error",
+        "tab"
+      ],
       "prettier/prettier": [
         "warn",
         {
-          "singleQuote": true
+          "singleQuote": true,
+          "useTabs": true
         }
       ],
       "@typescript-eslint/explicit-module-boundary-types": "off"
