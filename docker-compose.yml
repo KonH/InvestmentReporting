@@ -26,11 +26,23 @@ services:
     container_name: auth-service
     ports:
       - 8083:8083
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    volumes:
+    - key_ring_storage:/publish/key_ring_storage
   test-service:
     build:
       context: ./InvestmentReporting.TestService
       args:
         - DOTNET_IMAGE_SUFFIX
     container_name: test-service
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
     ports:
       - 8084:8084
+    volumes:
+       - key_ring_storage:/publish/key_ring_storage
+volumes:
+  key_ring_storage:
