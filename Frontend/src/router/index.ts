@@ -2,6 +2,7 @@ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 import Home from '@/views/home.vue';
 import Login from '@/views/login.vue';
 import Register from '@/views/register.vue';
+import Backend from '@/service/backend';
 
 const routes: Array<RouteRecordRaw> = [
 	{
@@ -27,19 +28,22 @@ const routes: Array<RouteRecordRaw> = [
 	},
 ];
 
-const router = createRouter({
+export const router = createRouter({
 	history: createWebHistory(),
 	routes,
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
 	const guest = to.meta.guest as boolean;
 	if (guest) {
 		next();
 	} else {
-		// TODO: proper auth check
-		console.log('redirect to login');
-		next({ path: '/login' });
+		const checkResult = await Backend.fetch('api/auth/v1/check');
+		if (checkResult.ok) {
+			next();
+		} else {
+			next({ path: '/login' });
+		}
 	}
 });
 
