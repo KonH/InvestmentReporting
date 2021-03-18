@@ -23,11 +23,16 @@ namespace InvestmentReporting.AuthService.Controllers {
 			_logger.LogInformation($"{nameof(Login)}: user: '{userName}'");
 			var user = await _userManager.FindByNameAsync(userName);
 			_logger.LogInformation($"{nameof(Login)}: found user '{user?.Id}'");
-			var result = await _signInManager.PasswordSignInAsync(user, password, true, false);
-			if ( result.Succeeded ) {
-				return Ok();
+			if ( user == null ) {
+				return BadRequest();
 			}
-			return BadRequest();
+			var result = await _signInManager.PasswordSignInAsync(user, password, true, false);
+			if ( !result.Succeeded ) {
+				_logger.LogWarning($"{nameof(Login)}: failed login: {result}");
+				return BadRequest();
+			}
+			_logger.LogInformation($"{nameof(Login)}: login success for '{user.Id}'");
+			return Ok();
 		}
 	}
 }
