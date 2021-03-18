@@ -1,3 +1,4 @@
+using AspNetCoreRateLimit;
 using InvestmentReporting.InviteService.Services;
 using InvestmentReporting.Shared.Extensions;
 using Microsoft.AspNetCore.Builder;
@@ -20,6 +21,12 @@ namespace InvestmentReporting.InviteService {
 			services.AddSwaggerGen(c => c.SwaggerDoc("v1", new OpenApiInfo { Title = "InvestmentReporting.InviteService", Version = "v1" }));
 			services.AddSharedAuthentication();
 			services.AddSingleton<InviteTokenService>();
+			services.AddMemoryCache();
+			services.Configure<IpRateLimitOptions>(Configuration.GetSection("IpRateLimiting"));
+			services.AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>();
+			services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
+			services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+			services.AddHttpContextAccessor();
 		}
 
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
@@ -32,6 +39,8 @@ namespace InvestmentReporting.InviteService {
 			app.UseRouting();
 			app.UseAuthentication();
 			app.UseAuthorization();
+
+			app.UseIpRateLimiting();
 
 			app.UseEndpoints(endpoints => endpoints.MapControllers());
 		}
