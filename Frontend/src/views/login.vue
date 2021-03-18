@@ -1,15 +1,21 @@
 <template>
 	<h1>Login</h1>
-	<label>
-		Username:
-		<input ref="login" type="text" />
-	</label>
-	<label>
-		Password:
-		<input ref="password" type="password" />
-	</label>
-	<button :onclick="onclick">Login</button>
-	<router-link to="/register">Register</router-link>
+	<div class="form-group">
+		<label>
+			Username:
+			<input ref="login" type="text" class="form-control" />
+		</label>
+	</div>
+	<div class="form-group">
+		<label>
+			Password:
+			<input ref="password" type="password" class="form-control" />
+		</label>
+	</div>
+	<button :onclick="onclick" class="btn btn-primary">Login</button>
+	<router-link to="/register" class="btn btn-secondary ml-2"
+		>Register</router-link
+	>
 </template>
 <script lang="ts">
 import { Vue } from 'vue-class-component';

@@ -1,6 +1,6 @@
 <template>
 	<h1>Home</h1>
-	<button :onclick="logout">Logout</button>
+	<button :onclick="logout" class="btn btn-secondary">Logout</button>
 </template>
 <script lang="ts">
 import { Vue } from 'vue-class-component';
