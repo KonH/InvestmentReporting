@@ -1,3 +1,4 @@
+using InvestmentReporting.InviteService.Services;
 using InvestmentReporting.Shared.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -18,6 +19,7 @@ namespace InvestmentReporting.InviteService {
 			services.AddControllers();
 			services.AddSwaggerGen(c => c.SwaggerDoc("v1", new OpenApiInfo { Title = "InvestmentReporting.InviteService", Version = "v1" }));
 			services.AddSharedAuthentication();
+			services.AddSingleton<InviteTokenService>();
 		}
 
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
