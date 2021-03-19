@@ -8,6 +8,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InvestmentReporting.AuthSer
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InvestmentReporting.InviteService", "InvestmentReporting.InviteService\InvestmentReporting.InviteService.csproj", "{F7E51317-9446-4EB3-915F-005F1579860D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InvestmentReporting.Domain", "InvestmentReporting.Domain\InvestmentReporting.Domain.csproj", "{AEC9F856-A8A8-45FF-AC2E-1B474790807D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InvestmentReporting.UnitTests", "InvestmentReporting.UnitTests\InvestmentReporting.UnitTests.csproj", "{C968B29F-DEE4-4004-9750-8387F6C16614}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +34,13 @@ Global
 		{F7E51317-9446-4EB3-915F-005F1579860D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F7E51317-9446-4EB3-915F-005F1579860D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F7E51317-9446-4EB3-915F-005F1579860D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AEC9F856-A8A8-45FF-AC2E-1B474790807D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AEC9F856-A8A8-45FF-AC2E-1B474790807D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AEC9F856-A8A8-45FF-AC2E-1B474790807D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AEC9F856-A8A8-45FF-AC2E-1B474790807D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C968B29F-DEE4-4004-9750-8387F6C16614}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C968B29F-DEE4-4004-9750-8387F6C16614}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C968B29F-DEE4-4004-9750-8387F6C16614}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C968B29F-DEE4-4004-9750-8387F6C16614}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
