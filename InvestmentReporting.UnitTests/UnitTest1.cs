@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using InvestmentReporting.Domain;
@@ -9,20 +8,31 @@ namespace InvestmentReporting.UnitTests {
 	public class Tests {
 		[Test]
 		public async Task IsBrokerAdded() {
-			var stateManager = new StateManager();
-			await stateManager.Push(DateTimeOffset.MinValue, new UserId(string.Empty), new OpenBroker(new BrokerId(string.Empty)));
-			var updatedState = await stateManager.Read(DateTimeOffset.MinValue, new UserId(string.Empty));
+			var userId        = new UserId(string.Empty);
+			var date          = DateTimeOffset.MinValue;
+			var stateManager  = new StateManager();
+			var brokerManager = new BrokerManager();
+			var createUseCase = new OpenBrokerUseCase(stateManager, brokerManager, new IdGenerator());
+			var readUseCase   = new ReadBrokersUseCase(stateManager, brokerManager);
 
-			updatedState.Brokers.Should().NotBeEmpty();
+			await createUseCase.Handle(date, userId, "BrokerName");
+
+			var brokers = await readUseCase.Handle(date, userId);
+			brokers.Should().NotBeEmpty();
 		}
 
 		[Test]
-		public async Task IsBrokerNotAddedInPastState() {
-			var stateManager = new StateManager();
-			await stateManager.Push(DateTimeOffset.MinValue.AddSeconds(1), new UserId(string.Empty), new OpenBroker(new BrokerId(string.Empty)));
-			var updatedState = await stateManager.Read(DateTimeOffset.MinValue, new UserId(string.Empty));
+		public async Task IsBrokerNotAddedInPast() {
+			var userId        = new UserId(string.Empty);
+			var stateManager  = new StateManager();
+			var brokerManager = new BrokerManager();
+			var createUseCase = new OpenBrokerUseCase(stateManager, brokerManager, new IdGenerator());
+			var readUseCase   = new ReadBrokersUseCase(stateManager, brokerManager);
 
-			updatedState.Brokers.Should().BeEmpty();
+			await createUseCase.Handle(DateTimeOffset.MinValue.AddSeconds(1), userId, "BrokerName");
+
+			var brokers = await readUseCase.Handle(DateTimeOffset.MinValue, userId);
+			brokers.Should().BeEmpty();
 		}
 	}
 }
