@@ -1,5 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using InvestmentReporting.Shared.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -19,7 +21,9 @@ namespace InvestmentReporting.AuthService.Controllers {
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> Login(string userName, string password) {
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		public async Task<IActionResult> Login([Required] string userName, [Required] string password) {
 			_logger.LogInformation($"{nameof(Login)}: user: '{userName}'");
 			var user = await _userManager.FindByNameAsync(userName);
 			_logger.LogInformation($"{nameof(Login)}: found user '{user?.Id}'");

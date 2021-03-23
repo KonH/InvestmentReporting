@@ -1,3 +1,4 @@
+using System;
 using System.Runtime.InteropServices;
 using Nuke.Common;
 using Nuke.Common.Execution;
@@ -43,13 +44,29 @@ namespace InvestmentReporting.BuildSystem {
 					.SetProjectFile(RootDirectory / "InvestmentReporting.InviteService")
 					.SetConfiguration(Configuration));
 
-				/*var apiDir = RootDirectory / "Frontend" / "api";
-				EnsureExistingDirectory(apiDir);
-				var swaggerPath = apiDir / "InvestmentReporting.TestService.swagger.json";
-				var dllPath     = RootDirectory / "InvestmentReporting.TestService" / "bin" / Configuration / "net5.0" / "InvestmentReporting.TestService.dll";
-				Run("Generate swagger api file",
-					RootDirectory / "InvestmentReporting.TestService",
-					"swagger", $"tofile --output {swaggerPath} {dllPath} v1");*/
+				if ( Configuration == "Debug" ) {
+					Environment.SetEnvironmentVariable("SWAGGER_RUN", true.ToString());
+					try {
+						var apiDir = RootDirectory / "api";
+						EnsureExistingDirectory(apiDir);
+						{
+							var swaggerPath = apiDir / "InvestmentReporting.AuthService.swagger.json";
+							var dllPath     = RootDirectory / "InvestmentReporting.AuthService" / "bin" / Configuration / "net5.0" / "InvestmentReporting.AuthService.dll";
+							Run("Generate swagger api file",
+								RootDirectory / "InvestmentReporting.AuthService",
+								"swagger", $"tofile --output {swaggerPath} {dllPath} v1");
+						}
+						{
+							var swaggerPath = apiDir / "InvestmentReporting.InviteService.swagger.json";
+							var dllPath     = RootDirectory / "InvestmentReporting.InviteService" / "bin" / Configuration / "net5.0" / "InvestmentReporting.InviteService.dll";
+							Run("Generate swagger api file",
+								RootDirectory / "InvestmentReporting.InviteService",
+								"swagger", $"tofile --output {swaggerPath} {dllPath} v1");
+						}
+					} finally {
+						Environment.SetEnvironmentVariable("SWAGGER_RUN", false.ToString());
+					}
+				}
 
 				DotNetPublish(s => s
 					.SetProject(RootDirectory / "InvestmentReporting.AuthService")

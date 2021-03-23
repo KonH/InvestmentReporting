@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InvestmentReporting.AuthService.Controllers {
@@ -7,6 +8,8 @@ namespace InvestmentReporting.AuthService.Controllers {
 	public class CheckController : ControllerBase {
 		[Authorize]
 		[HttpGet]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 		public IActionResult Check() => Ok();
 	}
 }
