@@ -17,7 +17,11 @@ namespace InvestmentReporting.InviteService {
 		public IConfiguration Configuration { get; }
 
 		public void ConfigureServices(IServiceCollection services) {
-			services.AddControllers();
+			services.AddControllers()
+				.ConfigureApiBehaviorOptions(opts => {
+					opts.SuppressModelStateInvalidFilter = true;
+					opts.SuppressMapClientErrors         = true;
+				});
 			services.AddSwaggerGen(c => c.SwaggerDoc("v1", new OpenApiInfo { Title = "InvestmentReporting.InviteService", Version = "v1" }));
 			services.AddSharedAuthentication();
 			services.AddSingleton<InviteTokenService>();

@@ -55,6 +55,9 @@ namespace InvestmentReporting.BuildSystem {
 							Run("Generate swagger api file",
 								RootDirectory / "InvestmentReporting.AuthService",
 								"swagger", $"tofile --output {swaggerPath} {dllPath} v1");
+							Run("Generate api client from swagger file",
+								RootDirectory / "Frontend",
+								"npm", "run generate-api -- --path ../api/InvestmentReporting.AuthService.swagger.json --output src/api --name \"auth.ts\"");
 						}
 						{
 							var swaggerPath = apiDir / "InvestmentReporting.InviteService.swagger.json";
@@ -62,6 +65,9 @@ namespace InvestmentReporting.BuildSystem {
 							Run("Generate swagger api file",
 								RootDirectory / "InvestmentReporting.InviteService",
 								"swagger", $"tofile --output {swaggerPath} {dllPath} v1");
+							Run("Generate api client from swagger file",
+								RootDirectory / "Frontend",
+								"npm", "run generate-api -- --path ../api/InvestmentReporting.InviteService.swagger.json --output src/api --name \"invite.ts\"");
 						}
 					} finally {
 						Environment.SetEnvironmentVariable("SWAGGER_RUN", false.ToString());

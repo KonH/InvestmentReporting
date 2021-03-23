@@ -15,7 +15,12 @@ namespace InvestmentReporting.AuthService {
 		public IConfiguration Configuration { get; }
 
 		public void ConfigureServices(IServiceCollection services) {
-			services.AddControllers();
+			services
+				.AddControllers()
+				.ConfigureApiBehaviorOptions(opts => {
+					opts.SuppressModelStateInvalidFilter = true;
+					opts.SuppressMapClientErrors         = true;
+				});
 			services.AddSwaggerGen(c => c.SwaggerDoc("v1", new OpenApiInfo { Title = "InvestmentReporting.AuthService", Version = "v1" }));
 			services.AddSharedAuthentication();
 		}

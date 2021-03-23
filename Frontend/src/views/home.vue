@@ -9,7 +9,7 @@ import router from '@/router';
 
 export default class Home extends Vue {
 	async logout() {
-		await Backend.post('api/auth/v1/logout');
+		await Backend.auth().logout.logoutCreate();
 		await router.go(0);
 	}
 }

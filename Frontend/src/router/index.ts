@@ -38,8 +38,8 @@ router.beforeEach(async (to, from, next) => {
 	if (guest) {
 		next();
 	} else {
-		const checkResult = await Backend.fetch('api/auth/v1/check');
-		if (checkResult.ok) {
+		const response = await Backend.tryFetch(Backend.auth().check.checkList());
+		if (response?.ok) {
 			next();
 		} else {
 			next({ path: '/login' });

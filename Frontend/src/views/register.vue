@@ -44,12 +44,14 @@ export default class Register extends Vue {
 			);
 			return;
 		}
-		const token = encodeURIComponent(this.tokenInput.value);
-		const username = encodeURIComponent(this.loginInput.value);
-		const password = encodeURIComponent(this.passwordInput.value);
-		const inviteUrl = `api/invite/v1/register?token=${token}&userName=${username}&password=${password}`;
-		const inviteResult = await Backend.post(inviteUrl);
-		if (inviteResult.ok) {
+		const inviteResult = await Backend.tryFetch(
+			Backend.invite().register.registerCreate({
+				token: this.tokenInput.value,
+				userName: this.loginInput.value,
+				password: this.passwordInput.value,
+			})
+		);
+		if (inviteResult?.ok) {
 			await router.push('/');
 		} else {
 			alert('Register failed');

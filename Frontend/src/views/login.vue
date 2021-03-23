@@ -38,11 +38,13 @@ export default class Login extends Vue {
 			);
 			return;
 		}
-		const username = encodeURIComponent(this.loginInput.value);
-		const password = encodeURIComponent(this.passwordInput.value);
-		const loginUrl = `api/auth/v1/login?userName=${username}&password=${password}`;
-		const loginResult = await Backend.post(loginUrl);
-		if (loginResult.ok) {
+		const loginResult = await Backend.tryFetch(
+			Backend.auth().login.loginCreate({
+				userName: this.loginInput.value,
+				password: this.passwordInput.value,
+			})
+		);
+		if (loginResult?.ok) {
 			await router.push('/');
 		} else {
 			alert('Login failed');
