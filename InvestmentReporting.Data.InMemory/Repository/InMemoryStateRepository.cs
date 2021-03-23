@@ -1,0 +1,27 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using InvestmentReporting.Data.Core.Model;
+using InvestmentReporting.Data.Core.Repository;
+
+namespace InvestmentReporting.Data.InMemory.Repository {
+	public sealed class InMemoryStateRepository : IStateRepository {
+		readonly List<ICommandModel> _commands;
+
+		public InMemoryStateRepository(List<ICommandModel> commands) {
+			_commands = commands;
+		}
+
+		public Task<IReadOnlyCollection<ICommandModel>> ReadCommands(DateTimeOffset date, string userId) =>
+			Task.FromResult((IReadOnlyCollection<ICommandModel>)_commands
+				.Where(c => c.Date <= date)
+				.Where(c => c.User == userId)
+				.ToArray());
+
+		public Task SaveCommand(ICommandModel model) {
+			_commands.Add(model);
+			return Task.CompletedTask;
+		}
+	}
+}

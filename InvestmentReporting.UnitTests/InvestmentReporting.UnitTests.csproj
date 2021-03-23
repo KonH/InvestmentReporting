@@ -16,6 +16,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\InvestmentReporting.Data.InMemory\InvestmentReporting.Data.InMemory.csproj" />
       <ProjectReference Include="..\InvestmentReporting.Domain\InvestmentReporting.Domain.csproj" />
     </ItemGroup>
 

@@ -5,8 +5,4 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\InvestmentReporting.Data.Core\InvestmentReporting.Data.Core.csproj" />
-    </ItemGroup>
-
 </Project>
