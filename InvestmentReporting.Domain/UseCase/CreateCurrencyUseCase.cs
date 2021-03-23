@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using InvestmentReporting.Data.Core.Repository;
 using InvestmentReporting.Domain.Command;
@@ -22,6 +23,10 @@ namespace InvestmentReporting.Domain.UseCase {
 			}
 			if ( !format.ToString().Contains("{0}") ) {
 				throw new InvalidCurrencyException();
+			}
+			var state = await _stateManager.Read(date, user);
+			if ( state.Currencies.Any(c => c.Code == code) ) {
+				throw new DuplicateCurrencyException();
 			}
 			var id = new CurrencyId(_idGenerator.GenerateNewId());
 			await _stateManager.Push(new CreateCurrencyCommand(date, user, id, code, format));

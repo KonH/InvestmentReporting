@@ -22,11 +22,15 @@ namespace InvestmentReporting.Domain.UseCase {
 				throw new InvalidAccountException();
 			}
 			var state = await _stateManager.Read(date, user);
-			if ( state.Brokers.All(b => b.Id != broker) ) {
-				throw new BrokerNotFoundException();
-			}
 			if ( state.Currencies.All(c => c.Id != currency) ) {
 				throw new CurrencyNotFoundException();
+			}
+			var brokerState = state.Brokers.FirstOrDefault(b => b.Id == broker);
+			if ( brokerState == null ) {
+				throw new BrokerNotFoundException();
+			}
+			if ( brokerState.Accounts.Any(a => a.DisplayName == displayName) ) {
+				throw new DuplicateAccountException();
 			}
 			var id = new AccountId(_idGenerator.GenerateNewId());
 			await _stateManager.Push(new CreateAccountCommand(date, user, broker, id, currency, displayName));

@@ -28,6 +28,17 @@ namespace InvestmentReporting.UnitTests {
 		}
 
 		[Test]
+		public async Task IsCurrencyWithSameCodeFailedToAdd() {
+			var code          = new CurrencyCode("USD");
+			var format        = new CurrencyFormat("${0}");
+			var stateManager  = GetStateManager();
+			var createUseCase = new CreateCurrencyUseCase(stateManager, new GuidIdGenerator());
+			await createUseCase.Handle(_date, _userId, code, format);
+
+			Assert.ThrowsAsync<DuplicateCurrencyException>(() => createUseCase.Handle(_date, _userId, code, format));
+		}
+
+		[Test]
 		public void IsCurrencyWithEmptyCodeFailedToAdd() {
 			var code          = new CurrencyCode(string.Empty);
 			var format        = new CurrencyFormat("${0}");

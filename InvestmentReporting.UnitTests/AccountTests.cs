@@ -39,6 +39,16 @@ namespace InvestmentReporting.UnitTests {
 		}
 
 		[Test]
+		public async Task IsAccountWithSameNameFailedToAdd() {
+			var accountName   = "Account";
+			var stateManager  = GetStateManager();
+			var createUseCase = new CreateAccountUseCase(stateManager, new GuidIdGenerator());
+			await createUseCase.Handle(_date, _userId, _brokerId, _currencyId, accountName);
+
+			Assert.ThrowsAsync<DuplicateAccountException>(() => createUseCase.Handle(_date, _userId, _brokerId, _currencyId, accountName));
+		}
+
+		[Test]
 		public void IsAccountForUnknownBrokerFailedToAdd() {
 			var accountName   = "Account";
 			var stateManager  = GetStateManager();
