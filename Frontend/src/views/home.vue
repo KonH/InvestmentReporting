@@ -3,7 +3,8 @@
 	<div v-for="broker in brokers" :key="broker.displayName">
 		<broker :broker="broker" />
 	</div>
-	<button :onclick="logout" class="btn btn-secondary">Logout</button>
+	<router-link to="/addBroker" class="btn btn-primary">Add Broker</router-link>
+	<button :onclick="logout" class="btn btn-secondary ml-2">Logout</button>
 </template>
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';

@@ -1,3 +1,7 @@
+using InvestmentReporting.Data.Core.Repository;
+using InvestmentReporting.Data.InMemory.Repository;
+using InvestmentReporting.Domain.Logic;
+using InvestmentReporting.Domain.UseCase;
 using InvestmentReporting.Shared.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -23,6 +27,12 @@ namespace InvestmentReporting.StateService {
 			services.AddSwaggerGen(c => c.SwaggerDoc("v1", new OpenApiInfo { Title = "InvestmentReporting.StateService", Version = "v1" }));
 			services.AddSharedAuthentication();
 			services.AddMemoryCache();
+
+			services.AddSingleton<IIdGenerator, GuidIdGenerator>();
+			services.AddSingleton<IStateRepository>(new InMemoryStateRepository(new()));
+			services.AddSingleton<StateManager>();
+			services.AddSingleton<ReadStateUseCase>();
+			services.AddSingleton<CreateBrokerUseCase>();
 		}
 
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {

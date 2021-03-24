@@ -5,6 +5,31 @@
     "version": "v1"
   },
   "paths": {
+    "/Broker": {
+      "post": {
+        "tags": [
+          "Broker"
+        ],
+        "parameters": [
+          {
+            "name": "displayName",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
     "/State": {
       "get": {
         "tags": [

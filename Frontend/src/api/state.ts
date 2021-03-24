@@ -213,6 +213,22 @@ export class HttpClient<SecurityDataType = unknown> {
  * @version v1
  */
 export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
+  broker = {
+    /**
+     * No description
+     *
+     * @tags Broker
+     * @name BrokerCreate
+     * @request POST:/Broker
+     */
+    brokerCreate: (query: { displayName: string }, params: RequestParams = {}) =>
+      this.request<void, void>({
+        path: `/Broker`,
+        method: "POST",
+        query: query,
+        ...params,
+      }),
+  };
   state = {
     /**
      * No description

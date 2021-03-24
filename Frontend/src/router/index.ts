@@ -3,6 +3,7 @@ import Home from '@/views/home.vue';
 import Login from '@/views/login.vue';
 import Register from '@/views/register.vue';
 import Backend from '@/service/backend';
+import AddBroker from '@/views/addBroker.vue';
 
 const routes: Array<RouteRecordRaw> = [
 	{
@@ -25,6 +26,11 @@ const routes: Array<RouteRecordRaw> = [
 		meta: {
 			guest: true,
 		},
+	},
+	{
+		path: '/addBroker',
+		name: 'Add Broker',
+		component: AddBroker,
 	},
 ];
 
