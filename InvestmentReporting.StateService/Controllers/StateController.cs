@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using InvestmentReporting.Domain.Entity;
@@ -25,10 +26,22 @@ namespace InvestmentReporting.StateService.Controllers {
 		[HttpGet]
 		[Produces("application/json")]
 		[ProducesResponseType(typeof(StateDto), StatusCodes.Status200OK)]
-		public async Task<IActionResult> Get() {
+		public async Task<IActionResult> Get([Required] DateTimeOffset date) {
 			var userId = new UserId(User.Identity?.Name ?? string.Empty);
-			var state  = await _useCase.Handle(DateTimeOffset.MinValue, userId);
-			var dto    = new StateDto(state.Brokers.Select(b => new BrokerDto(b.DisplayName)).ToArray());
+			_logger.LogInformation($"Retrieve state for user '{userId}' at {date}");
+			var state  = await _useCase.Handle(date, userId);
+			var brokers = state.Brokers
+				.Select(b => new BrokerDto(
+					b.Id,
+					b.DisplayName,
+					b.Accounts
+						.Select(a => new AccountDto(a.Id, a.Currency, a.DisplayName, a.Balance))
+						.ToArray()))
+				.ToArray();
+			var currencies = state.Currencies
+				.Select(c => new CurrencyDto(c.Id, c.Code, c.Format))
+				.ToArray();
+			var dto = new StateDto(brokers, currencies);
 			return new JsonResult(dto);
 		}
 	}

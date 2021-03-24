@@ -12,11 +12,11 @@ namespace InvestmentReporting.StateService.Controllers {
 	[Authorize]
 	[ApiController]
 	[Route("[controller]")]
-	public class BrokerController : ControllerBase {
-		readonly ILogger             _logger;
-		readonly CreateBrokerUseCase _useCase;
+	public class AccountController : ControllerBase {
+		readonly ILogger              _logger;
+		readonly CreateAccountUseCase _useCase;
 
-		public BrokerController(ILogger<BrokerController> logger, CreateBrokerUseCase useCase) {
+		public AccountController(ILogger<AccountController> logger, CreateAccountUseCase useCase) {
 			_logger  = logger;
 			_useCase = useCase;
 		}
@@ -24,11 +24,13 @@ namespace InvestmentReporting.StateService.Controllers {
 		[HttpPost]
 		[ProducesResponseType(StatusCodes.Status201Created)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		public async Task<IActionResult> Post([Required] string displayName) {
-			var userId = new UserId(User.Identity?.Name ?? string.Empty);
-			_logger.LogInformation($"Creating broker '{displayName}' for user '{userId}'");
+		public async Task<IActionResult> Post(
+			[Required] string broker, [Required] string currency, [Required] string displayName) {
+			var userId     = new UserId(User.Identity?.Name ?? string.Empty);
+			_logger.LogInformation(
+				$"Creating account '{displayName}' for broker '{broker}' with currency '{currency}' for user '{userId}'");
 			try {
-				await _useCase.Handle(DateTimeOffset.MinValue, userId, displayName);
+				await _useCase.Handle(DateTimeOffset.MinValue, userId, new(broker), new(currency), displayName);
 				return StatusCode(StatusCodes.Status201Created);
 			} catch ( Exception e ) {
 				_logger.LogError(e.ToString());

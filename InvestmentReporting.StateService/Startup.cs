@@ -39,6 +39,10 @@ namespace InvestmentReporting.StateService {
 			services.AddSingleton<StateManager>();
 			services.AddSingleton<ReadStateUseCase>();
 			services.AddSingleton<CreateBrokerUseCase>();
+			services.AddSingleton<CreateCurrencyUseCase>();
+			services.AddSingleton<CreateAccountUseCase>();
+			services.AddSingleton<AddIncomeUseCase>();
+			services.AddSingleton<AddExpenseUseCase>();
 		}
 
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
