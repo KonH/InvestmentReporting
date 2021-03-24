@@ -5,4 +5,12 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <PackageReference Include="MongoDB.Driver" Version="2.12.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\InvestmentReporting.Data.Core\InvestmentReporting.Data.Core.csproj" />
+    </ItemGroup>
+
 </Project>

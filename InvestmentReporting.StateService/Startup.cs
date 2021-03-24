@@ -1,5 +1,5 @@
 using InvestmentReporting.Data.Core.Repository;
-using InvestmentReporting.Data.InMemory.Repository;
+using InvestmentReporting.Data.Mongo.Repository;
 using InvestmentReporting.Domain.Logic;
 using InvestmentReporting.Domain.UseCase;
 using InvestmentReporting.Shared.Extensions;
@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using MongoDB.Driver;
 
 namespace InvestmentReporting.StateService {
 	public class Startup {
@@ -28,8 +29,13 @@ namespace InvestmentReporting.StateService {
 			services.AddSharedAuthentication();
 			services.AddMemoryCache();
 
-			services.AddSingleton<IIdGenerator, GuidIdGenerator>();
-			services.AddSingleton<IStateRepository>(new InMemoryStateRepository(new()));
+			services.AddSingleton<IMongoDatabase>(_ => {
+				var mongoSettings = MongoClientSettings.FromConnectionString(MongoConnectionString.Create());
+				var client        = new MongoClient(mongoSettings);
+				return client.GetDatabase("InvestmentReporting");
+			});
+			services.AddSingleton<IIdGenerator, ObjectIdGenerator>();
+			services.AddSingleton<IStateRepository, MongoStateRepository>();
 			services.AddSingleton<StateManager>();
 			services.AddSingleton<ReadStateUseCase>();
 			services.AddSingleton<CreateBrokerUseCase>();

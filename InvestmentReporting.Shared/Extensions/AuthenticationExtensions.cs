@@ -16,13 +16,10 @@ namespace InvestmentReporting.Shared.Extensions {
 				// Workaround for invalid connection string issue while running swagger generation
 				return;
 			}
-			var mongoUserName    = Environment.GetEnvironmentVariable("MONGO_INITDB_ROOT_USERNAME");
-			var mongoPassword    = Environment.GetEnvironmentVariable("MONGO_INITDB_ROOT_PASSWORD");
-			var connectionString = $"mongodb://{mongoUserName}:{mongoPassword}@mongo:27017/InvestmentReporting?authSource=admin";
 			services
 				.AddIdentityMongoDbProvider<User, Role, ObjectId>(
 					_ => {},
-					mongoIdentityOpts => mongoIdentityOpts.ConnectionString = connectionString)
+					mongoIdentityOpts => mongoIdentityOpts.ConnectionString = MongoConnectionString.Create())
 				.AddSignInManager();
 			services.AddDataProtection()
 				.PersistKeysToFileSystem(new DirectoryInfo("key_ring_storage"))
