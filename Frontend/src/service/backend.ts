@@ -1,5 +1,6 @@
 import { Api as Auth } from '@/api/auth';
 import { Api as Invite } from '@/api/invite';
+import { Api as State } from '@/api/state';
 
 export default class Backend {
 	static auth() {
@@ -8,6 +9,10 @@ export default class Backend {
 
 	static invite() {
 		return new Invite({ baseUrl: '/api/invite/v1' });
+	}
+
+	static state() {
+		return new State({ baseUrl: '/api/state/v1' });
 	}
 
 	static async tryFetch<T>(promise: Promise<T>) {

@@ -9,6 +9,14 @@
  * ---------------------------------------------------------------
  */
 
+export interface BrokerDto {
+  displayName?: string | null;
+}
+
+export interface StateDto {
+  brokers?: BrokerDto[] | null;
+}
+
 export type QueryParamsType = Record<string | number, any>;
 export type ResponseFormat = keyof Omit<Body, "body" | "bodyUsed">;
 
@@ -204,4 +212,21 @@ export class HttpClient<SecurityDataType = unknown> {
  * @title InvestmentReporting.StateService
  * @version v1
  */
-export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {}
+export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
+  state = {
+    /**
+     * No description
+     *
+     * @tags State
+     * @name StateList
+     * @request GET:/State
+     */
+    stateList: (params: RequestParams = {}) =>
+      this.request<StateDto, any>({
+        path: `/State`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+  };
+}
