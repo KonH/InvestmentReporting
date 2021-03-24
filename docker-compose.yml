@@ -8,9 +8,11 @@ services:
     depends_on:
       - auth-service
       - invite-service
+      - state-service
     links:
       - auth-service
       - invite-service
+      - state-service
   mongo:
     build:
       context: ./Mongo
@@ -46,5 +48,18 @@ services:
       - 8084:8084
     volumes:
        - key_ring_storage:/publish/key_ring_storage
+  state-service:
+    build:
+      context: ./InvestmentReporting.StateService
+      args:
+        - DOTNET_IMAGE_SUFFIX
+    container_name: state-service
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    ports:
+      - 8085:8085
+    volumes:
+      - key_ring_storage:/publish/key_ring_storage
 volumes:
   key_ring_storage:

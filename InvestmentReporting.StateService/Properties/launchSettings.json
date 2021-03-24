@@ -1,0 +1,13 @@
+﻿{
+  "$schema": "http://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "InvestmentReporting.StateService": {
+      "commandName": "Project",
+      "dotnetRunMessages": "true",
+      "applicationUrl": "http://localhost:8085",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}

@@ -12,7 +12,8 @@ namespace InvestmentReporting.BuildSystem {
 	class Build : NukeBuild {
 		static readonly (string, string)[] DotNetProjects = {
 			("InvestmentReporting.AuthService", "auth.ts"),
-			("InvestmentReporting.InviteService", "invite.ts")
+			("InvestmentReporting.InviteService", "invite.ts"),
+			("InvestmentReporting.StateService", "state.ts")
 		};
 
 		[Parameter]
