@@ -18,10 +18,13 @@
 	>
 </template>
 <script lang="ts">
-import { Vue } from 'vue-class-component';
+import { Options, Vue } from 'vue-class-component';
 import Backend from '@/service/backend';
 import router from '@/router';
 
+@Options({
+	name: 'Login',
+})
 export default class Login extends Vue {
 	loginInput: HTMLInputElement | undefined;
 	passwordInput: HTMLInputElement | undefined;

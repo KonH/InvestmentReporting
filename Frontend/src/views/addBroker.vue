@@ -10,10 +10,13 @@
 	<router-link to="/" class="btn btn-secondary ml-2">Back</router-link>
 </template>
 <script lang="ts">
-import { Vue } from 'vue-class-component';
+import { Options, Vue } from 'vue-class-component';
 import Backend from '@/service/backend';
 import router from '@/router';
 
+@Options({
+	name: 'AddBroker',
+})
 export default class AddBroker extends Vue {
 	displayNameInput: HTMLInputElement | undefined;
 

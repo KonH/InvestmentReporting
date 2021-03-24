@@ -14,14 +14,18 @@ import { StateDto } from '@/api/state';
 import { Action, State } from 'vuex-class';
 
 @Options({
+	name: 'Home',
 	components: {
 		CurrencyView,
 		BrokerView,
 	},
 })
 export default class Home extends Vue {
-	@State('activeState') activeState!: StateDto;
-	@Action('fetchActiveState') fetchActiveState!: () => void;
+	@State('activeState')
+	activeState!: StateDto;
+
+	@Action('fetchActiveState')
+	fetchActiveState!: () => void;
 
 	get currencies() {
 		return this.activeState.currencies;

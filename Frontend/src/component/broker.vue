@@ -1,17 +1,21 @@
 <template>
-	<b>{{ displayName }}</b>
+	<b>{{ broker.displayName }}</b>
+	<accountList :broker-id="broker.id" :accounts="broker.accounts" />
 </template>
 <script lang="ts">
-import { Vue } from 'vue-class-component';
+import { Options, Vue } from 'vue-class-component';
 import { BrokerDto } from '@/api/state';
 import { Prop } from 'vue-property-decorator';
+import AccountList from '@/component/accountList.vue';
 
+@Options({
+	name: 'Broker',
+	components: {
+		AccountList,
+	},
+})
 export default class Broker extends Vue {
 	@Prop()
-	broker: BrokerDto | undefined;
-
-	get displayName() {
-		return this.broker?.displayName;
-	}
+	broker!: BrokerDto;
 }
 </script>

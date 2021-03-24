@@ -16,12 +16,14 @@ import { StateDto } from '@/api/state';
 import { State } from 'vuex-class';
 
 @Options({
+	name: 'CurrencyView',
 	components: {
 		Currency,
 	},
 })
 export default class CurrencyView extends Vue {
-	@State('activeState') activeState!: StateDto;
+	@State('activeState')
+	activeState!: StateDto;
 
 	get currencies() {
 		return this.activeState.currencies;

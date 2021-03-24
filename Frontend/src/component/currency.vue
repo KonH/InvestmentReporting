@@ -1,17 +1,16 @@
 <template>
-	<b>{{ displayName }}</b>
+	<b>{{ currency.displayName }}</b>
 </template>
 <script lang="ts">
-import { Vue } from 'vue-class-component';
+import { Options, Vue } from 'vue-class-component';
 import { CurrencyDto } from '@/api/state';
 import { Prop } from 'vue-property-decorator';
 
+@Options({
+	name: 'Currency',
+})
 export default class Currency extends Vue {
 	@Prop()
-	currency: CurrencyDto | undefined;
-
-	get displayName() {
-		return this.currency?.code;
-	}
+	currency!: CurrencyDto;
 }
 </script>

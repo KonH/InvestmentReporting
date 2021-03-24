@@ -16,12 +16,14 @@ import { StateDto } from '@/api/state';
 import { State } from 'vuex-class';
 
 @Options({
+	name: 'BrokerView',
 	components: {
 		Broker,
 	},
 })
 export default class BrokerView extends Vue {
-	@State('activeState') activeState!: StateDto;
+	@State('activeState')
+	activeState!: StateDto;
 
 	get brokers() {
 		return this.activeState.brokers;
