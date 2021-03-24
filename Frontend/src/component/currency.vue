@@ -3,15 +3,15 @@
 </template>
 <script lang="ts">
 import { Vue } from 'vue-class-component';
-import { BrokerDto } from '@/api/state';
+import { CurrencyDto } from '@/api/state';
 import { Prop } from 'vue-property-decorator';
 
-export default class Broker extends Vue {
+export default class Currency extends Vue {
 	@Prop()
-	broker: BrokerDto | undefined;
+	currency: CurrencyDto | undefined;
 
 	get displayName() {
-		return this.broker?.displayName;
+		return this.currency?.code;
 	}
 }
 </script>

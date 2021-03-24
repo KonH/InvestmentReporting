@@ -36,7 +36,7 @@ export default class AddBroker extends Vue {
 		if (result?.ok) {
 			await router.push('/');
 		} else {
-			alert('Failed:' + result?.error);
+			alert(`Failed: ${result?.error}`);
 		}
 	}
 }

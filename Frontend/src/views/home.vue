@@ -1,27 +1,31 @@
 <template>
 	<h1>Home</h1>
-	<div v-for="broker in brokers" :key="broker.displayName">
-		<broker :broker="broker" />
-	</div>
-	<router-link to="/addBroker" class="btn btn-primary">Add Broker</router-link>
-	<button :onclick="logout" class="btn btn-secondary ml-2">Logout</button>
+	<currencyView />
+	<brokerView />
+	<button :onclick="logout" class="btn btn-secondary mt-2">Logout</button>
 </template>
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
 import Backend from '@/service/backend';
 import router from '@/router';
-import Broker from '@/component/broker.vue';
+import CurrencyView from '@/views/currencyView.vue';
+import BrokerView from '@/views/brokerView.vue';
 import { StateDto } from '@/api/state';
 import { Action, State } from 'vuex-class';
 
 @Options({
 	components: {
-		Broker,
+		CurrencyView,
+		BrokerView,
 	},
 })
 export default class Home extends Vue {
 	@State('activeState') activeState!: StateDto;
 	@Action('fetchActiveState') fetchActiveState!: () => void;
+
+	get currencies() {
+		return this.activeState.currencies;
+	}
 
 	get brokers() {
 		return this.activeState.brokers;

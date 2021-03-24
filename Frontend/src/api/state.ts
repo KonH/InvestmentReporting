@@ -9,12 +9,30 @@
  * ---------------------------------------------------------------
  */
 
-export interface BrokerDto {
+export interface AccountDto {
+  id?: string | null;
+  currency?: string | null;
   displayName?: string | null;
+
+  /** @format double */
+  balance?: number;
+}
+
+export interface BrokerDto {
+  id?: string | null;
+  displayName?: string | null;
+  accounts?: AccountDto[] | null;
+}
+
+export interface CurrencyDto {
+  id?: string | null;
+  code?: string | null;
+  format?: string | null;
 }
 
 export interface StateDto {
   brokers?: BrokerDto[] | null;
+  currencies?: CurrencyDto[] | null;
 }
 
 export type QueryParamsType = Record<string | number, any>;
@@ -213,6 +231,22 @@ export class HttpClient<SecurityDataType = unknown> {
  * @version v1
  */
 export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
+  account = {
+    /**
+     * No description
+     *
+     * @tags Account
+     * @name AccountCreate
+     * @request POST:/Account
+     */
+    accountCreate: (query: { broker: string; currency: string; displayName: string }, params: RequestParams = {}) =>
+      this.request<void, void>({
+        path: `/Account`,
+        method: "POST",
+        query: query,
+        ...params,
+      }),
+  };
   broker = {
     /**
      * No description
@@ -229,6 +263,76 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         ...params,
       }),
   };
+  currency = {
+    /**
+     * No description
+     *
+     * @tags Currency
+     * @name CurrencyCreate
+     * @request POST:/Currency
+     */
+    currencyCreate: (query: { code: string; format: string }, params: RequestParams = {}) =>
+      this.request<void, void>({
+        path: `/Currency`,
+        method: "POST",
+        query: query,
+        ...params,
+      }),
+  };
+  expense = {
+    /**
+     * No description
+     *
+     * @tags Expense
+     * @name ExpenseCreate
+     * @request POST:/Expense
+     */
+    expenseCreate: (
+      query: {
+        date: string;
+        broker: string;
+        account: string;
+        currency: string;
+        amount: number;
+        exchangeRate: number;
+        category: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, void>({
+        path: `/Expense`,
+        method: "POST",
+        query: query,
+        ...params,
+      }),
+  };
+  income = {
+    /**
+     * No description
+     *
+     * @tags Income
+     * @name IncomeCreate
+     * @request POST:/Income
+     */
+    incomeCreate: (
+      query: {
+        date: string;
+        broker: string;
+        account: string;
+        currency: string;
+        amount: number;
+        exchangeRate: number;
+        category: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, void>({
+        path: `/Income`,
+        method: "POST",
+        query: query,
+        ...params,
+      }),
+  };
   state = {
     /**
      * No description
@@ -237,10 +341,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name StateList
      * @request GET:/State
      */
-    stateList: (params: RequestParams = {}) =>
+    stateList: (query: { date: string }, params: RequestParams = {}) =>
       this.request<StateDto, any>({
         path: `/State`,
         method: "GET",
+        query: query,
         format: "json",
         ...params,
       }),
