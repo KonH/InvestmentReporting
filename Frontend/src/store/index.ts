@@ -1,8 +1,22 @@
 import { createStore } from 'vuex';
+import AppState from '@/store/appState';
+import { StateDto } from '@/api/state';
+import Backend from '@/service/backend';
 
 export default createStore({
-	state: {},
-	mutations: {},
-	actions: {},
+	state() {
+		return new AppState();
+	},
+	mutations: {
+		applyActiveState(appState: AppState, activeState: StateDto) {
+			appState.activeState = activeState;
+		},
+	},
+	actions: {
+		async fetchActiveState({ commit }) {
+			const response = await Backend.state().state.stateList();
+			commit('applyActiveState', response.data);
+		},
+	},
 	modules: {},
 });
