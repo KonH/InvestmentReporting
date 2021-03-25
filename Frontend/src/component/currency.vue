@@ -1,5 +1,5 @@
 <template>
-	<b>{{ currency.displayName }}</b>
+	<b>{{ currency.code }}</b>
 </template>
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
