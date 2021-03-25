@@ -8,8 +8,8 @@
 import { Options, Vue } from 'vue-class-component';
 import Backend from '@/service/backend';
 import router from '@/router';
-import CurrencyView from '@/views/currencyView.vue';
-import BrokerView from '@/views/brokerView.vue';
+import CurrencyView from '@/view/currencyView.vue';
+import BrokerView from '@/view/brokerView.vue';
 import { StateDto } from '@/api/state';
 import { State } from 'vuex-class';
 

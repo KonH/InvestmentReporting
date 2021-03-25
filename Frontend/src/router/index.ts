@@ -1,13 +1,13 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
-import Home from '@/views/home.vue';
-import Login from '@/views/login.vue';
-import Register from '@/views/register.vue';
+import Home from '@/view/home.vue';
+import Login from '@/view/login.vue';
+import Register from '@/view/register.vue';
 import Backend from '@/service/backend';
-import AddBroker from '@/views/addBroker.vue';
-import AddCurrency from '@/views/addCurrency.vue';
-import AddAccount from '@/views/addAccount.vue';
-import AddIncome from '@/views/addIncome.vue';
-import AddExpense from '@/views/addExpense.vue';
+import AddBroker from '@/view/addBroker.vue';
+import AddCurrency from '@/view/addCurrency.vue';
+import AddAccount from '@/view/addAccount.vue';
+import AddIncome from '@/view/addIncome.vue';
+import AddExpense from '@/view/addExpense.vue';
 
 const routes: Array<RouteRecordRaw> = [
 	{
