@@ -18,6 +18,11 @@
     <ItemGroup>
       <ProjectReference Include="..\InvestmentReporting.Data.InMemory\InvestmentReporting.Data.InMemory.csproj" />
       <ProjectReference Include="..\InvestmentReporting.Domain\InvestmentReporting.Domain.csproj" />
+      <ProjectReference Include="..\InvestmentReporting.Import\InvestmentReporting.Import.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="Samples\AlphaDirect_BrokerMoneyMove_Sample.xml" CopyToOutputDirectory="Always" />
     </ItemGroup>
 
 </Project>

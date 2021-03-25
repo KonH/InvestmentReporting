@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Report Name="MyBroker">
+    <Trades2>
+        <Report Name="3_BrokerMoneyMove">
+            <Tablix1>
+                <settlement_date_Collection>
+                    <settlement_date settlement_date="2000-01-01T00:00:00">
+                        <rn_Collection>
+                            <rn last_update="2020-01-01T01:02:03">
+                                <oper_type oper_type="Перевод">
+                                    <comment comment="из BankName">
+                                        <money_volume_begin1_Collection>
+                                            <money_volume_begin1>
+                                                <p_code_Collection>
+                                                    <p_code>
+                                                        <p_code p_code="RUB"/>
+                                                    </p_code>
+                                                    <p_code>
+                                                        <p_code p_code="USD" volume="100.00"/>
+                                                    </p_code>
+                                                </p_code_Collection>
+                                            </money_volume_begin1>
+                                        </money_volume_begin1_Collection>
+                                    </comment>
+                                </oper_type>
+                            </rn>
+                        </rn_Collection>
+                    </settlement_date>
+                    <settlement_date settlement_date="2000-01-02T00:00:00">
+                        <rn_Collection>
+                            <rn last_update="2020-01-02T02:03:04">
+                                <oper_type oper_type="Перевод">
+                                    <comment comment="из BankName">
+                                        <money_volume_begin1_Collection>
+                                            <money_volume_begin1>
+                                                <p_code_Collection>
+                                                    <p_code>
+                                                        <p_code p_code="RUB" volume="200.00"/>
+                                                    </p_code>
+                                                    <p_code>
+                                                        <p_code p_code="USD"/>
+                                                    </p_code>
+                                                </p_code_Collection>
+                                            </money_volume_begin1>
+                                        </money_volume_begin1_Collection>
+                                    </comment>
+                                </oper_type>
+                            </rn>
+                        </rn_Collection>
+                    </settlement_date>
+                </settlement_date_Collection>
+            </Tablix1>
+        </Report>
+    </Trades2>
+</Report>

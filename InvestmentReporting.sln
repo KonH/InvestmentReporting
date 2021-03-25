@@ -22,6 +22,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InvestmentReporting.StateSe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InvestmentReporting.ImportService", "InvestmentReporting.ImportService\InvestmentReporting.ImportService.csproj", "{5B0AC6A5-8CF7-4AB8-A2D6-67B97D18C825}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InvestmentReporting.Import", "InvestmentReporting.Import\InvestmentReporting.Import.csproj", "{33AF95E0-3157-4673-A811-9A235DFDA622}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -72,5 +74,9 @@ Global
 		{5B0AC6A5-8CF7-4AB8-A2D6-67B97D18C825}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5B0AC6A5-8CF7-4AB8-A2D6-67B97D18C825}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5B0AC6A5-8CF7-4AB8-A2D6-67B97D18C825}.Release|Any CPU.Build.0 = Release|Any CPU
+		{33AF95E0-3157-4673-A811-9A235DFDA622}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{33AF95E0-3157-4673-A811-9A235DFDA622}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33AF95E0-3157-4673-A811-9A235DFDA622}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{33AF95E0-3157-4673-A811-9A235DFDA622}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
