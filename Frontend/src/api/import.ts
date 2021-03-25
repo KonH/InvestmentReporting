@@ -204,4 +204,20 @@ export class HttpClient<SecurityDataType = unknown> {
  * @title InvestmentReporting.ImportService
  * @version v1
  */
-export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {}
+export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
+  import = {
+    /**
+     * No description
+     *
+     * @tags Import
+     * @name ImportCreate
+     * @request POST:/Import
+     */
+    importCreate: (params: RequestParams = {}) =>
+      this.request<void, void>({
+        path: `/Import`,
+        method: "POST",
+        ...params,
+      }),
+  };
+}

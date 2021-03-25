@@ -1,6 +1,9 @@
 <template>
 	<b>{{ broker.displayName }}</b>
 	<accountList :broker-id="broker.id" :accounts="broker.accounts" />
+	<router-link :to="`/import/${broker.id}`" class="btn btn-primary mb-2"
+		>Import</router-link
+	>
 </template>
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';

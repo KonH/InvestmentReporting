@@ -4,6 +4,22 @@
     "title": "InvestmentReporting.ImportService",
     "version": "v1"
   },
-  "paths": { },
+  "paths": {
+    "/Import": {
+      "post": {
+        "tags": [
+          "Import"
+        ],
+        "responses": {
+          "201": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    }
+  },
   "components": { }
 }

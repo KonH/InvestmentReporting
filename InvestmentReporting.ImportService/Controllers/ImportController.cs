@@ -1,7 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -15,6 +12,14 @@ namespace InvestmentReporting.ImportService.Controllers {
 
 		public ImportController(ILogger<ImportController> logger) {
 			_logger = logger;
+		}
+
+		[HttpPost]
+		[ProducesResponseType(StatusCodes.Status201Created)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		public IActionResult Post() {
+			_logger.LogInformation("Import");
+			return Ok();
 		}
 	}
 }
