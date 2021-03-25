@@ -13,7 +13,8 @@ namespace InvestmentReporting.BuildSystem {
 		static readonly (string, string)[] DotNetProjects = {
 			("InvestmentReporting.AuthService", "auth.ts"),
 			("InvestmentReporting.InviteService", "invite.ts"),
-			("InvestmentReporting.StateService", "state.ts")
+			("InvestmentReporting.StateService", "state.ts"),
+			("InvestmentReporting.ImportService", "import.ts")
 		};
 
 		[Parameter]

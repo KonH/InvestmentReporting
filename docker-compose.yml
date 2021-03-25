@@ -9,10 +9,12 @@ services:
       - auth-service
       - invite-service
       - state-service
+      - import-service
     links:
       - auth-service
       - invite-service
       - state-service
+      - import-service
   mongo:
     build:
       context: ./Mongo
@@ -59,6 +61,23 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: example
     ports:
       - 8085:8085
+    volumes:
+      - key_ring_storage:/publish/key_ring_storage
+  import-service:
+    build:
+      context: ./InvestmentReporting.ImportService
+      args:
+        - DOTNET_IMAGE_SUFFIX
+    container_name: import-service
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    ports:
+      - 8086:8086
+    depends_on:
+      - state-service
+    links:
+      - state-service
     volumes:
       - key_ring_storage:/publish/key_ring_storage
 volumes:
