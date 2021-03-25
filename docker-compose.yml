@@ -15,6 +15,7 @@ services:
       - invite-service
       - state-service
       - import-service
+    restart: unless-stopped
   mongo:
     build:
       context: ./Mongo
@@ -24,6 +25,7 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
+    restart: unless-stopped
   auth-service:
     build:
       context: ./InvestmentReporting.AuthService
@@ -37,6 +39,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: example
     volumes:
     - key_ring_storage:/publish/key_ring_storage
+    restart: unless-stopped
   invite-service:
     build:
       context: ./InvestmentReporting.InviteService
@@ -50,6 +53,7 @@ services:
       - 8084:8084
     volumes:
        - key_ring_storage:/publish/key_ring_storage
+    restart: unless-stopped
   state-service:
     build:
       context: ./InvestmentReporting.StateService
@@ -63,6 +67,7 @@ services:
       - 8085:8085
     volumes:
       - key_ring_storage:/publish/key_ring_storage
+    restart: unless-stopped
   import-service:
     build:
       context: ./InvestmentReporting.ImportService
@@ -80,5 +85,6 @@ services:
       - state-service
     volumes:
       - key_ring_storage:/publish/key_ring_storage
+    restart: unless-stopped
 volumes:
   key_ring_storage:
