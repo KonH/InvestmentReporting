@@ -6,6 +6,8 @@ import Backend from '@/service/backend';
 import AddBroker from '@/views/addBroker.vue';
 import AddCurrency from '@/views/addCurrency.vue';
 import AddAccount from '@/views/addAccount.vue';
+import AddIncome from '@/views/addIncome.vue';
+import AddExpense from '@/views/addExpense.vue';
 
 const routes: Array<RouteRecordRaw> = [
 	{
@@ -43,6 +45,16 @@ const routes: Array<RouteRecordRaw> = [
 		path: '/addAccount/:broker',
 		name: 'Add Account',
 		component: AddAccount,
+	},
+	{
+		path: '/addIncome/:broker/:account',
+		name: 'Add Income',
+		component: AddIncome,
+	},
+	{
+		path: '/addExpense/:broker/:account',
+		name: 'Add Expense',
+		component: AddExpense,
 	},
 ];
 

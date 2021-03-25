@@ -1,5 +1,15 @@
 <template>
 	<b>{{ account.displayName }} ({{ balanceFormat }})</b>
+	<router-link
+		:to="`/addIncome/${brokerId}/${account.id}`"
+		class="btn btn-primary ml-2"
+		>Add Income</router-link
+	>
+	<router-link
+		:to="`/addExpense/${brokerId}/${account.id}`"
+		class="btn btn-primary ml-2"
+		>Add Expense</router-link
+	>
 </template>
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
@@ -15,6 +25,9 @@ export default class Account extends Vue {
 	activeState!: StateDto;
 
 	@Prop()
+	brokerId!: string;
+
+	@Prop()
 	account!: AccountDto;
 
 	get balanceFormat() {
@@ -22,7 +35,7 @@ export default class Account extends Vue {
 			(c) => c.id == this.account.currency
 		) as CurrencyDto;
 		const format = accountCurrency.format;
-		return format.replace('{0}', this.account.balance);
+		return format?.replace('{0}', (this.account.balance ?? 0).toString());
 	}
 }
 </script>

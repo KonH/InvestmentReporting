@@ -28,8 +28,9 @@
 import { Options, Vue } from 'vue-class-component';
 import Backend from '@/service/backend';
 import router from '@/router';
-import { State } from 'vuex-class';
+import { Action, State } from 'vuex-class';
 import { StateDto } from '@/api/state';
+import { Ref } from 'vue-property-decorator';
 
 @Options({
 	name: 'AddAccount',
@@ -37,25 +38,20 @@ import { StateDto } from '@/api/state';
 export default class AddAccount extends Vue {
 	@State('activeState') activeState!: StateDto;
 
-	displayNameInput: HTMLInputElement | undefined;
-	currencySelect: HTMLSelectElement | undefined;
+	@Ref('displayName')
+	displayNameInput!: HTMLInputElement;
+
+	@Ref('currency')
+	currencySelect!: HTMLSelectElement;
+
+	@Action('fetchActiveState')
+	fetchActiveState!: () => void;
 
 	get currencies() {
 		return this.activeState.currencies;
 	}
 
-	mounted() {
-		this.displayNameInput = this.$refs.displayName as HTMLInputElement;
-		this.currencySelect = this.$refs.currency as HTMLSelectElement;
-	}
-
 	async onclick() {
-		if (!this.displayNameInput || !this.currencySelect) {
-			console.error(
-				`invalid setup (displayNameInput: ${this.displayNameInput}, currencySelect: ${this.currencySelect})`
-			);
-			return;
-		}
 		const brokerId = this.$route.params.broker as string;
 		const currencyId = this.currencySelect.value;
 		const result = await Backend.tryFetch(
@@ -66,6 +62,7 @@ export default class AddAccount extends Vue {
 			})
 		);
 		if (result?.ok) {
+			this.fetchActiveState();
 			await router.push('/');
 		} else {
 			alert(`Failed: ${result?.error}`);

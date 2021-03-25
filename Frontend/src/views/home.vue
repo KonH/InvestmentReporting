@@ -11,7 +11,7 @@ import router from '@/router';
 import CurrencyView from '@/views/currencyView.vue';
 import BrokerView from '@/views/brokerView.vue';
 import { StateDto } from '@/api/state';
-import { Action, State } from 'vuex-class';
+import { State } from 'vuex-class';
 
 @Options({
 	name: 'Home',
@@ -24,19 +24,12 @@ export default class Home extends Vue {
 	@State('activeState')
 	activeState!: StateDto;
 
-	@Action('fetchActiveState')
-	fetchActiveState!: () => void;
-
 	get currencies() {
 		return this.activeState.currencies;
 	}
 
 	get brokers() {
 		return this.activeState.brokers;
-	}
-
-	async created() {
-		this.fetchActiveState();
 	}
 
 	async logout() {

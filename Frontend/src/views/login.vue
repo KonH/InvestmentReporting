@@ -21,26 +21,19 @@
 import { Options, Vue } from 'vue-class-component';
 import Backend from '@/service/backend';
 import router from '@/router';
+import { Ref } from 'vue-property-decorator';
 
 @Options({
 	name: 'Login',
 })
 export default class Login extends Vue {
-	loginInput: HTMLInputElement | undefined;
-	passwordInput: HTMLInputElement | undefined;
+	@Ref('login')
+	loginInput!: HTMLInputElement;
 
-	mounted() {
-		this.loginInput = this.$refs.login as HTMLInputElement;
-		this.passwordInput = this.$refs.password as HTMLInputElement;
-	}
+	@Ref('password')
+	passwordInput!: HTMLInputElement;
 
 	async onclick() {
-		if (!this.loginInput || !this.passwordInput) {
-			console.error(
-				`invalid setup (loginInput: ${this.loginInput}, passwordInput: ${this.passwordInput})`
-			);
-			return;
-		}
 		const loginResult = await Backend.tryFetch(
 			Backend.auth().login.loginCreate({
 				userName: this.loginInput.value,

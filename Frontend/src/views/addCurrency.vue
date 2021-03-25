@@ -19,26 +19,23 @@
 import { Options, Vue } from 'vue-class-component';
 import Backend from '@/service/backend';
 import router from '@/router';
+import { Ref } from 'vue-property-decorator';
+import { Action } from 'vuex-class';
 
 @Options({
 	name: 'AddCurrency',
 })
 export default class AddCurrency extends Vue {
-	codeInput: HTMLInputElement | undefined;
-	formatInput: HTMLInputElement | undefined;
+	@Ref('code')
+	codeInput!: HTMLInputElement;
 
-	mounted() {
-		this.codeInput = this.$refs.code as HTMLInputElement;
-		this.formatInput = this.$refs.format as HTMLInputElement;
-	}
+	@Ref('format')
+	formatInput!: HTMLInputElement;
+
+	@Action('fetchActiveState')
+	fetchActiveState!: () => void;
 
 	async onclick() {
-		if (!this.codeInput || !this.formatInput) {
-			console.error(
-				`invalid setup (codeInput: ${this.codeInput}, formatInput: ${this.formatInput})`
-			);
-			return;
-		}
 		const result = await Backend.tryFetch(
 			Backend.state().currency.currencyCreate({
 				code: this.codeInput.value,
@@ -46,6 +43,7 @@ export default class AddCurrency extends Vue {
 			})
 		);
 		if (result?.ok) {
+			this.fetchActiveState();
 			await router.push('/');
 		} else {
 			alert(`Failed: ${result?.error}`);

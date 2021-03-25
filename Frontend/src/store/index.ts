@@ -14,7 +14,7 @@ export default createStore({
 	},
 	actions: {
 		async fetchActiveState({ commit }) {
-			const date = new Date().toUTCString();
+			const date = new Date().toISOString();
 			const response = await Backend.state().state.stateList({ date: date });
 			commit('applyActiveState', response.data);
 		},

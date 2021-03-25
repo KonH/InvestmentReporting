@@ -3,3 +3,19 @@
 		<router-view />
 	</div>
 </template>
+<script lang="ts">
+import { Options, Vue } from 'vue-class-component';
+import { Action } from 'vuex-class';
+
+@Options({
+	name: 'App',
+})
+export default class App extends Vue {
+	@Action('fetchActiveState')
+	fetchActiveState!: () => void;
+
+	created() {
+		this.fetchActiveState();
+	}
+}
+</script>

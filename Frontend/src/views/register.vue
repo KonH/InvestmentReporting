@@ -25,28 +25,22 @@
 import { Options, Vue } from 'vue-class-component';
 import Backend from '@/service/backend';
 import router from '@/router';
+import { Ref } from 'vue-property-decorator';
 
 @Options({
 	name: 'Register',
 })
 export default class Register extends Vue {
-	tokenInput: HTMLInputElement | undefined;
-	loginInput: HTMLInputElement | undefined;
-	passwordInput: HTMLInputElement | undefined;
+	@Ref('token')
+	tokenInput!: HTMLInputElement;
 
-	mounted() {
-		this.tokenInput = this.$refs.token as HTMLInputElement;
-		this.loginInput = this.$refs.login as HTMLInputElement;
-		this.passwordInput = this.$refs.password as HTMLInputElement;
-	}
+	@Ref('login')
+	loginInput!: HTMLInputElement;
+
+	@Ref('password')
+	passwordInput!: HTMLInputElement;
 
 	async onclick() {
-		if (!this.tokenInput || !this.loginInput || !this.passwordInput) {
-			console.error(
-				`invalid setup (tokenInput: ${this.tokenInput}, loginInput: ${this.loginInput}, passwordInput: ${this.passwordInput})`
-			);
-			return;
-		}
 		const inviteResult = await Backend.tryFetch(
 			Backend.invite().register.registerCreate({
 				token: this.tokenInput.value,

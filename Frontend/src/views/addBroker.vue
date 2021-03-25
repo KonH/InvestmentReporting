@@ -13,24 +13,16 @@
 import { Options, Vue } from 'vue-class-component';
 import Backend from '@/service/backend';
 import router from '@/router';
+import { Ref } from 'vue-property-decorator';
 
 @Options({
 	name: 'AddBroker',
 })
 export default class AddBroker extends Vue {
-	displayNameInput: HTMLInputElement | undefined;
-
-	mounted() {
-		this.displayNameInput = this.$refs.displayName as HTMLInputElement;
-	}
+	@Ref('displayName')
+	displayNameInput!: HTMLInputElement;
 
 	async onclick() {
-		if (!this.displayNameInput) {
-			console.error(
-				`invalid setup (displayNameInput: ${this.displayNameInput}`
-			);
-			return;
-		}
 		const result = await Backend.tryFetch(
 			Backend.state().broker.brokerCreate({
 				displayName: this.displayNameInput.value,

@@ -1,8 +1,8 @@
 <template>
 	<div>
 		<ul>
-			<li v-for="account in accounts" :key="account.id">
-				<account :account="account" />
+			<li v-for="account in accounts" :key="account.id" class="mb-2">
+				<account :account="account" :broker-id="brokerId" />
 			</li>
 			<router-link :to="`/addAccount/${brokerId}`" class="btn btn-primary"
 				>Add Account</router-link
