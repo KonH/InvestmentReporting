@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using InvestmentReporting.Data.Core.Model;
 using InvestmentReporting.Data.InMemory.Repository;
 using InvestmentReporting.Domain.Entity;
 using InvestmentReporting.Domain.Logic;
@@ -152,6 +153,41 @@ namespace InvestmentReporting.UnitTests {
 			Assert.ThrowsAsync<InvalidPriceException>(() => addUseCase.Handle(
 				_date, _userId, _brokerId, _accountId, _currencyId, 100, exchangeRate: 0, _expenseCategory));
 		}
+
+		[Test]
+		public async Task IsIncomeOperationFound() {
+			var stateManager = GetStateBuilder()
+				.With(new AddIncomeModel(_date, _userId, _brokerId, _accountId, string.Empty, _currencyId, 100, 1, _incomeCategory))
+				.Build();
+			var readUseCase = new ReadOperationsUseCase(stateManager);
+
+			var operations = await readUseCase.Handle(_date, _date, _userId, _brokerId, _accountId);
+
+			operations.Should().Contain(op =>
+				(op.Date == _date) &&
+				(op.Kind == OperationKind.Income) &&
+				(op.Amount == 100) &&
+				(op.Category == _incomeCategory));
+		}
+
+		[Test]
+		public async Task IsExpenseOperationFound() {
+			var stateManager = GetStateBuilder()
+				.With(new AddExpenseModel(_date, _userId, _brokerId, _accountId, string.Empty, _currencyId, 50, 1, _expenseCategory))
+				.Build();
+			var readUseCase = new ReadOperationsUseCase(stateManager);
+
+			var operations = await readUseCase.Handle(_date, _date, _userId, _brokerId, _accountId);
+
+			operations.Should().Contain(op =>
+				(op.Date == _date) &&
+				(op.Kind == OperationKind.Expense) &&
+				(op.Amount == -50) &&
+				(op.Category == _expenseCategory));
+		}
+
+		StateManagerBuilder GetStateBuilder() =>
+			new StateManagerBuilder().With(_userId).With(_brokerId).With(_currencyId).With(_accountId);
 
 		StateManager GetStateManager() =>
 			new StateManagerBuilder().With(_userId).With(_brokerId).With(_currencyId).With(_accountId).Build();

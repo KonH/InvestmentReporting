@@ -26,18 +26,23 @@ namespace InvestmentReporting.UnitTests {
 
 		public StateManagerBuilder With(BrokerId broker) {
 			_brokerId = broker.ToString();
-			_commands.Add(new CreateBrokerModel(_date, _userId, _brokerId, string.Empty));
+			With(new CreateBrokerModel(_date, _userId, _brokerId, string.Empty));
 			return this;
 		}
 
 		public StateManagerBuilder With(CurrencyId currency) {
 			_currencyId = currency.ToString();
-			_commands.Add(new CreateCurrencyModel(_date, _userId, _currencyId, string.Empty, string.Empty));
+			With(new CreateCurrencyModel(_date, _userId, _currencyId, string.Empty, string.Empty));
 			return this;
 		}
 
 		public StateManagerBuilder With(AccountId account) {
-			_commands.Add(new CreateAccountModel(_date, _userId, _brokerId, account.ToString(), _currencyId, string.Empty));
+			With(new CreateAccountModel(_date, _userId, _brokerId, account.ToString(), _currencyId, string.Empty));
+			return this;
+		}
+
+		public StateManagerBuilder With(ICommandModel command) {
+			_commands.Add(command);
 			return this;
 		}
 

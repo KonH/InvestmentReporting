@@ -13,9 +13,11 @@ namespace InvestmentReporting.Data.InMemory.Repository {
 			_commands = commands;
 		}
 
-		public Task<IReadOnlyCollection<ICommandModel>> ReadCommands(DateTimeOffset date, string userId) =>
+		public Task<IReadOnlyCollection<ICommandModel>> ReadCommands(
+			DateTimeOffset startDate, DateTimeOffset endDate, string userId) =>
 			Task.FromResult((IReadOnlyCollection<ICommandModel>)_commands
-				.Where(c => c.Date <= date)
+				.Where(c => c.Date >= startDate)
+				.Where(c => c.Date <= endDate)
 				.Where(c => c.User == userId)
 				.ToArray());
 

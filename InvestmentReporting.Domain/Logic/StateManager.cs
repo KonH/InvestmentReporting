@@ -27,7 +27,7 @@ namespace InvestmentReporting.Domain.Logic {
 
 		async Task<State> Take(DateTimeOffset date, UserId id) {
 			var state         = new State(new List<Broker>(), new List<Currency>());
-			var commandModels = await _repository.ReadCommands(date, id);
+			var commandModels = await _repository.ReadCommands(DateTimeOffset.MinValue, date, id);
 			foreach ( var model in commandModels ) {
 				var apply = _applies[model.GetType()];
 				apply(state, model);
@@ -37,6 +37,10 @@ namespace InvestmentReporting.Domain.Logic {
 
 		public async Task<ReadOnlyState> ReadState(DateTimeOffset date, UserId id) =>
 			new(await Take(date, id));
+
+		public async Task<IReadOnlyCollection<ICommandModel>> ReadCommands(
+			DateTimeOffset startDate, DateTimeOffset endDate, UserId id) =>
+			await _repository.ReadCommands(startDate, endDate, id);
 
 		public async Task PushCommand(ICommand command) {
 			var model = _persists[command.GetType()](command);

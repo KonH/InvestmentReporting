@@ -38,6 +38,7 @@ namespace InvestmentReporting.StateService {
 			services.AddSingleton<IStateRepository, MongoStateRepository>();
 			services.AddSingleton<StateManager>();
 			services.AddSingleton<ReadStateUseCase>();
+			services.AddSingleton<ReadOperationsUseCase>();
 			services.AddSingleton<CreateBrokerUseCase>();
 			services.AddSingleton<CreateCurrencyUseCase>();
 			services.AddSingleton<CreateAccountUseCase>();

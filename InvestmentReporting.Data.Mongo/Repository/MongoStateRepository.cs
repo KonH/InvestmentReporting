@@ -35,14 +35,16 @@ namespace InvestmentReporting.Data.Mongo.Repository {
 			}
 		}
 
-		public Task<IReadOnlyCollection<ICommandModel>> ReadCommands(DateTimeOffset date, string userId) {
+		public Task<IReadOnlyCollection<ICommandModel>> ReadCommands(
+			DateTimeOffset startDate, DateTimeOffset endDate, string userId) {
 			var dbModels = _collection.AsQueryable()
 				.Select(e => e.Model)
 				.Where(e => (e != null))
 				.Select(e => e!)
 				.ToArray();
 			var models = dbModels
-				.Where(e => e.Date <= date)
+				.Where(e => e.Date >= startDate)
+				.Where(e => e.Date <= endDate)
 				.Where(e => e.User == userId)
 				.ToArray();
 			return Task.FromResult<IReadOnlyCollection<ICommandModel>>(models);
