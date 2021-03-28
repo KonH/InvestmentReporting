@@ -29,7 +29,7 @@ namespace InvestmentReporting.Domain.UseCase {
 			if ( string.IsNullOrWhiteSpace(category.ToString()) ) {
 				throw new InvalidCategoryException();
 			}
-			var state = await _stateManager.Read(date, user);
+			var state = await _stateManager.ReadState(date, user);
 			if ( state.Currencies.All(c => c.Id != currency) ) {
 				throw new CurrencyNotFoundException();
 			}
@@ -41,7 +41,7 @@ namespace InvestmentReporting.Domain.UseCase {
 				throw new AccountNotFoundException();
 			}
 			var id = new OperationId(_idGenerator.GenerateNewId());
-			await _stateManager.Push(new AddIncomeCommand(
+			await _stateManager.PushCommand(new AddIncomeCommand(
 				date, user, broker, account, id, currency, amount, exchangeRate, category));
 		}
 	}

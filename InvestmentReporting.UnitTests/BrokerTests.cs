@@ -21,7 +21,7 @@ namespace InvestmentReporting.UnitTests {
 
 			await createUseCase.Handle(_date, _userId, brokerName);
 
-			var state = await stateManager.Read(_date, _userId);
+			var state = await stateManager.ReadState(_date, _userId);
 			state.Brokers.Should().NotBeEmpty();
 			state.Brokers.Should().Contain(b => b.DisplayName == brokerName);
 		}
@@ -52,7 +52,7 @@ namespace InvestmentReporting.UnitTests {
 
 			await createUseCase.Handle(_date.AddSeconds(1), _userId, brokerName);
 
-			var state = await stateManager.Read(_date, _userId);
+			var state = await stateManager.ReadState(_date, _userId);
 			state.Brokers.Should().BeEmpty();
 		}
 

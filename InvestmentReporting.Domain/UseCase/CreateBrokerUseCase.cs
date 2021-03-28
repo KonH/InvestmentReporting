@@ -21,12 +21,12 @@ namespace InvestmentReporting.Domain.UseCase {
 			if ( string.IsNullOrWhiteSpace(displayName) ) {
 				throw new InvalidBrokerException();
 			}
-			var state = await _stateManager.Read(date, user);
+			var state = await _stateManager.ReadState(date, user);
 			if ( state.Brokers.Any(b => b.DisplayName == displayName) ) {
 				throw new DuplicateBrokerException();
 			}
 			var id = new BrokerId(_idGenerator.GenerateNewId());
-			await _stateManager.Push(new CreateBrokerCommand(date, user, id, displayName));
+			await _stateManager.PushCommand(new CreateBrokerCommand(date, user, id, displayName));
 		}
 	}
 }

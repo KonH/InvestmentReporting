@@ -16,7 +16,7 @@ namespace InvestmentReporting.Import.Logic {
 		}
 
 		public Task<ReadOnlyState> Read(DateTimeOffset date, UserId id) =>
-			_stateManager.Read(date, id);
+			_stateManager.ReadState(date, id);
 
 		public void Add(ICommand command) {
 			_commands.Add(command);
@@ -24,7 +24,7 @@ namespace InvestmentReporting.Import.Logic {
 
 		public async Task Push() {
 			foreach ( var command in _commands ) {
-				await _stateManager.Push(command);
+				await _stateManager.PushCommand(command);
 			}
 		}
 	}

@@ -16,7 +16,7 @@ namespace InvestmentReporting.Domain.UseCase {
 			if ( string.IsNullOrWhiteSpace(user.Value) ) {
 				throw new InvalidUserException();
 			}
-			return await _stateManager.Read(date, user);
+			return await _stateManager.ReadState(date, user);
 		}
 	}
 }

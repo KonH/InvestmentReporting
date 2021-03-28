@@ -21,7 +21,7 @@ namespace InvestmentReporting.Domain.UseCase {
 			if ( string.IsNullOrWhiteSpace(displayName) ) {
 				throw new InvalidAccountException();
 			}
-			var state = await _stateManager.Read(date, user);
+			var state = await _stateManager.ReadState(date, user);
 			if ( state.Currencies.All(c => c.Id != currency) ) {
 				throw new CurrencyNotFoundException();
 			}
@@ -33,7 +33,7 @@ namespace InvestmentReporting.Domain.UseCase {
 				throw new DuplicateAccountException();
 			}
 			var id = new AccountId(_idGenerator.GenerateNewId());
-			await _stateManager.Push(new CreateAccountCommand(date, user, broker, id, currency, displayName));
+			await _stateManager.PushCommand(new CreateAccountCommand(date, user, broker, id, currency, displayName));
 		}
 	}
 }

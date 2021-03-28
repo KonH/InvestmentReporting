@@ -26,7 +26,7 @@ namespace InvestmentReporting.UnitTests {
 
 			await addUseCase.Handle(_date, _userId, _brokerId, _accountId, _currencyId, 100, exchangeRate: 1, _incomeCategory);
 
-			var state   = await stateManager.Read(_date, _userId);
+			var state   = await stateManager.ReadState(_date, _userId);
 			var broker  = state.Brokers.First(b => b.Id == _brokerId);
 			var account = broker.Accounts.First(a => a.Id == _accountId);
 			account.Balance.Should().Be(100);
@@ -93,7 +93,7 @@ namespace InvestmentReporting.UnitTests {
 
 			await addUseCase.Handle(_date, _userId, _brokerId, _accountId, _currencyId, 100, exchangeRate: 1, _expenseCategory);
 
-			var state   = await stateManager.Read(_date, _userId);
+			var state   = await stateManager.ReadState(_date, _userId);
 			var broker  = state.Brokers.First(b => b.Id == _brokerId);
 			var account = broker.Accounts.First(a => a.Id == _accountId);
 			account.Balance.Should().Be(-100);

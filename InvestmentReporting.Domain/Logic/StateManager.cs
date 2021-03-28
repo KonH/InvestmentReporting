@@ -35,10 +35,10 @@ namespace InvestmentReporting.Domain.Logic {
 			return state;
 		}
 
-		public async Task<ReadOnlyState> Read(DateTimeOffset date, UserId id) =>
+		public async Task<ReadOnlyState> ReadState(DateTimeOffset date, UserId id) =>
 			new(await Take(date, id));
 
-		public async Task Push(ICommand command) {
+		public async Task PushCommand(ICommand command) {
 			var model = _persists[command.GetType()](command);
 			await _repository.SaveCommand(model);
 		}

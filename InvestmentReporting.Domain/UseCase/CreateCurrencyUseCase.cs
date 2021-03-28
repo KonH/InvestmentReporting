@@ -24,12 +24,12 @@ namespace InvestmentReporting.Domain.UseCase {
 			if ( !format.ToString().Contains("{0}") ) {
 				throw new InvalidCurrencyException();
 			}
-			var state = await _stateManager.Read(date, user);
+			var state = await _stateManager.ReadState(date, user);
 			if ( state.Currencies.Any(c => c.Code == code) ) {
 				throw new DuplicateCurrencyException();
 			}
 			var id = new CurrencyId(_idGenerator.GenerateNewId());
-			await _stateManager.Push(new CreateCurrencyCommand(date, user, id, code, format));
+			await _stateManager.PushCommand(new CreateCurrencyCommand(date, user, id, code, format));
 		}
 	}
 }
