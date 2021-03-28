@@ -10,6 +10,11 @@
 		class="btn btn-primary ml-2"
 		>Add Expense</router-link
 	>
+	<router-link
+		:to="`/operations/${brokerId}/${account.id}`"
+		class="btn btn-secondary ml-2"
+		>Operations</router-link
+	>
 </template>
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';

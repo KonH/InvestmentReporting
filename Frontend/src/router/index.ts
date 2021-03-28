@@ -9,6 +9,7 @@ import AddAccount from '@/view/addAccount.vue';
 import AddIncome from '@/view/addIncome.vue';
 import AddExpense from '@/view/addExpense.vue';
 import Import from '@/view/import.vue';
+import OperationList from '@/view/operationList.vue';
 
 const routes: Array<RouteRecordRaw> = [
 	{
@@ -61,6 +62,11 @@ const routes: Array<RouteRecordRaw> = [
 		path: '/import/:broker',
 		name: 'Import',
 		component: Import,
+	},
+	{
+		path: '/operations/:broker/:account',
+		name: 'Operations',
+		component: OperationList,
 	},
 ];
 

@@ -9,6 +9,16 @@
  * ---------------------------------------------------------------
  */
 
+export interface OperationDto {
+  /** @format date-time */
+  date?: string;
+  kind?: string | null;
+
+  /** @format double */
+  amount?: number;
+  category?: string | null;
+}
+
 export interface AccountDto {
   id?: string | null;
   currency?: string | null;
@@ -330,6 +340,26 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         path: `/Income`,
         method: "POST",
         query: query,
+        ...params,
+      }),
+  };
+  operation = {
+    /**
+     * No description
+     *
+     * @tags Operation
+     * @name OperationList
+     * @request GET:/Operation
+     */
+    operationList: (
+      query: { startDate: string; endDate: string; broker: string; account: string },
+      params: RequestParams = {},
+    ) =>
+      this.request<OperationDto[], any>({
+        path: `/Operation`,
+        method: "GET",
+        query: query,
+        format: "json",
         ...params,
       }),
   };
