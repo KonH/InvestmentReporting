@@ -9,13 +9,12 @@
 	<div>
 		<label>
 			Currency:
-			<select
-				v-for="currency in currencies"
-				ref="currency"
-				:key="currency.id"
-				class="form-control"
-			>
-				<option :value="currency.id">
+			<select ref="currency" class="form-control">
+				<option
+					v-for="currency in currencies"
+					:key="currency.id"
+					:value="currency.id"
+				>
 					{{ currency.code }} ({{ currency.format }})
 				</option>
 			</select>
