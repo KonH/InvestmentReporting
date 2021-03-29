@@ -5,5 +5,5 @@ namespace InvestmentReporting.Domain.Command {
 	public record AddAssetCommand(
 		DateTimeOffset Date, UserId User, BrokerId Broker,
 		AssetId Id, string Name, AssetCategory Category, AssetTicker Ticker,
-		CurrencyId BoughtCurrency, decimal BoughtPrice, int Count) : ICommand {}
+		CurrencyId BoughtCurrency, decimal BoughtPrice, CurrencyId FeeCurrency, decimal BoughtFee, int Count) : ICommand {}
 }
