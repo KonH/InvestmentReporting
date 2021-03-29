@@ -15,12 +15,15 @@ namespace InvestmentReporting.StateService.Controllers {
 	[ApiController]
 	[Route("[controller]")]
 	public class StateController : ControllerBase {
-		readonly ILogger          _logger;
-		readonly ReadStateUseCase _useCase;
+		readonly ILogger           _logger;
+		readonly ReadStateUseCase  _readUseCase;
+		readonly ResetStateUseCase _resetUseCase;
 
-		public StateController(ILogger<StateController> logger, ReadStateUseCase useCase) {
-			_logger  = logger;
-			_useCase = useCase;
+		public StateController(
+			ILogger<StateController> logger, ReadStateUseCase readUseCase, ResetStateUseCase resetUseCase) {
+			_logger       = logger;
+			_readUseCase  = readUseCase;
+			_resetUseCase = resetUseCase;
 		}
 
 		[HttpGet]
@@ -29,7 +32,7 @@ namespace InvestmentReporting.StateService.Controllers {
 		public async Task<IActionResult> Get([Required] DateTimeOffset date) {
 			var userId = new UserId(User.Identity?.Name ?? string.Empty);
 			_logger.LogInformation($"Retrieve state for user '{userId}' at {date}");
-			var state  = await _useCase.Handle(date, userId);
+			var state  = await _readUseCase.Handle(date, userId);
 			var brokers = state.Brokers
 				.Select(b => new BrokerDto(
 					b.Id,
@@ -43,6 +46,15 @@ namespace InvestmentReporting.StateService.Controllers {
 				.ToArray();
 			var dto = new StateDto(brokers, currencies);
 			return new JsonResult(dto);
+		}
+
+		[HttpDelete]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		public async Task<IActionResult> Delete() {
+			var userId = new UserId(User.Identity?.Name ?? string.Empty);
+			_logger.LogInformation($"Reset state for user '{userId}'");
+			await _resetUseCase.Handle(userId);
+			return Ok();
 		}
 	}
 }

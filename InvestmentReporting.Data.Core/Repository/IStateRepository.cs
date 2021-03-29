@@ -8,6 +8,8 @@ namespace InvestmentReporting.Data.Core.Repository {
 		public Task<IReadOnlyCollection<ICommandModel>> ReadCommands(
 			DateTimeOffset startDate, DateTimeOffset endDate, string userId);
 
+		public Task DeleteCommands(IReadOnlyCollection<ICommandModel> commands);
+
 		public Task SaveCommand(ICommandModel model);
 	}
 }

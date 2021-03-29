@@ -46,5 +46,9 @@ namespace InvestmentReporting.Domain.Logic {
 			var model = _persists[command.GetType()](command);
 			await _repository.SaveCommand(model);
 		}
+
+		public async Task DeleteCommands(IReadOnlyCollection<ICommandModel> commands) {
+			await _repository.DeleteCommands(commands);
+		}
 	}
 }

@@ -25,5 +25,10 @@ namespace InvestmentReporting.Data.InMemory.Repository {
 			_commands.Add(model);
 			return Task.CompletedTask;
 		}
+
+		public Task DeleteCommands(IReadOnlyCollection<ICommandModel> commands) {
+			_commands.RemoveAll(commands.Contains);
+			return Task.CompletedTask;
+		}
 	}
 }

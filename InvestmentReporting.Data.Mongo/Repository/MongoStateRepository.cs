@@ -56,5 +56,13 @@ namespace InvestmentReporting.Data.Mongo.Repository {
 			};
 			await _collection.InsertOneAsync(dbModel);
 		}
+
+		public async Task DeleteCommands(IReadOnlyCollection<ICommandModel> commands) {
+			var dbModels = _collection.AsQueryable()
+				.Where(e => commands.Contains(e.Model))
+				.Select(e => e.Id)
+				.ToArray();
+			await _collection.DeleteManyAsync(m => dbModels.Contains(m.Id));
+		}
 	}
 }
