@@ -11,7 +11,7 @@ using InvestmentReporting.Domain.UseCase.Exceptions;
 using NUnit.Framework;
 
 namespace InvestmentReporting.UnitTests {
-	public sealed class OperationTests {
+	public sealed class CashOperationTests {
 		readonly DateTimeOffset  _date            = DateTimeOffset.MinValue;
 		readonly UserId          _userId          = new("user");
 		readonly BrokerId        _brokerId        = new("broker");

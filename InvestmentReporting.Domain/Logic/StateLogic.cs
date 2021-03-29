@@ -11,7 +11,7 @@ namespace InvestmentReporting.Domain.Logic {
 				cmd => new(cmd.Date, cmd.User, cmd.Id, cmd.DisplayName),
 				(state, m) => {
 					state.Brokers.Add(new(
-						new(m.Id), m.DisplayName, new List<Account>()));
+						new(m.Id), m.DisplayName, new List<Account>(), new List<Asset>()));
 				}
 			);
 			manager.Bind<CreateCurrencyCommand, CreateCurrencyModel>(
@@ -51,6 +51,17 @@ namespace InvestmentReporting.Domain.Logic {
 					var accountId = new AccountId(m.Account);
 					var account   = broker.Accounts.First(a => a.Id == accountId);
 					account.Balance -= m.Amount * m.ExchangeRate;
+				}
+			);
+			manager.Bind<AddAssetCommand, AddAssetModel>(
+				cmd => new(cmd.Date, cmd.User, cmd.Broker, cmd.Id, cmd.Name, cmd.Category, cmd.Ticker,
+					cmd.BoughtCurrency, cmd.BoughtPrice, cmd.Count),
+				(state, m) => {
+					var brokerId = new BrokerId(m.Broker);
+					var broker   = state.Brokers.First(b => b.Id == brokerId);
+					broker.Inventory.Add(new(
+						new(m.Id), m.Name, new(m.Category), new(m.Ticker),
+						new(m.BoughtCurrency), m.BoughtPrice, m.Date, m.Count));
 				}
 			);
 		}
