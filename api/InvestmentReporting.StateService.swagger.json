@@ -312,6 +312,16 @@
             }
           }
         }
+      },
+      "delete": {
+        "tags": [
+          "Operation"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
       }
     },
     "/State": {
@@ -340,6 +350,16 @@
                 }
               }
             }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "State"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
           }
         }
       }

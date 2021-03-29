@@ -2,7 +2,11 @@
 	<h1>Home</h1>
 	<currencyView />
 	<brokerView />
-	<button :onclick="logout" class="btn btn-secondary mt-2">Logout</button>
+	<button :onclick="resetOps" class="btn btn-danger mt-2">Reset (ops)</button>
+	<button :onclick="resetAll" class="btn btn-danger mt-2 ml-2">
+		Reset (all)
+	</button>
+	<button :onclick="logout" class="btn btn-secondary mt-2 ml-2">Logout</button>
 </template>
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
@@ -30,6 +34,16 @@ export default class Home extends Vue {
 
 	get brokers() {
 		return this.activeState.brokers;
+	}
+
+	async resetOps() {
+		await Backend.state().operation.operationDelete();
+		await router.go(0);
+	}
+
+	async resetAll() {
+		await Backend.state().state.stateDelete();
+		await router.go(0);
 	}
 
 	async logout() {

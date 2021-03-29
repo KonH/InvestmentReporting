@@ -362,6 +362,20 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         format: "json",
         ...params,
       }),
+
+    /**
+     * No description
+     *
+     * @tags Operation
+     * @name OperationDelete
+     * @request DELETE:/Operation
+     */
+    operationDelete: (params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/Operation`,
+        method: "DELETE",
+        ...params,
+      }),
   };
   state = {
     /**
@@ -377,6 +391,20 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         method: "GET",
         query: query,
         format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags State
+     * @name StateDelete
+     * @request DELETE:/State
+     */
+    stateDelete: (params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/State`,
+        method: "DELETE",
         ...params,
       }),
   };
