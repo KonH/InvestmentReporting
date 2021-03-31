@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using InvestmentReporting.Data.Core.Model;
 using InvestmentReporting.Data.InMemory.Repository;
+using InvestmentReporting.Domain.Command;
 using InvestmentReporting.Domain.Entity;
 using InvestmentReporting.Domain.Logic;
 
@@ -38,6 +39,12 @@ namespace InvestmentReporting.UnitTests {
 
 		public StateManagerBuilder With(AccountId account) {
 			With(new CreateAccountModel(_date, _userId, _brokerId, account.ToString(), _currencyId, string.Empty));
+			return this;
+		}
+
+		public StateManagerBuilder With(AssetId asset, AssetTicker ticker, int count) {
+			With(new AddAssetModel(
+				_date, _userId, _brokerId, asset, string.Empty, string.Empty, ticker, count));
 			return this;
 		}
 

@@ -54,16 +54,39 @@ namespace InvestmentReporting.Domain.Logic {
 				}
 			);
 			manager.Bind<AddAssetCommand, AddAssetModel>(
-				cmd => new(cmd.Date, cmd.User, cmd.Broker, cmd.Id, cmd.Name, cmd.Category, cmd.Ticker,
-					cmd.BoughtCurrency, cmd.BoughtPrice, cmd.FeeCurrency, cmd.BoughtFee, cmd.Count),
+				cmd => new(cmd.Date, cmd.User, cmd.Broker, cmd.Id, cmd.Name, cmd.Category, cmd.Ticker, cmd.Count),
 				(state, m) => {
 					var brokerId = new BrokerId(m.Broker);
 					var broker   = state.Brokers.First(b => b.Id == brokerId);
 					broker.Inventory.Add(new(
-						new(m.Id), m.Name, new(m.Category), new(m.Ticker),
-						new(m.BoughtCurrency), m.BoughtPrice,
-						new(m.FeeCurrency), m.BoughtFee,
-						m.Date, m.Count));
+						new(m.Id), m.Name, new(m.Category), new(m.Ticker), m.Count));
+				}
+			);
+			manager.Bind<RemoveAssetCommand, RemoveAssetModel>(
+				cmd => new(cmd.Date, cmd.User, cmd.Broker, cmd.Id),
+				(state, m) => {
+					var brokerId = new BrokerId(m.Broker);
+					var broker   = state.Brokers.First(b => b.Id == brokerId);
+					var asset    = broker.Inventory.First(a => a.Id == m.Id);
+					broker.Inventory.Remove(asset);
+				}
+			);
+			manager.Bind<ReduceAssetCommand, ReduceAssetModel>(
+				cmd => new(cmd.Date, cmd.User, cmd.Broker, cmd.Id, cmd.Count),
+				(state, m) => {
+					var brokerId = new BrokerId(m.Broker);
+					var broker   = state.Brokers.First(b => b.Id == brokerId);
+					var asset    = broker.Inventory.First(a => a.Id == m.Id);
+					asset.Count -= m.Count;
+				}
+			);
+			manager.Bind<IncreaseAssetCommand, IncreaseAssetModel>(
+				cmd => new(cmd.Date, cmd.User, cmd.Broker, cmd.Id, cmd.Count),
+				(state, m) => {
+					var brokerId = new BrokerId(m.Broker);
+					var broker   = state.Brokers.First(b => b.Id == brokerId);
+					var asset    = broker.Inventory.First(a => a.Id == m.Id);
+					asset.Count += m.Count;
 				}
 			);
 		}

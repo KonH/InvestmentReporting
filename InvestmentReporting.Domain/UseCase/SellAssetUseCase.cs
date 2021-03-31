@@ -1,39 +1,29 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using InvestmentReporting.Data.Core.Repository;
 using InvestmentReporting.Domain.Command;
 using InvestmentReporting.Domain.Entity;
 using InvestmentReporting.Domain.Logic;
 using InvestmentReporting.Domain.UseCase.Exceptions;
 
 namespace InvestmentReporting.Domain.UseCase {
-	public sealed class BuyAssetUseCase {
-		readonly ExpenseCategory _buyAssetCategory    = new("Asset Buy");
-		readonly ExpenseCategory _buyAssetFeeCategory = new("Asset Buy Broker Fee");
+	public sealed class SellAssetUseCase {
+		readonly IncomeCategory  _sellAssetCategory    = new("Asset Sell");
+		readonly ExpenseCategory _sellAssetFeeCategory = new("Asset Sell Broker Fee");
 
 		readonly StateManager      _stateManager;
-		readonly IIdGenerator      _idGenerator;
+		readonly AddIncomeUseCase  _addIncome;
 		readonly AddExpenseUseCase _addExpense;
 
-		public BuyAssetUseCase(StateManager stateManager, IIdGenerator idGenerator, AddExpenseUseCase addExpense) {
+		public SellAssetUseCase(StateManager stateManager, AddIncomeUseCase addIncome, AddExpenseUseCase addExpense) {
 			_stateManager = stateManager;
-			_idGenerator  = idGenerator;
+			_addIncome    = addIncome;
 			_addExpense   = addExpense;
 		}
 
 		public async Task Handle(
 			DateTimeOffset date, UserId user, BrokerId brokerId, AccountId payAccountId, AccountId feeAccountId,
-			string name, AssetCategory category, AssetTicker ticker, decimal price, decimal fee, int count) {
-			if ( string.IsNullOrWhiteSpace(name) ) {
-				throw new InvalidAssetException();
-			}
-			if ( string.IsNullOrWhiteSpace(category.Value) ) {
-				throw new InvalidAssetException();
-			}
-			if ( string.IsNullOrWhiteSpace(ticker.Value) ) {
-				throw new InvalidAssetException();
-			}
+			AssetId assetId, decimal price, decimal fee, int count) {
 			if ( count <= 0 ) {
 				throw new InvalidCountException();
 			}
@@ -41,6 +31,17 @@ namespace InvestmentReporting.Domain.UseCase {
 			var broker = state.Brokers.FirstOrDefault(b => b.Id == brokerId);
 			if ( broker == null ) {
 				throw new InvalidBrokerException();
+			}
+			if ( string.IsNullOrWhiteSpace(assetId) ) {
+				throw new InvalidAssetException();
+			}
+			var asset = broker.Inventory.FirstOrDefault(a => a.Id == assetId);
+			if ( asset == null ) {
+				throw new AssetNotFoundException();
+			}
+			var remainingCount = asset.Count - count;
+			if ( remainingCount < 0 ) {
+				throw new InvalidCountException();
 			}
 			var payAccount = broker.Accounts.FirstOrDefault(a => a.Id == payAccountId);
 			if ( payAccount == null ) {
@@ -56,8 +57,8 @@ namespace InvestmentReporting.Domain.UseCase {
 				case 0:
 					break;
 				default:
-					await _addExpense.Handle(
-						date, user, brokerId, payAccountId, payAccount.Currency, price, 1, _buyAssetCategory);
+					await _addIncome.Handle(
+						date, user, brokerId, payAccountId, payAccount.Currency, price, 1, _sellAssetCategory);
 					break;
 			}
 			switch ( fee ) {
@@ -67,16 +68,13 @@ namespace InvestmentReporting.Domain.UseCase {
 					break;
 				default:
 					await _addExpense.Handle(
-						date, user, brokerId, feeAccountId, feeAccount.Currency, fee, 1, _buyAssetFeeCategory);
+						date, user, brokerId, feeAccountId, feeAccount.Currency, fee, 1, _sellAssetFeeCategory);
 					break;
 			}
-			var asset = broker.Inventory.FirstOrDefault(a => a.Ticker == ticker);
-			if ( asset != null ) {
-				await _stateManager.PushCommand(new IncreaseAssetCommand(date, user, brokerId, asset.Id, count));
-				return;
+			await _stateManager.PushCommand(new ReduceAssetCommand(date, user, brokerId, assetId, count));
+			if ( remainingCount == 0 ) {
+				await _stateManager.PushCommand(new RemoveAssetCommand(date, user, brokerId, assetId));
 			}
-			var id = new AssetId(_idGenerator.GenerateNewId());
-			await _stateManager.PushCommand(new AddAssetCommand(date, user, brokerId, id, name, category, ticker, count));
 		}
 	}
 }
