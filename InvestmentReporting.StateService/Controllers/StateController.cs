@@ -39,6 +39,9 @@ namespace InvestmentReporting.StateService.Controllers {
 					b.DisplayName,
 					b.Accounts
 						.Select(a => new AccountDto(a.Id, a.Currency, a.DisplayName, a.Balance))
+						.ToArray(),
+					b.Inventory
+						.Select(a => new AssetDto(a.Id, a.Name, a.Category, a.Ticker, a.Count))
 						.ToArray()))
 				.ToArray();
 			var currencies = state.Currencies

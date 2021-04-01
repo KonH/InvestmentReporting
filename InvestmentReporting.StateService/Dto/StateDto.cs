@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace InvestmentReporting.StateService.Dto {
-	public record StateDto([Required] BrokerDto[] Brokers, [Required] CurrencyDto[] Currencies) {}
+	public record StateDto(BrokerDto[] Brokers, CurrencyDto[] Currencies) {}
 }
