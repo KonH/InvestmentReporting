@@ -28,10 +28,21 @@ export interface AccountDto {
   balance?: number;
 }
 
+export interface AssetDto {
+  id?: string | null;
+  name?: string | null;
+  category?: string | null;
+  ticker?: string | null;
+
+  /** @format int32 */
+  count?: number;
+}
+
 export interface BrokerDto {
   id?: string | null;
   displayName?: string | null;
   accounts?: AccountDto[] | null;
+  inventory?: AssetDto[] | null;
 }
 
 export interface CurrencyDto {
@@ -252,6 +263,63 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     accountCreate: (query: { broker: string; currency: string; displayName: string }, params: RequestParams = {}) =>
       this.request<void, void>({
         path: `/Account`,
+        method: "POST",
+        query: query,
+        ...params,
+      }),
+  };
+  asset = {
+    /**
+     * No description
+     *
+     * @tags Asset
+     * @name BuyAssetCreate
+     * @request POST:/Asset/BuyAsset
+     */
+    buyAssetCreate: (
+      query: {
+        date: string;
+        broker: string;
+        payAccount: string;
+        feeAccount: string;
+        name: string;
+        category: string;
+        ticker: string;
+        price: number;
+        fee: number;
+        count: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, void>({
+        path: `/Asset/BuyAsset`,
+        method: "POST",
+        query: query,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Asset
+     * @name SellAssetCreate
+     * @request POST:/Asset/SellAsset
+     */
+    sellAssetCreate: (
+      query: {
+        date: string;
+        broker: string;
+        payAccount: string;
+        feeAccount: string;
+        asset: string;
+        price: number;
+        fee: number;
+        count: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, void>({
+        path: `/Asset/SellAsset`,
         method: "POST",
         query: query,
         ...params,
