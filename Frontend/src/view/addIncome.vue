@@ -6,30 +6,10 @@
 			<input ref="date" type="datetime-local" class="form-control" />
 		</label>
 	</div>
-	<div>
-		<label>
-			Currency:
-			<select ref="currency" class="form-control">
-				<option
-					v-for="currency in currencies"
-					:key="currency.id"
-					:value="currency.id"
-				>
-					{{ currency.code }} ({{ currency.format }})
-				</option>
-			</select>
-		</label>
-	</div>
 	<div class="form-group">
 		<label>
 			Amount:
 			<input ref="amount" type="number" class="form-control" value="0" />
-		</label>
-	</div>
-	<div class="form-group">
-		<label>
-			Exchange rate:
-			<input ref="exchangeRate" type="number" class="form-control" value="1" />
 		</label>
 	</div>
 	<div class="form-group">
@@ -58,14 +38,8 @@ export default class AddIncome extends Vue {
 	@Ref('date')
 	dateInput!: HTMLInputElement;
 
-	@Ref('currency')
-	currencySelect!: HTMLSelectElement;
-
 	@Ref('amount')
 	amountInput!: HTMLInputElement;
-
-	@Ref('exchangeRate')
-	exchangeRateInput!: HTMLInputElement;
 
 	@Ref('category')
 	categoryInput!: HTMLInputElement;
@@ -81,40 +55,21 @@ export default class AddIncome extends Vue {
 		return this.$route.params.account as string;
 	}
 
-	get currencies() {
-		return this.activeState.currencies;
-	}
-
 	mounted() {
 		this.setCurrentDate();
-		this.setAccountCurrency();
 	}
 
 	setCurrentDate() {
 		this.dateInput.value = new Date().toISOString();
 	}
 
-	setAccountCurrency() {
-		const broker = this.activeState.brokers?.find((b) => b.id == this.brokerId);
-		if (!broker) {
-			return;
-		}
-		const account = broker.accounts?.find((a) => a.id == this.accountId);
-		if (account) {
-			this.currencySelect.value = account.currency ?? '';
-		}
-	}
-
 	async onclick() {
-		const currencyId = this.currencySelect.value;
 		const result = await Backend.tryFetch(
 			Backend.state().income.incomeCreate({
 				date: new Date(this.dateInput.value).toISOString(),
 				broker: this.brokerId,
 				account: this.accountId,
-				currency: currencyId,
 				amount: Number.parseFloat(this.amountInput.value),
-				exchangeRate: Number.parseFloat(this.exchangeRateInput.value),
 				category: this.categoryInput.value,
 			})
 		);

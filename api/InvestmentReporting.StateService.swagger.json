@@ -322,24 +322,7 @@
             }
           },
           {
-            "name": "currency",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "name": "amount",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "number",
-              "format": "double"
-            }
-          },
-          {
-            "name": "exchangeRate",
             "in": "query",
             "required": true,
             "schema": {
@@ -398,24 +381,7 @@
             }
           },
           {
-            "name": "currency",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "name": "amount",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "number",
-              "format": "double"
-            }
-          },
-          {
-            "name": "exchangeRate",
             "in": "query",
             "required": true,
             "schema": {

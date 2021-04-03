@@ -57,7 +57,7 @@ namespace InvestmentReporting.Domain.UseCase {
 					break;
 				default:
 					await _addExpense.Handle(
-						date, user, brokerId, payAccountId, payAccount.Currency, price, 1, _buyAssetCategory);
+						date, user, brokerId, payAccountId, price, _buyAssetCategory);
 					break;
 			}
 			switch ( fee ) {
@@ -67,7 +67,7 @@ namespace InvestmentReporting.Domain.UseCase {
 					break;
 				default:
 					await _addExpense.Handle(
-						date, user, brokerId, feeAccountId, feeAccount.Currency, fee, 1, _buyAssetFeeCategory);
+						date, user, brokerId, feeAccountId, fee, _buyAssetFeeCategory);
 					break;
 			}
 			var asset = broker.Inventory.FirstOrDefault(a => a.Ticker == ticker);

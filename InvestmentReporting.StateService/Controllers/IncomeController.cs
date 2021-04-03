@@ -26,14 +26,13 @@ namespace InvestmentReporting.StateService.Controllers {
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		public async Task<IActionResult> Post(
 			[Required] DateTimeOffset date, [Required] string broker, [Required] string account,
-			[Required] string currency, [Required] decimal amount, [Required] decimal exchangeRate,
-			[Required] string category) {
+			[Required] decimal amount, [Required] string category) {
 			var userId = new UserId(User.Identity?.Name ?? string.Empty);
 			_logger.LogInformation(
-				$"Add income (currency: '{currency}', amount: {amount}, exchangeRate: {exchangeRate}, category: '{category}') " +
+				$"Add income (amount: {amount}, category: '{category}') " +
 				$"at '{date}' for user '{userId}' on broker '{broker}' and account '{account}'");
 			try {
-				await _useCase.Handle(date, userId, new(broker), new(account), new(currency), amount, exchangeRate, new(category));
+				await _useCase.Handle(date, userId, new(broker), new(account), amount, new(category));
 				return StatusCode(StatusCodes.Status201Created);
 			} catch ( Exception e ) {
 				_logger.LogError(e.ToString());

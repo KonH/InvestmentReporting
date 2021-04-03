@@ -25,7 +25,7 @@ namespace InvestmentReporting.UnitTests {
 			var stateManager = GetStateManager();
 			var addUseCase   = new AddIncomeUseCase(stateManager, new GuidIdGenerator());
 
-			await addUseCase.Handle(_date, _userId, _brokerId, _accountId, _currencyId, 100, exchangeRate: 1, _incomeCategory);
+			await addUseCase.Handle(_date, _userId, _brokerId, _accountId, 100, _incomeCategory);
 
 			var state   = await stateManager.ReadState(_date, _userId);
 			var broker  = state.Brokers.First(b => b.Id == _brokerId);
@@ -39,7 +39,7 @@ namespace InvestmentReporting.UnitTests {
 			var addUseCase   = new AddIncomeUseCase(stateManager, new GuidIdGenerator());
 
 			Assert.ThrowsAsync<BrokerNotFoundException>(() => addUseCase.Handle(
-				_date, _userId, new(string.Empty), _accountId, _currencyId, 100, exchangeRate: 1, _incomeCategory));
+				_date, _userId, new(string.Empty), _accountId, 100, _incomeCategory));
 		}
 
 		[Test]
@@ -48,16 +48,7 @@ namespace InvestmentReporting.UnitTests {
 			var addUseCase   = new AddIncomeUseCase(stateManager, new GuidIdGenerator());
 
 			Assert.ThrowsAsync<AccountNotFoundException>(() => addUseCase.Handle(
-				_date, _userId, _brokerId, new(string.Empty), _currencyId, 100, exchangeRate: 1, _incomeCategory));
-		}
-
-		[Test]
-		public void IsIncomeWithUnknownCurrencyFailedToAdd() {
-			var stateManager = GetStateManager();
-			var addUseCase   = new AddIncomeUseCase(stateManager, new GuidIdGenerator());
-
-			Assert.ThrowsAsync<CurrencyNotFoundException>(() => addUseCase.Handle(
-				_date, _userId, _brokerId, _accountId, new(string.Empty), 100, exchangeRate: 1, _incomeCategory));
+				_date, _userId, _brokerId, new(string.Empty), 100, _incomeCategory));
 		}
 
 		[Test]
@@ -66,7 +57,7 @@ namespace InvestmentReporting.UnitTests {
 			var addUseCase   = new AddIncomeUseCase(stateManager, new GuidIdGenerator());
 
 			Assert.ThrowsAsync<InvalidCategoryException>(() => addUseCase.Handle(
-				_date, _userId, _brokerId, _accountId, _currencyId, 100, exchangeRate: 1, new(string.Empty)));
+				_date, _userId, _brokerId, _accountId, 100, new(string.Empty)));
 		}
 
 		[Test]
@@ -75,16 +66,7 @@ namespace InvestmentReporting.UnitTests {
 			var addUseCase   = new AddIncomeUseCase(stateManager, new GuidIdGenerator());
 
 			Assert.ThrowsAsync<InvalidPriceException>(() => addUseCase.Handle(
-				_date, _userId, _brokerId, _accountId, _currencyId, 0, exchangeRate: 1, _incomeCategory));
-		}
-
-		[Test]
-		public void IsIncomeWithZeroExchangeRateFailedToAdd() {
-			var stateManager = GetStateManager();
-			var addUseCase   = new AddIncomeUseCase(stateManager, new GuidIdGenerator());
-
-			Assert.ThrowsAsync<InvalidPriceException>(() => addUseCase.Handle(
-				_date, _userId, _brokerId, _accountId, _currencyId, 100, exchangeRate: 0, _incomeCategory));
+				_date, _userId, _brokerId, _accountId, 0, _incomeCategory));
 		}
 
 		[Test]
@@ -92,7 +74,7 @@ namespace InvestmentReporting.UnitTests {
 			var stateManager = GetStateManager();
 			var addUseCase   = new AddExpenseUseCase(stateManager, new GuidIdGenerator());
 
-			await addUseCase.Handle(_date, _userId, _brokerId, _accountId, _currencyId, 100, exchangeRate: 1, _expenseCategory);
+			await addUseCase.Handle(_date, _userId, _brokerId, _accountId, 100, _expenseCategory);
 
 			var state   = await stateManager.ReadState(_date, _userId);
 			var broker  = state.Brokers.First(b => b.Id == _brokerId);
@@ -106,7 +88,7 @@ namespace InvestmentReporting.UnitTests {
 			var addUseCase   = new AddExpenseUseCase(stateManager, new GuidIdGenerator());
 
 			Assert.ThrowsAsync<BrokerNotFoundException>(() => addUseCase.Handle(
-				_date, _userId, new(string.Empty), _accountId, _currencyId, 100, exchangeRate: 1, _expenseCategory));
+				_date, _userId, new(string.Empty), _accountId, 100, _expenseCategory));
 		}
 
 		[Test]
@@ -115,16 +97,7 @@ namespace InvestmentReporting.UnitTests {
 			var addUseCase   = new AddExpenseUseCase(stateManager, new GuidIdGenerator());
 
 			Assert.ThrowsAsync<AccountNotFoundException>(() => addUseCase.Handle(
-				_date, _userId, _brokerId, new(string.Empty), _currencyId, 100, exchangeRate: 1, _expenseCategory));
-		}
-
-		[Test]
-		public void IsExpenseWithUnknownCurrencyFailedToAdd() {
-			var stateManager = GetStateManager();
-			var addUseCase   = new AddExpenseUseCase(stateManager, new GuidIdGenerator());
-
-			Assert.ThrowsAsync<CurrencyNotFoundException>(() => addUseCase.Handle(
-				_date, _userId, _brokerId, _accountId, new(string.Empty), 100, exchangeRate: 1, _expenseCategory));
+				_date, _userId, _brokerId, new(string.Empty), 100, _expenseCategory));
 		}
 
 		[Test]
@@ -133,7 +106,7 @@ namespace InvestmentReporting.UnitTests {
 			var addUseCase   = new AddExpenseUseCase(stateManager, new GuidIdGenerator());
 
 			Assert.ThrowsAsync<InvalidCategoryException>(() => addUseCase.Handle(
-				_date, _userId, _brokerId, _accountId, _currencyId, 100, exchangeRate: 1, new(string.Empty)));
+				_date, _userId, _brokerId, _accountId, 100, new(string.Empty)));
 		}
 
 		[Test]
@@ -142,22 +115,13 @@ namespace InvestmentReporting.UnitTests {
 			var addUseCase   = new AddExpenseUseCase(stateManager, new GuidIdGenerator());
 
 			Assert.ThrowsAsync<InvalidPriceException>(() => addUseCase.Handle(
-				_date, _userId, _brokerId, _accountId, _currencyId, 0, exchangeRate: 1, _expenseCategory));
-		}
-
-		[Test]
-		public void IsExpenseWithZeroExchangeRateFailedToAdd() {
-			var stateManager = GetStateManager();
-			var addUseCase   = new AddExpenseUseCase(stateManager, new GuidIdGenerator());
-
-			Assert.ThrowsAsync<InvalidPriceException>(() => addUseCase.Handle(
-				_date, _userId, _brokerId, _accountId, _currencyId, 100, exchangeRate: 0, _expenseCategory));
+				_date, _userId, _brokerId, _accountId, 0, _expenseCategory));
 		}
 
 		[Test]
 		public async Task IsIncomeOperationFound() {
 			var stateManager = GetStateBuilder()
-				.With(new AddIncomeModel(_date, _userId, _brokerId, _accountId, string.Empty, _currencyId, 100, 1, _incomeCategory))
+				.With(new AddIncomeModel(_date, _userId, _brokerId, _accountId, string.Empty, 100, _incomeCategory))
 				.Build();
 			var readUseCase = new ReadOperationsUseCase(stateManager);
 
@@ -173,7 +137,7 @@ namespace InvestmentReporting.UnitTests {
 		[Test]
 		public async Task IsExpenseOperationFound() {
 			var stateManager = GetStateBuilder()
-				.With(new AddExpenseModel(_date, _userId, _brokerId, _accountId, string.Empty, _currencyId, 50, 1, _expenseCategory))
+				.With(new AddExpenseModel(_date, _userId, _brokerId, _accountId, string.Empty, 50, _expenseCategory))
 				.Build();
 			var readUseCase = new ReadOperationsUseCase(stateManager);
 

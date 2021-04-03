@@ -33,24 +33,24 @@ namespace InvestmentReporting.Domain.Logic {
 			manager.Bind<AddIncomeCommand, AddIncomeModel>(
 				cmd => new(
 					cmd.Date, cmd.User, cmd.Broker, cmd.Account, cmd.Id,
-					cmd.Currency, cmd.Amount, cmd.ExchangeRate, cmd.Category),
+					cmd.Amount, cmd.Category),
 				(state, m) => {
 					var brokerId  = new BrokerId(m.Broker);
 					var broker    = state.Brokers.First(b => b.Id == brokerId);
 					var accountId = new AccountId(m.Account);
 					var account   = broker.Accounts.First(a => a.Id == accountId);
-					account.Balance += m.Amount * m.ExchangeRate;
+					account.Balance += m.Amount;
 				}
 			);
 			manager.Bind<AddExpenseCommand, AddExpenseModel>(
 				cmd => new(cmd.Date, cmd.User, cmd.Broker, cmd.Account, cmd.Id,
-					cmd.Currency, cmd.Amount, cmd.ExchangeRate, cmd.Category),
+					cmd.Amount, cmd.Category),
 				(state, m) => {
 					var brokerId  = new BrokerId(m.Broker);
 					var broker    = state.Brokers.First(b => b.Id == brokerId);
 					var accountId = new AccountId(m.Account);
 					var account   = broker.Accounts.First(a => a.Id == accountId);
-					account.Balance -= m.Amount * m.ExchangeRate;
+					account.Balance -= m.Amount;
 				}
 			);
 			manager.Bind<AddAssetCommand, AddAssetModel>(

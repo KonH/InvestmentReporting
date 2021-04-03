@@ -19,20 +19,14 @@ namespace InvestmentReporting.Domain.UseCase {
 
 		public async Task Handle(
 			DateTimeOffset date, UserId user, BrokerId broker, AccountId account,
-			CurrencyId currency, decimal amount, decimal exchangeRate, ExpenseCategory category) {
+			decimal amount, ExpenseCategory category) {
 			if ( amount == 0 ) {
-				throw new InvalidPriceException();
-			}
-			if ( exchangeRate == 0 ) {
 				throw new InvalidPriceException();
 			}
 			if ( string.IsNullOrWhiteSpace(category.ToString()) ) {
 				throw new InvalidCategoryException();
 			}
-			var state = await _stateManager.ReadState(date, user);
-			if ( state.Currencies.All(c => c.Id != currency) ) {
-				throw new CurrencyNotFoundException();
-			}
+			var state       = await _stateManager.ReadState(date, user);
 			var brokerState = state.Brokers.FirstOrDefault(b => b.Id == broker);
 			if ( brokerState == null ) {
 				throw new BrokerNotFoundException();
@@ -42,7 +36,7 @@ namespace InvestmentReporting.Domain.UseCase {
 			}
 			var id = new OperationId(_idGenerator.GenerateNewId());
 			await _stateManager.PushCommand(new AddExpenseCommand(
-				date, user, broker, account, id, currency, amount, exchangeRate, category));
+				date, user, broker, account, id, amount, category));
 		}
 	}
 }

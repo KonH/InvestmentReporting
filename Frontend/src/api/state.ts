@@ -366,15 +366,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/Expense
      */
     expenseCreate: (
-      query: {
-        date: string;
-        broker: string;
-        account: string;
-        currency: string;
-        amount: number;
-        exchangeRate: number;
-        category: string;
-      },
+      query: { date: string; broker: string; account: string; amount: number; category: string },
       params: RequestParams = {},
     ) =>
       this.request<void, void>({
@@ -393,15 +385,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/Income
      */
     incomeCreate: (
-      query: {
-        date: string;
-        broker: string;
-        account: string;
-        currency: string;
-        amount: number;
-        exchangeRate: number;
-        category: string;
-      },
+      query: { date: string; broker: string; account: string; amount: number; category: string },
       params: RequestParams = {},
     ) =>
       this.request<void, void>({
