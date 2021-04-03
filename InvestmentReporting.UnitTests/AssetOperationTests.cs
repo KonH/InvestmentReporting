@@ -24,7 +24,7 @@ namespace InvestmentReporting.UnitTests {
 
 		[Test]
 		public async Task IsAssetBought() {
-			var stateManager = GetBuyStateManager();
+			var stateManager = GetStateManager();
 			var buyUseCase   = GetBuyUseCase(stateManager);
 
 			await buyUseCase.Handle(
@@ -39,8 +39,36 @@ namespace InvestmentReporting.UnitTests {
 		}
 
 		[Test]
+		public async Task IsBuyOperationMarkedWithAsset() {
+			var stateManager = GetStateManagerWithAsset();
+			var buyUseCase   = GetBuyUseCase(stateManager);
+			var readUseCase  = new ReadOperationsUseCase(stateManager);
+
+			await buyUseCase.Handle(
+				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _name, _category, _ticker, 1, 1, 1);
+
+			var operations = await readUseCase.Handle(_date, _date, _userId, _brokerId, _payAccountId);
+			operations.Should().NotBeEmpty();
+			operations.Should().Contain(o => o.Asset == _assetId);
+		}
+
+		[Test]
+		public async Task IsFeeOperationMarkedWithAsset() {
+			var stateManager = GetStateManagerWithAsset();
+			var buyUseCase   = GetBuyUseCase(stateManager);
+			var readUseCase  = new ReadOperationsUseCase(stateManager);
+
+			await buyUseCase.Handle(
+				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _name, _category, _ticker, 1, 1, 1);
+
+			var operations = await readUseCase.Handle(_date, _date, _userId, _brokerId, _feeAccountId);
+			operations.Should().NotBeEmpty();
+			operations.Should().Contain(o => o.Asset == _assetId);
+		}
+
+		[Test]
 		public async Task IsAssetAccumulatedOnBought() {
-			var stateManager = GetSellStateManager();
+			var stateManager = GetStateManagerWithAsset();
 			var buyUseCase   = GetBuyUseCase(stateManager);
 
 			await buyUseCase.Handle(
@@ -55,7 +83,7 @@ namespace InvestmentReporting.UnitTests {
 
 		[Test]
 		public async Task IsBalanceChangedAfterBuyByPrice() {
-			var stateManager = GetBuyStateManager();
+			var stateManager = GetStateManager();
 			var buyUseCase   = GetBuyUseCase(stateManager);
 			var price        = 100;
 
@@ -70,7 +98,7 @@ namespace InvestmentReporting.UnitTests {
 
 		[Test]
 		public async Task IsBalanceChangedAfterBuyByFee() {
-			var stateManager = GetBuyStateManager();
+			var stateManager = GetStateManager();
 			var buyUseCase   = GetBuyUseCase(stateManager);
 			var fee          = 100;
 
@@ -85,7 +113,7 @@ namespace InvestmentReporting.UnitTests {
 
 		[Test]
 		public void IsZeroPriceAssetBought() {
-			var stateManager = GetBuyStateManager();
+			var stateManager = GetStateManager();
 			var buyUseCase   = GetBuyUseCase(stateManager);
 
 			Assert.DoesNotThrowAsync(() => buyUseCase.Handle(
@@ -94,7 +122,7 @@ namespace InvestmentReporting.UnitTests {
 
 		[Test]
 		public void IsZeroFeeAssetBought() {
-			var stateManager = GetBuyStateManager();
+			var stateManager = GetStateManager();
 			var buyUseCase   = GetBuyUseCase(stateManager);
 
 			Assert.DoesNotThrowAsync(() => buyUseCase.Handle(
@@ -103,7 +131,7 @@ namespace InvestmentReporting.UnitTests {
 
 		[Test]
 		public void IsAssetFailedToBuyToUnknownBroker() {
-			var stateManager = GetBuyStateManager();
+			var stateManager = GetStateManager();
 			var buyUseCase   = GetBuyUseCase(stateManager);
 
 			Assert.ThrowsAsync<InvalidBrokerException>(() => buyUseCase.Handle(
@@ -112,7 +140,7 @@ namespace InvestmentReporting.UnitTests {
 
 		[Test]
 		public void IsAssetFailedToBuyToUnknownPayAccount() {
-			var stateManager = GetBuyStateManager();
+			var stateManager = GetStateManager();
 			var buyUseCase   = GetBuyUseCase(stateManager);
 
 			Assert.ThrowsAsync<InvalidAccountException>(() => buyUseCase.Handle(
@@ -121,7 +149,7 @@ namespace InvestmentReporting.UnitTests {
 
 		[Test]
 		public void IsAssetFailedToBuyToUnknownFeeAccount() {
-			var stateManager = GetBuyStateManager();
+			var stateManager = GetStateManager();
 			var buyUseCase   = GetBuyUseCase(stateManager);
 
 			Assert.ThrowsAsync<InvalidAccountException>(() => buyUseCase.Handle(
@@ -130,7 +158,7 @@ namespace InvestmentReporting.UnitTests {
 
 		[Test]
 		public void IsAssetFailedToBuyWithEmptyName() {
-			var stateManager = GetBuyStateManager();
+			var stateManager = GetStateManager();
 			var buyUseCase   = GetBuyUseCase(stateManager);
 
 			Assert.ThrowsAsync<InvalidAssetException>(() => buyUseCase.Handle(
@@ -139,7 +167,7 @@ namespace InvestmentReporting.UnitTests {
 
 		[Test]
 		public void IsAssetFailedToBuyWithEmptyCategory() {
-			var stateManager = GetBuyStateManager();
+			var stateManager = GetStateManager();
 			var buyUseCase   = GetBuyUseCase(stateManager);
 
 			Assert.ThrowsAsync<InvalidAssetException>(() => buyUseCase.Handle(
@@ -148,7 +176,7 @@ namespace InvestmentReporting.UnitTests {
 
 		[Test]
 		public void IsAssetFailedToBuyWithEmptyTicker() {
-			var stateManager = GetBuyStateManager();
+			var stateManager = GetStateManager();
 			var buyUseCase   = GetBuyUseCase(stateManager);
 
 			Assert.ThrowsAsync<InvalidAssetException>(() => buyUseCase.Handle(
@@ -157,7 +185,7 @@ namespace InvestmentReporting.UnitTests {
 
 		[Test]
 		public void IsAssetFailedToBuyWithInvalidCount() {
-			var stateManager = GetBuyStateManager();
+			var stateManager = GetStateManager();
 			var buyUseCase   = GetBuyUseCase(stateManager);
 
 			Assert.ThrowsAsync<InvalidCountException>(() => buyUseCase.Handle(
@@ -166,7 +194,7 @@ namespace InvestmentReporting.UnitTests {
 
 		[Test]
 		public void IsAssetFailedToBuyWithInvalidPrice() {
-			var stateManager = GetBuyStateManager();
+			var stateManager = GetStateManager();
 			var buyUseCase   = GetBuyUseCase(stateManager);
 
 			Assert.ThrowsAsync<InvalidPriceException>(() => buyUseCase.Handle(
@@ -175,7 +203,7 @@ namespace InvestmentReporting.UnitTests {
 
 		[Test]
 		public void IsAssetFailedToBuyWithInvalidFee() {
-			var stateManager = GetBuyStateManager();
+			var stateManager = GetStateManager();
 			var buyUseCase   = GetBuyUseCase(stateManager);
 
 			Assert.ThrowsAsync<InvalidPriceException>(() => buyUseCase.Handle(
@@ -184,7 +212,7 @@ namespace InvestmentReporting.UnitTests {
 
 		[Test]
 		public async Task IsAssetSoldCompletely() {
-			var stateManager = GetSellStateManager();
+			var stateManager = GetStateManagerWithAsset();
 			var sellUseCase  = GetSellUseCase(stateManager);
 
 			await sellUseCase.Handle(
@@ -197,7 +225,7 @@ namespace InvestmentReporting.UnitTests {
 
 		[Test]
 		public async Task IsAssetSoldPartially() {
-			var stateManager = GetSellStateManager();
+			var stateManager = GetStateManagerWithAsset();
 			var sellUseCase  = GetSellUseCase(stateManager);
 
 			await sellUseCase.Handle(
@@ -211,8 +239,36 @@ namespace InvestmentReporting.UnitTests {
 		}
 
 		[Test]
+		public async Task IsSellPriceOperationMarkedWithAsset() {
+			var stateManager = GetStateManagerWithAsset();
+			var sellUseCase  = GetSellUseCase(stateManager);
+			var readUseCase  = new ReadOperationsUseCase(stateManager);
+
+			await sellUseCase.Handle(
+				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _assetId, 1, 1, 1);
+
+			var operations = await readUseCase.Handle(_date, _date, _userId, _brokerId, _payAccountId);
+			operations.Should().NotBeEmpty();
+			operations.Should().Contain(o => o.Asset == _assetId);
+		}
+
+		[Test]
+		public async Task IsSellFeeOperationMarkedWithAsset() {
+			var stateManager = GetStateManagerWithAsset();
+			var sellUseCase  = GetSellUseCase(stateManager);
+			var readUseCase  = new ReadOperationsUseCase(stateManager);
+
+			await sellUseCase.Handle(
+				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _assetId, 1, 1, 1);
+
+			var operations = await readUseCase.Handle(_date, _date, _userId, _brokerId, _feeAccountId);
+			operations.Should().NotBeEmpty();
+			operations.Should().Contain(o => o.Asset == _assetId);
+		}
+
+		[Test]
 		public async Task IsBalanceChangedAfterSellByPrice() {
-			var stateManager = GetSellStateManager();
+			var stateManager = GetStateManagerWithAsset();
 			var sellUseCase  = GetSellUseCase(stateManager);
 			var price        = 100;
 
@@ -227,7 +283,7 @@ namespace InvestmentReporting.UnitTests {
 
 		[Test]
 		public async Task IsBalanceChangedAfterSellByFee() {
-			var stateManager = GetSellStateManager();
+			var stateManager = GetStateManagerWithAsset();
 			var sellUseCase  = GetSellUseCase(stateManager);
 			var fee          = 100;
 
@@ -242,7 +298,7 @@ namespace InvestmentReporting.UnitTests {
 
 		[Test]
 		public void IsZeroPriceAssetSold() {
-			var stateManager = GetSellStateManager();
+			var stateManager = GetStateManagerWithAsset();
 			var sellUseCase  = GetSellUseCase(stateManager);
 
 			Assert.DoesNotThrowAsync(() => sellUseCase.Handle(
@@ -251,7 +307,7 @@ namespace InvestmentReporting.UnitTests {
 
 		[Test]
 		public void IsZeroFeeAssetSold() {
-			var stateManager = GetSellStateManager();
+			var stateManager = GetStateManagerWithAsset();
 			var sellUseCase  = GetSellUseCase(stateManager);
 
 			Assert.DoesNotThrowAsync(() => sellUseCase.Handle(
@@ -260,7 +316,7 @@ namespace InvestmentReporting.UnitTests {
 
 		[Test]
 		public void IsAssetFailedToSellToUnknownBroker() {
-			var stateManager = GetSellStateManager();
+			var stateManager = GetStateManagerWithAsset();
 			var sellUseCase  = GetSellUseCase(stateManager);
 
 			Assert.ThrowsAsync<InvalidBrokerException>(() => sellUseCase.Handle(
@@ -269,7 +325,7 @@ namespace InvestmentReporting.UnitTests {
 
 		[Test]
 		public void IsAssetFailedToSellToUnknownPayAccount() {
-			var stateManager = GetSellStateManager();
+			var stateManager = GetStateManagerWithAsset();
 			var sellUseCase  = GetSellUseCase(stateManager);
 
 			Assert.ThrowsAsync<InvalidAccountException>(() => sellUseCase.Handle(
@@ -278,7 +334,7 @@ namespace InvestmentReporting.UnitTests {
 
 		[Test]
 		public void IsAssetFailedToSellToUnknownFeeAccount() {
-			var stateManager = GetSellStateManager();
+			var stateManager = GetStateManagerWithAsset();
 			var sellUseCase  = GetSellUseCase(stateManager);
 
 			Assert.ThrowsAsync<InvalidAccountException>(() => sellUseCase.Handle(
@@ -287,7 +343,7 @@ namespace InvestmentReporting.UnitTests {
 
 		[Test]
 		public void IsAssetFailedToSellWithInvalidId() {
-			var stateManager = GetSellStateManager();
+			var stateManager = GetStateManagerWithAsset();
 			var sellUseCase  = GetSellUseCase(stateManager);
 
 			Assert.ThrowsAsync<InvalidAssetException>(() => sellUseCase.Handle(
@@ -296,7 +352,7 @@ namespace InvestmentReporting.UnitTests {
 
 		[Test]
 		public void IsAssetFailedToSellWithInvalidCount() {
-			var stateManager = GetSellStateManager();
+			var stateManager = GetStateManagerWithAsset();
 			var sellUseCase  = GetSellUseCase(stateManager);
 
 			Assert.ThrowsAsync<InvalidCountException>(() => sellUseCase.Handle(
@@ -305,7 +361,7 @@ namespace InvestmentReporting.UnitTests {
 
 		[Test]
 		public void IsAssetFailedToSellWithMoreThanAvailableCount() {
-			var stateManager = GetSellStateManager();
+			var stateManager = GetStateManagerWithAsset();
 			var sellUseCase  = GetSellUseCase(stateManager);
 
 			Assert.ThrowsAsync<InvalidCountException>(() => sellUseCase.Handle(
@@ -314,7 +370,7 @@ namespace InvestmentReporting.UnitTests {
 
 		[Test]
 		public void IsAssetFailedToSellWithInvalidPrice() {
-			var stateManager = GetSellStateManager();
+			var stateManager = GetStateManagerWithAsset();
 			var sellUseCase  = GetSellUseCase(stateManager);
 
 			Assert.ThrowsAsync<InvalidPriceException>(() => sellUseCase.Handle(
@@ -323,7 +379,7 @@ namespace InvestmentReporting.UnitTests {
 
 		[Test]
 		public void IsAssetFailedToSellWithInvalidFee() {
-			var stateManager = GetSellStateManager();
+			var stateManager = GetStateManagerWithAsset();
 			var sellUseCase  = GetSellUseCase(stateManager);
 
 			Assert.ThrowsAsync<InvalidPriceException>(() => sellUseCase.Handle(
@@ -347,9 +403,9 @@ namespace InvestmentReporting.UnitTests {
 			new StateManagerBuilder().With(_userId).With(_brokerId).With(_currencyId)
 				.With(_payAccountId).With(_feeAccountId);
 
-		StateManager GetBuyStateManager() => GetStateBuilder().Build();
+		StateManager GetStateManager() => GetStateBuilder().Build();
 
-		StateManager GetSellStateManager() =>
+		StateManager GetStateManagerWithAsset() =>
 			GetStateBuilder().With(_assetId, _ticker, 2).Build();
 	}
 }

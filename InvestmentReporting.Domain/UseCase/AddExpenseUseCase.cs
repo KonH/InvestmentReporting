@@ -19,7 +19,7 @@ namespace InvestmentReporting.Domain.UseCase {
 
 		public async Task Handle(
 			DateTimeOffset date, UserId user, BrokerId broker, AccountId account,
-			decimal amount, ExpenseCategory category) {
+			decimal amount, ExpenseCategory category, AssetId? asset) {
 			if ( amount == 0 ) {
 				throw new InvalidPriceException();
 			}
@@ -34,9 +34,12 @@ namespace InvestmentReporting.Domain.UseCase {
 			if ( brokerState.Accounts.All(a => a.Id != account) ) {
 				throw new AccountNotFoundException();
 			}
+			if ( (asset != null) && brokerState.Inventory.All(a => a.Id != asset) ) {
+				throw new AssetNotFoundException();
+			}
 			var id = new OperationId(_idGenerator.GenerateNewId());
 			await _stateManager.PushCommand(new AddExpenseCommand(
-				date, user, broker, account, id, amount, category));
+				date, user, broker, account, id, amount, category, asset));
 		}
 	}
 }

@@ -58,7 +58,7 @@ namespace InvestmentReporting.Domain.UseCase {
 					break;
 				default:
 					await _addIncome.Handle(
-						date, user, brokerId, payAccountId, price, _sellAssetCategory);
+						date, user, brokerId, payAccountId, price, _sellAssetCategory, assetId);
 					break;
 			}
 			switch ( fee ) {
@@ -68,7 +68,7 @@ namespace InvestmentReporting.Domain.UseCase {
 					break;
 				default:
 					await _addExpense.Handle(
-						date, user, brokerId, feeAccountId, fee, _sellAssetFeeCategory);
+						date, user, brokerId, feeAccountId, fee, _sellAssetFeeCategory, assetId);
 					break;
 			}
 			await _stateManager.PushCommand(new ReduceAssetCommand(date, user, brokerId, assetId, count));

@@ -20,11 +20,17 @@ namespace InvestmentReporting.Domain.UseCase {
 			var incomeOperations = ReadOperations<AddIncomeModel>(
 				commands,
 				c => (c.Broker == broker) && (c.Account == account),
-				c => new Operation(c.Date, OperationKind.Income, c.Amount, c.Category));
+				c => {
+					var asset = (c.Asset != null) ? new AssetId(c.Asset) : null;
+					return new Operation(c.Date, OperationKind.Income, c.Amount, c.Category, asset);
+				});
 			var expenseOperations = ReadOperations<AddExpenseModel>(
 				commands,
 				c => (c.Broker == broker) && (c.Account == account),
-				c => new Operation(c.Date, OperationKind.Expense, -c.Amount, c.Category));
+				c => {
+					var asset = (c.Asset != null) ? new AssetId(c.Asset) : null;
+					return new Operation(c.Date, OperationKind.Expense, -c.Amount, c.Category, asset);
+				});
 			return incomeOperations.Concat(expenseOperations)
 				.OrderBy(o => o.Date)
 				.ToArray();

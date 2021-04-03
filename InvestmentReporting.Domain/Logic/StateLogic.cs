@@ -31,9 +31,12 @@ namespace InvestmentReporting.Domain.Logic {
 				}
 			);
 			manager.Bind<AddIncomeCommand, AddIncomeModel>(
-				cmd => new(
-					cmd.Date, cmd.User, cmd.Broker, cmd.Account, cmd.Id,
-					cmd.Amount, cmd.Category),
+				cmd => {
+					var asset = (cmd.Asset != null) ? (string)cmd.Asset : null;
+					return new(
+						cmd.Date, cmd.User, cmd.Broker, cmd.Account, cmd.Id,
+						cmd.Amount, cmd.Category, asset);
+				},
 				(state, m) => {
 					var brokerId  = new BrokerId(m.Broker);
 					var broker    = state.Brokers.First(b => b.Id == brokerId);
@@ -43,8 +46,11 @@ namespace InvestmentReporting.Domain.Logic {
 				}
 			);
 			manager.Bind<AddExpenseCommand, AddExpenseModel>(
-				cmd => new(cmd.Date, cmd.User, cmd.Broker, cmd.Account, cmd.Id,
-					cmd.Amount, cmd.Category),
+				cmd => {
+					var asset = (cmd.Asset != null) ? (string)cmd.Asset : null;
+					return new(cmd.Date, cmd.User, cmd.Broker, cmd.Account, cmd.Id,
+						cmd.Amount, cmd.Category, asset);
+				},
 				(state, m) => {
 					var brokerId  = new BrokerId(m.Broker);
 					var broker    = state.Brokers.First(b => b.Id == brokerId);

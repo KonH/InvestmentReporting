@@ -50,6 +50,15 @@ namespace InvestmentReporting.Domain.UseCase {
 			if ( feeAccount == null ) {
 				throw new InvalidAccountException();
 			}
+			var     asset = broker.Inventory.FirstOrDefault(a => a.Ticker == ticker);
+			AssetId id;
+			if ( asset != null ) {
+				id = asset.Id;
+				await _stateManager.PushCommand(new IncreaseAssetCommand(date, user, brokerId, asset.Id, count));
+			} else {
+				id = new AssetId(_idGenerator.GenerateNewId());
+				await _stateManager.PushCommand(new AddAssetCommand(date, user, brokerId, id, name, category, ticker, count));
+			}
 			switch ( price ) {
 				case < 0:
 					throw new InvalidPriceException();
@@ -57,7 +66,7 @@ namespace InvestmentReporting.Domain.UseCase {
 					break;
 				default:
 					await _addExpense.Handle(
-						date, user, brokerId, payAccountId, price, _buyAssetCategory);
+						date, user, brokerId, payAccountId, price, _buyAssetCategory, id);
 					break;
 			}
 			switch ( fee ) {
@@ -67,16 +76,9 @@ namespace InvestmentReporting.Domain.UseCase {
 					break;
 				default:
 					await _addExpense.Handle(
-						date, user, brokerId, feeAccountId, fee, _buyAssetFeeCategory);
+						date, user, brokerId, feeAccountId, fee, _buyAssetFeeCategory, id);
 					break;
 			}
-			var asset = broker.Inventory.FirstOrDefault(a => a.Ticker == ticker);
-			if ( asset != null ) {
-				await _stateManager.PushCommand(new IncreaseAssetCommand(date, user, brokerId, asset.Id, count));
-				return;
-			}
-			var id = new AssetId(_idGenerator.GenerateNewId());
-			await _stateManager.PushCommand(new AddAssetCommand(date, user, brokerId, id, name, category, ticker, count));
 		}
 	}
 }
