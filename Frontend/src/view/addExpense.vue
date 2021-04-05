@@ -18,6 +18,16 @@
 			<input ref="category" type="text" class="form-control" />
 		</label>
 	</div>
+	<div>
+		<label>
+			Asset:
+			<select ref="asset" class="form-control">
+				<option v-for="asset in assets" :key="asset.id" :value="asset.id">
+					{{ renderAsset(asset) }}
+				</option>
+			</select>
+		</label>
+	</div>
 	<button :onclick="onclick" class="btn btn-primary">Add</button>
 	<router-link to="/" class="btn btn-secondary ml-2">Back</router-link>
 </template>
@@ -26,7 +36,7 @@ import { Options, Vue } from 'vue-class-component';
 import Backend from '@/service/backend';
 import router from '@/router';
 import { Action, State } from 'vuex-class';
-import { StateDto } from '@/api/state';
+import { AssetDto, StateDto } from '@/api/state';
 import { Ref } from 'vue-property-decorator';
 
 @Options({
@@ -44,6 +54,9 @@ export default class AddExpense extends Vue {
 	@Ref('category')
 	categoryInput!: HTMLInputElement;
 
+	@Ref('asset')
+	assetSelect!: HTMLSelectElement;
+
 	@Action('fetchActiveState')
 	fetchActiveState!: () => void;
 
@@ -55,6 +68,20 @@ export default class AddExpense extends Vue {
 		return this.$route.params.account as string;
 	}
 
+	get assets() {
+		const broker = this.activeState.brokers?.find((b) => b.id == this.brokerId);
+		const viewArray: [AssetDto] = [{ id: '' }];
+		const inventory = broker?.inventory ?? [];
+		return viewArray.concat(inventory);
+	}
+
+	renderAsset(asset: AssetDto | null) {
+		if (asset?.id) {
+			return `${asset.name} (${asset.ticker})`;
+		}
+		return '';
+	}
+
 	mounted() {
 		this.setCurrentDate();
 	}
@@ -64,6 +91,7 @@ export default class AddExpense extends Vue {
 	}
 
 	async onclick() {
+		const asset = this.assetSelect.value ? this.assetSelect.value : null;
 		const result = await Backend.tryFetch(
 			Backend.state().expense.expenseCreate({
 				date: new Date(this.dateInput.value).toISOString(),
@@ -71,6 +99,7 @@ export default class AddExpense extends Vue {
 				account: this.accountId,
 				amount: Number.parseFloat(this.amountInput.value),
 				category: this.categoryInput.value,
+				asset: asset,
 			})
 		);
 		if (result?.ok) {
