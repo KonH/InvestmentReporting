@@ -25,7 +25,7 @@ namespace InvestmentReporting.UnitTests {
 		[Test]
 		public void IsFailedToImportToUnknownBroker() {
 			var stateManager = new StateManagerBuilder().Build();
-			var sample       = LoadSample("AlphaDirect_BrokerMoneyMove_Sample.xml");
+			var sample       = LoadSample("AlphaDirect_BrokerMoneyMove_IncomeSample.xml");
 			var useCase      = GetUseCase(stateManager);
 
 			Assert.ThrowsAsync<BrokerNotFoundException>(() => useCase.Handle(_date, _userId, _brokerId, sample));
@@ -37,7 +37,7 @@ namespace InvestmentReporting.UnitTests {
 				.With(_userId)
 				.With(_brokerId)
 				.Build();
-			var sample  = LoadSample("AlphaDirect_BrokerMoneyMove_Sample.xml");
+			var sample  = LoadSample("AlphaDirect_BrokerMoneyMove_IncomeSample.xml");
 			var useCase = GetUseCase(stateManager);
 
 			Assert.ThrowsAsync<AccountNotFoundException>(() => useCase.Handle(_date, _userId, _brokerId, sample));
@@ -45,7 +45,7 @@ namespace InvestmentReporting.UnitTests {
 
 		[Test]
 		public void IsIncomeTransfersRead() {
-			var sample = LoadSample("AlphaDirect_BrokerMoneyMove_Sample.xml");
+			var sample = LoadSample("AlphaDirect_BrokerMoneyMove_IncomeSample.xml");
 			var parser = new BrokerMoneyMoveParser();
 
 			var actualTransfers = parser.ReadIncomeTransfers(sample);
@@ -60,7 +60,7 @@ namespace InvestmentReporting.UnitTests {
 		[Test]
 		public async Task IsIncomeTransfersImported() {
 			var stateManager = GetStateManager();
-			var sample       = LoadSample("AlphaDirect_BrokerMoneyMove_Sample.xml");
+			var sample       = LoadSample("AlphaDirect_BrokerMoneyMove_IncomeSample.xml");
 			var useCase      = GetUseCase(stateManager);
 
 			await useCase.Handle(_date, _userId, _brokerId, sample);
@@ -71,7 +71,7 @@ namespace InvestmentReporting.UnitTests {
 		[Test]
 		public async Task IsIncomeTransfersNotDuplicated() {
 			var stateManager = GetStateManager();
-			var sample       = LoadSample("AlphaDirect_BrokerMoneyMove_Sample.xml");
+			var sample       = LoadSample("AlphaDirect_BrokerMoneyMove_IncomeSample.xml");
 			var useCase      = GetUseCase(stateManager);
 
 			await useCase.Handle(_date, _userId, _brokerId, sample);

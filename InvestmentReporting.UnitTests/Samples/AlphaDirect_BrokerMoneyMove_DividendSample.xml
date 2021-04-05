@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Report Name="MyBroker">
+    <Trades2>
+        <Report Name="3_BrokerMoneyMove">
+            <Tablix1>
+                <settlement_date_Collection>
+                    <settlement_date settlement_date="2000-01-01T00:00:00">
+                        <rn_Collection>
+                            <rn last_update="2020-01-01T01:02:03">
+                                <oper_type oper_type="Перевод">
+                                    <comment
+                                            comment="{VO00001} Cash Dividend US0000000001 (NAME - XXX YYY) TAX 0.1 USD">
+                                        <money_volume_begin1_Collection>
+                                            <money_volume_begin1>
+                                                <p_code_Collection>
+                                                    <p_code>
+                                                        <p_code p_code="RUB"/>
+                                                    </p_code>
+                                                    <p_code>
+                                                        <p_code p_code="USD" volume="0.3"/>
+                                                    </p_code>
+                                                </p_code_Collection>
+                                            </money_volume_begin1>
+                                        </money_volume_begin1_Collection>
+                                        <Textbox95>
+                                            <Textbox83 money_volume="3426.97"/>
+                                            <Textbox84 all_volume="58283.60"/>
+                                        </Textbox95>
+                                        <Textbox93 debet_volume="0.00"/>
+                                        <Textbox11 acc_code="515203-000"/>
+                                    </comment>
+                                </oper_type>
+                            </rn>
+                        </rn_Collection>
+                    </settlement_date>
+                </settlement_date_Collection>
+            </Tablix1>
+        </Report>
+    </Trades2>
+</Report>
