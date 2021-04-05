@@ -14,6 +14,8 @@ namespace InvestmentReporting.Import.UseCase {
 	public sealed class ImportUseCase {
 		readonly IncomeCategory _incomeTransferCategory = new("Income Transfer");
 
+		readonly XmlSanitizer _sanitizer = new();
+
 		readonly TransactionStateManager _stateManager;
 		readonly BrokerMoneyMoveParser   _moneyMoveParser;
 		readonly AddIncomeUseCase        _addIncomeUseCase;
@@ -27,6 +29,7 @@ namespace InvestmentReporting.Import.UseCase {
 		}
 
 		public async Task Handle(DateTimeOffset date, UserId user, BrokerId brokerId, XmlDocument report) {
+			report = _sanitizer.Sanitize(report);
 			var state = await _stateManager.ReadState(date, user);
 			var broker = state.Brokers.FirstOrDefault(b => b.Id == brokerId);
 			if ( broker == null ) {
