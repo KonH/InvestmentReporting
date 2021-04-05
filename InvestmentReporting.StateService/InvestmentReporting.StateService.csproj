@@ -16,4 +16,8 @@
       <ProjectReference Include="..\InvestmentReporting.Shared\InvestmentReporting.Shared.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+        <Content Update="publish\**\*.*" CopyToPublishDirectory="Never" />
+    </ItemGroup>
+
 </Project>
