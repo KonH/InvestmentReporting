@@ -16,19 +16,35 @@ namespace InvestmentReporting.Import.Logic {
 		const string PCodesXpath =
 			"money_volume_begin1_Collection/money_volume_begin1/p_code_Collection/p_code/p_code";
 
-		public IReadOnlyCollection<IncomeTransfer> ReadIncomeTransfers(XmlDocument report) {
+		public IReadOnlyCollection<IncomeTransfer> ReadIncomeTransfers(XmlDocument report) =>
+			ReadTransfers(
+				report,
+				comment => comment.StartsWith("из "),
+				(lastUpdate, fullName, currency, amount) => new IncomeTransfer(lastUpdate, fullName, currency, amount));
+
+		public IReadOnlyCollection<ExpenseTransfer> ReadExpenseTransfers(XmlDocument report) =>
+			ReadTransfers(
+				report,
+				comment => comment.StartsWith("Списание по поручению клиента"),
+				(lastUpdate, fullName, currency, amount) => new ExpenseTransfer(lastUpdate, fullName, currency, amount));
+
+		IReadOnlyCollection<T> ReadTransfers<T>(
+			XmlDocument report, Func<string, bool> commentFilter,
+			Func<DateTimeOffset, string, string, decimal, T> factory) {
 			var operations = report.SelectNodes(OperationsXpath);
 			if ( operations == null ) {
 				throw new UnexpectedFormatException($"Failed to retrieve operations via XPath '{OperationsXpath}'");
 			}
-			var result = new List<IncomeTransfer>();
+			var result = new List<T>();
 			foreach ( XmlNode operationNode in operations ) {
-				HandleOperationNode(operationNode, result);
+				HandleOperationNode(operationNode, result, commentFilter, factory);
 			}
 			return result;
 		}
 
-		static void HandleOperationNode(XmlNode operationNode, List<IncomeTransfer> result) {
+		static void HandleOperationNode<T>(
+			XmlNode operationNode, List<T> result,
+			Func<string, bool> commentFilter, Func<DateTimeOffset, string, string, decimal, T> factory) {
 			var rawLastUpdateStr =
 				operationNode.Attributes?["last_update"]?.Value ??
 				throw new UnexpectedFormatException("Failed to retrieve 'last_update' operation attribute");
@@ -44,12 +60,13 @@ namespace InvestmentReporting.Import.Logic {
 					$"Failed to retrieve operations via XPath '{OperationsXpath}/{OperationTypesXPath}'");
 			}
 			foreach ( XmlNode operationTypeNode in operationTypeNodes ) {
-				HandleOperationTypeNode(operationTypeNode, lastUpdate, result);
+				HandleOperationTypeNode(operationTypeNode, lastUpdate, result, commentFilter, factory);
 			}
 		}
 
-		static void HandleOperationTypeNode(
-			XmlNode operationTypeNode, DateTimeOffset lastUpdate, List<IncomeTransfer> result) {
+		static void HandleOperationTypeNode<T>(
+			XmlNode operationTypeNode, DateTimeOffset lastUpdate, List<T> result,
+			Func<string, bool> commentFilter, Func<DateTimeOffset, string, string, decimal, T> factory) {
 			var operationType = operationTypeNode.Attributes?["oper_type"]?.Value ?? string.Empty;
 			var commentNode   = operationTypeNode.SelectSingleNode(CommentXpath);
 			if ( commentNode == null ) {
@@ -58,7 +75,7 @@ namespace InvestmentReporting.Import.Logic {
 					$"'{OperationsXpath}/{OperationTypesXPath}/{CommentXpath}'");
 			}
 			var comment = commentNode.Attributes?["comment"]?.Value ?? string.Empty;
-			if ( !comment.StartsWith("из ") ) {
+			if ( !commentFilter(comment) ) {
 				return;
 			}
 			var pCodeNodes = commentNode.SelectNodes(PCodesXpath);
@@ -68,7 +85,7 @@ namespace InvestmentReporting.Import.Logic {
 					$"'{OperationsXpath}/{OperationTypesXPath}/{CommentXpath}/{PCodesXpath}'");
 			}
 			var nonZeroVolumeCodes = ParseNonZeroVolumeCodes(pCodeNodes);
-			var fullName           = $"{operationType} {comment}";
+			var fullName           = $"{operationType} {comment.TrimEnd()}";
 			switch ( nonZeroVolumeCodes.Count ) {
 				case 0:
 					throw new UnexpectedFormatException(
@@ -78,7 +95,7 @@ namespace InvestmentReporting.Import.Logic {
 						$"Too much valid values for '{fullName}' operation");
 				default:
 					var (currency, amount) = nonZeroVolumeCodes[0];
-					result.Add(new IncomeTransfer(lastUpdate, fullName, currency, amount));
+					result.Add(factory(lastUpdate, fullName, currency, amount));
 					break;
 			}
 		}

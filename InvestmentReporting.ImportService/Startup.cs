@@ -44,6 +44,7 @@ namespace InvestmentReporting.ImportService {
 			services.AddScoped<ImportUseCase>();
 			services.AddScoped<BrokerMoneyMoveParser>();
 			services.AddScoped<AddIncomeUseCase>();
+			services.AddScoped<AddExpenseUseCase>();
 		}
 
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {

@@ -109,6 +109,72 @@ namespace InvestmentReporting.UnitTests {
 			rubAccount.Balance.Should().Be(200);
 		}
 
+		[Test]
+		public void IsExpenseTransfersRead() {
+			var sample = LoadSample("AlphaDirect_BrokerMoneyMove_ExpenseSample.xml");
+			var parser = new BrokerMoneyMoveParser();
+
+			var actualTransfers = parser.ReadExpenseTransfers(sample);
+
+			var expectedTransfers = new[] {
+				new ExpenseTransfer(DateTimeOffset.Parse("2020-01-01T01:02:03+3"), "Перевод Списание по поручению клиента.", "USD", -100),
+				new ExpenseTransfer(DateTimeOffset.Parse("2020-01-02T02:03:04+3"), "Перевод Списание по поручению клиента.", "RUB", -200),
+			};
+			actualTransfers.Should().Contain(expectedTransfers);
+		}
+
+		[Test]
+		public void IsExpenseTransfersSkipDividend() {
+			var sample = LoadSample("AlphaDirect_BrokerMoneyMove_DividendSample.xml");
+			var parser = new BrokerMoneyMoveParser();
+
+			var actualTransfers = parser.ReadExpenseTransfers(sample);
+
+			actualTransfers.Should().BeEmpty();
+		}
+
+		[Test]
+		public void IsExpenseTransfersSkipIncomeTransfer() {
+			var sample = LoadSample("AlphaDirect_BrokerMoneyMove_IncomeSample.xml");
+			var parser = new BrokerMoneyMoveParser();
+
+			var actualTransfers = parser.ReadExpenseTransfers(sample);
+
+			actualTransfers.Should().BeEmpty();
+		}
+
+		[Test]
+		public async Task IsExpenseTransfersImported() {
+			var stateManager = GetStateManager();
+			var sample       = LoadSample("AlphaDirect_BrokerMoneyMove_ExpenseSample.xml");
+			var useCase      = GetUseCase(stateManager);
+
+			await useCase.Handle(_date, _userId, _brokerId, sample);
+
+			await AssertExpenseTransfers(stateManager);
+		}
+
+		[Test]
+		public async Task IsExpenseTransfersNotDuplicated() {
+			var stateManager = GetStateManager();
+			var sample       = LoadSample("AlphaDirect_BrokerMoneyMove_ExpenseSample.xml");
+			var useCase      = GetUseCase(stateManager);
+
+			await useCase.Handle(_date, _userId, _brokerId, sample);
+			await useCase.Handle(_date, _userId, _brokerId, sample);
+
+			await AssertExpenseTransfers(stateManager);
+		}
+
+		async Task AssertExpenseTransfers(StateManager stateManager) {
+			var state      = await stateManager.ReadState(DateTimeOffset.MaxValue, _userId);
+			var broker     = state.Brokers.First(b => b.Id == _brokerId);
+			var usdAccount = broker.Accounts.First(a => a.Id == _usdAccountId);
+			usdAccount.Balance.Should().Be(-100);
+			var rubAccount = broker.Accounts.First(a => a.Id == _rubAccountId);
+			rubAccount.Balance.Should().Be(-200);
+		}
+
 		XmlDocument LoadSample(string name) {
 			using var file = File.OpenRead(Path.Combine("Samples", name));
 			var xml = new XmlDocument();
@@ -130,7 +196,10 @@ namespace InvestmentReporting.UnitTests {
 			var transStateManager = new TransactionStateManager(stateManager);
 			var moneyMoveParser   = new BrokerMoneyMoveParser();
 			var idGenerator       = new GuidIdGenerator();
-			return new ImportUseCase(transStateManager, moneyMoveParser, new AddIncomeUseCase(stateManager, idGenerator));
+			return new ImportUseCase(
+				transStateManager, moneyMoveParser,
+				new AddIncomeUseCase(stateManager, idGenerator),
+				new AddExpenseUseCase(stateManager, idGenerator));
 		}
 	}
 }
