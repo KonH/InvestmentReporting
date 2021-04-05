@@ -10,6 +10,48 @@
         "tags": [
           "Import"
         ],
+        "parameters": [
+          {
+            "name": "date",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "broker",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "report"
+                ],
+                "type": "object",
+                "properties": {
+                  "report": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "report": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "201": {
             "description": "Success"
