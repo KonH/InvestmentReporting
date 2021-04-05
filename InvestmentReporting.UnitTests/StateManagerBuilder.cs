@@ -33,7 +33,7 @@ namespace InvestmentReporting.UnitTests {
 
 		public StateManagerBuilder With(CurrencyId currency) {
 			_currencyId = currency.ToString();
-			With(new CreateCurrencyModel(_date, _userId, _currencyId, string.Empty, string.Empty));
+			With(new CreateCurrencyModel(_date, _userId, _currencyId, _currencyId, string.Empty));
 			return this;
 		}
 

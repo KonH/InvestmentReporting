@@ -1,6 +1,9 @@
 using InvestmentReporting.Data.Core.Repository;
 using InvestmentReporting.Data.Mongo.Repository;
 using InvestmentReporting.Domain.Logic;
+using InvestmentReporting.Domain.UseCase;
+using InvestmentReporting.Import.Logic;
+using InvestmentReporting.Import.UseCase;
 using InvestmentReporting.Shared.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -36,6 +39,11 @@ namespace InvestmentReporting.ImportService {
 			services.AddSingleton<IIdGenerator, ObjectIdGenerator>();
 			services.AddSingleton<IStateRepository, MongoStateRepository>();
 			services.AddSingleton<StateManager>();
+			services.AddScoped<TransactionStateManager>();
+			services.AddScoped<IStateManager>(sp => sp.GetRequiredService<TransactionStateManager>());
+			services.AddScoped<ImportUseCase>();
+			services.AddScoped<BrokerMoneyMoveParser>();
+			services.AddScoped<AddIncomeUseCase>();
 		}
 
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
