@@ -10,11 +10,7 @@
 		<label>
 			Currency:
 			<select ref="currency" class="form-control">
-				<option
-					v-for="currency in currencies"
-					:key="currency.id"
-					:value="currency.id"
-				>
+				<option v-for="currency in currencies" :key="currency.id" :value="currency.id">
 					{{ currency.code }} ({{ currency.format }})
 				</option>
 			</select>

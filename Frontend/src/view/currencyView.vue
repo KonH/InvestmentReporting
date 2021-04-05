@@ -4,9 +4,7 @@
 		<div v-for="currency in currencies" :key="currency.id">
 			<currency :currency="currency" />
 		</div>
-		<router-link to="/addCurrency" class="btn btn-primary"
-			>Add Currency</router-link
-		>
+		<router-link to="/addCurrency" class="btn btn-primary">Add Currency</router-link>
 	</div>
 </template>
 <script lang="ts">

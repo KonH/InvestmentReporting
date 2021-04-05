@@ -3,9 +3,7 @@
 	<currencyView />
 	<brokerView />
 	<button :onclick="resetOps" class="btn btn-danger mt-2">Reset (ops)</button>
-	<button :onclick="resetAll" class="btn btn-danger mt-2 ml-2">
-		Reset (all)
-	</button>
+	<button :onclick="resetAll" class="btn btn-danger mt-2 ml-2">Reset (all)</button>
 	<button :onclick="logout" class="btn btn-secondary mt-2 ml-2">Logout</button>
 </template>
 <script lang="ts">

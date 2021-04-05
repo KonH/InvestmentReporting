@@ -13,9 +13,7 @@
 		</label>
 	</div>
 	<button :onclick="onclick" class="btn btn-primary">Login</button>
-	<router-link to="/register" class="btn btn-secondary ml-2"
-		>Register</router-link
-	>
+	<router-link to="/register" class="btn btn-secondary ml-2">Register</router-link>
 </template>
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';

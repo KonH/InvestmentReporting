@@ -20,11 +20,7 @@
 		<label>
 			Pay account:
 			<select ref="payAccount" class="form-control">
-				<option
-					v-for="account in accounts"
-					:key="account.id"
-					:value="account.id"
-				>
+				<option v-for="account in accounts" :key="account.id" :value="account.id">
 					{{ account.displayName }}
 				</option>
 			</select>
@@ -38,11 +34,7 @@
 		<label>
 			Fee account:
 			<select ref="feeAccount" class="form-control">
-				<option
-					v-for="account in accounts"
-					:key="account.id"
-					:value="account.id"
-				>
+				<option v-for="account in accounts" :key="account.id" :value="account.id">
 					{{ account.displayName }}
 				</option>
 			</select>

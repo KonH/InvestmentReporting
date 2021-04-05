@@ -4,9 +4,7 @@
 		<div v-for="broker in brokers" :key="broker.id">
 			<broker :broker="broker" />
 		</div>
-		<router-link to="/addBroker" class="btn btn-primary"
-			>Add Broker</router-link
-		>
+		<router-link to="/addBroker" class="btn btn-primary">Add Broker</router-link>
 	</div>
 </template>
 <script lang="ts">

@@ -69,9 +69,11 @@
         "warn",
         {
           "singleQuote": true,
-          "useTabs": true
+          "useTabs": true,
+          "printWidth": 120
         }
       ],
+      "max-len": "off",
       "@typescript-eslint/explicit-module-boundary-types": "off"
     }
   },

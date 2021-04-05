@@ -18,9 +18,7 @@ export default class Import extends Vue {
 	fetchActiveState!: () => void;
 
 	async onclick() {
-		const result = await Backend.tryFetch(
-			Backend.import().import.importCreate()
-		);
+		const result = await Backend.tryFetch(Backend.import().import.importCreate());
 		if (result?.ok) {
 			this.fetchActiveState();
 			await router.push('/');

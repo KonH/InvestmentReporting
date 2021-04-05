@@ -4,9 +4,7 @@
 			<li v-for="account in accounts" :key="account.id" class="mb-2">
 				<account :account="account" :broker-id="brokerId" />
 			</li>
-			<router-link :to="`/addAccount/${brokerId}`" class="btn btn-primary"
-				>Add Account</router-link
-			>
+			<router-link :to="`/addAccount/${brokerId}`" class="btn btn-primary">Add Account</router-link>
 		</ul>
 	</div>
 </template>
