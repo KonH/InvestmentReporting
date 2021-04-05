@@ -2,7 +2,7 @@
 	<div>
 		<ul>
 			<li v-for="asset in assets" :key="asset.id" class="mb-2">
-				<asset :asset="asset" />
+				<asset :asset="asset" :broker-id="brokerId" />
 			</li>
 		</ul>
 	</div>
@@ -22,5 +22,8 @@ import { Prop } from 'vue-property-decorator';
 export default class AssetList extends Vue {
 	@Prop()
 	assets!: AssetDto[];
+
+	@Prop()
+	brokerId!: string;
 }
 </script>

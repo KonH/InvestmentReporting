@@ -7,10 +7,10 @@ using InvestmentReporting.Domain.Entity;
 using InvestmentReporting.Domain.Logic;
 
 namespace InvestmentReporting.Domain.UseCase {
-	public sealed class ReadOperationsUseCase {
+	public sealed class ReadAccountOperationsUseCase {
 		readonly StateManager _stateManager;
 
-		public ReadOperationsUseCase(StateManager stateManager) {
+		public ReadAccountOperationsUseCase(StateManager stateManager) {
 			_stateManager = stateManager;
 		}
 

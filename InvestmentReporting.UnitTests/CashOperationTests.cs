@@ -142,7 +142,7 @@ namespace InvestmentReporting.UnitTests {
 			var stateManager = GetStateBuilder()
 				.With(new AddIncomeModel(_date, _userId, _brokerId, _accountId, string.Empty, 100, _incomeCategory, _assetId))
 				.Build();
-			var readUseCase = new ReadOperationsUseCase(stateManager);
+			var readUseCase = new ReadAccountOperationsUseCase(stateManager);
 
 			var operations = await readUseCase.Handle(_date, _date, _userId, _brokerId, _accountId);
 
@@ -159,7 +159,7 @@ namespace InvestmentReporting.UnitTests {
 			var stateManager = GetStateBuilder()
 				.With(new AddExpenseModel(_date, _userId, _brokerId, _accountId, string.Empty, 50, _expenseCategory, _assetId))
 				.Build();
-			var readUseCase = new ReadOperationsUseCase(stateManager);
+			var readUseCase = new ReadAccountOperationsUseCase(stateManager);
 
 			var operations = await readUseCase.Handle(_date, _date, _userId, _brokerId, _accountId);
 

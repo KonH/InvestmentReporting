@@ -39,7 +39,8 @@ namespace InvestmentReporting.StateService {
 			services.AddSingleton<StateManager>();
 			services.AddSingleton<ReadStateUseCase>();
 			services.AddSingleton<ResetStateUseCase>();
-			services.AddSingleton<ReadOperationsUseCase>();
+			services.AddSingleton<ReadAccountOperationsUseCase>();
+			services.AddSingleton<ReadAssetOperationsUseCase>();
 			services.AddSingleton<ResetOperationsUseCase>();
 			services.AddSingleton<CreateBrokerUseCase>();
 			services.AddSingleton<CreateCurrencyUseCase>();

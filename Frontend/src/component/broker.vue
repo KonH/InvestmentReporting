@@ -7,7 +7,7 @@
 	</p>
 	<p>
 		Assets:
-		<assetList :assets="broker.inventory" />
+		<assetList :assets="broker.inventory" :broker-id="broker.id" />
 		<router-link :to="`/buyAsset/${broker.id}`" class="btn btn-primary mb-2">Buy</router-link>
 		<router-link :to="`/sellAsset/${broker.id}`" class="btn btn-primary mb-2 ml-2">Sell</router-link>
 	</p>

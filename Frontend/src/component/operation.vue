@@ -3,6 +3,7 @@
 	<td>{{ operation.amount }}</td>
 	<td>{{ operation.kind }}</td>
 	<td>{{ operation.category }}</td>
+	<td v-if="operation.asset">{{ operation.asset }}</td>
 </template>
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';

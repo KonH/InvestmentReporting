@@ -42,7 +42,7 @@ namespace InvestmentReporting.UnitTests {
 		public async Task IsBuyOperationMarkedWithAsset() {
 			var stateManager = GetStateManagerWithAsset();
 			var buyUseCase   = GetBuyUseCase(stateManager);
-			var readUseCase  = new ReadOperationsUseCase(stateManager);
+			var readUseCase  = new ReadAccountOperationsUseCase(stateManager);
 
 			await buyUseCase.Handle(
 				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _name, _category, _ticker, 1, 1, 1);
@@ -56,7 +56,7 @@ namespace InvestmentReporting.UnitTests {
 		public async Task IsFeeOperationMarkedWithAsset() {
 			var stateManager = GetStateManagerWithAsset();
 			var buyUseCase   = GetBuyUseCase(stateManager);
-			var readUseCase  = new ReadOperationsUseCase(stateManager);
+			var readUseCase  = new ReadAccountOperationsUseCase(stateManager);
 
 			await buyUseCase.Handle(
 				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _name, _category, _ticker, 1, 1, 1);
@@ -242,7 +242,7 @@ namespace InvestmentReporting.UnitTests {
 		public async Task IsSellPriceOperationMarkedWithAsset() {
 			var stateManager = GetStateManagerWithAsset();
 			var sellUseCase  = GetSellUseCase(stateManager);
-			var readUseCase  = new ReadOperationsUseCase(stateManager);
+			var readUseCase  = new ReadAccountOperationsUseCase(stateManager);
 
 			await sellUseCase.Handle(
 				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _assetId, 1, 1, 1);
@@ -256,7 +256,7 @@ namespace InvestmentReporting.UnitTests {
 		public async Task IsSellFeeOperationMarkedWithAsset() {
 			var stateManager = GetStateManagerWithAsset();
 			var sellUseCase  = GetSellUseCase(stateManager);
-			var readUseCase  = new ReadOperationsUseCase(stateManager);
+			var readUseCase  = new ReadAccountOperationsUseCase(stateManager);
 
 			await sellUseCase.Handle(
 				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _assetId, 1, 1, 1);
