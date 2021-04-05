@@ -22,7 +22,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Content Include="Samples\AlphaDirect_BrokerMoneyMove_Sample.xml" CopyToOutputDirectory="Always" />
+      <Content Include="Samples\AlphaDirect_BrokerMoneyMove_DividendSample.xml" CopyToOutputDirectory="Always" />
+      <Content Include="Samples\AlphaDirect_BrokerMoneyMove_ExpenseSample.xml" CopyToOutputDirectory="Always" />
+      <Content Include="Samples\AlphaDirect_BrokerMoneyMove_IncomeSample.xml" CopyToOutputDirectory="Always" />
     </ItemGroup>
 
 </Project>
