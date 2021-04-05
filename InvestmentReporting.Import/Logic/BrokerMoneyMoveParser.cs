@@ -57,7 +57,10 @@ namespace InvestmentReporting.Import.Logic {
 					$"Failed to retrieve operation details via XPath " +
 					$"'{OperationsXpath}/{OperationTypesXPath}/{CommentXpath}'");
 			}
-			var comment    = commentNode.Attributes?["comment"]?.Value ?? string.Empty;
+			var comment = commentNode.Attributes?["comment"]?.Value ?? string.Empty;
+			if ( !comment.StartsWith("из ") ) {
+				return;
+			}
 			var pCodeNodes = commentNode.SelectNodes(PCodesXpath);
 			if ( pCodeNodes == null ) {
 				throw new UnexpectedFormatException(

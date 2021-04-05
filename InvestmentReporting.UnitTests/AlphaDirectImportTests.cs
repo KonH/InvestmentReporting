@@ -58,6 +58,26 @@ namespace InvestmentReporting.UnitTests {
 		}
 
 		[Test]
+		public void IsIncomeTransfersSkipDividend() {
+			var sample = LoadSample("AlphaDirect_BrokerMoneyMove_DividendSample.xml");
+			var parser = new BrokerMoneyMoveParser();
+
+			var actualTransfers = parser.ReadIncomeTransfers(sample);
+
+			actualTransfers.Should().BeEmpty();
+		}
+
+		[Test]
+		public void IsIncomeTransfersSkipExpenseTransfer() {
+			var sample = LoadSample("AlphaDirect_BrokerMoneyMove_ExpenseSample.xml");
+			var parser = new BrokerMoneyMoveParser();
+
+			var actualTransfers = parser.ReadIncomeTransfers(sample);
+
+			actualTransfers.Should().BeEmpty();
+		}
+
+		[Test]
 		public async Task IsIncomeTransfersImported() {
 			var stateManager = GetStateManager();
 			var sample       = LoadSample("AlphaDirect_BrokerMoneyMove_IncomeSample.xml");
