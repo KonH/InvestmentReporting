@@ -9,10 +9,10 @@ using InvestmentReporting.Domain.UseCase.Exceptions;
 
 namespace InvestmentReporting.Domain.UseCase {
 	public sealed class CreateAccountUseCase {
-		readonly StateManager _stateManager;
-		readonly IIdGenerator _idGenerator;
+		readonly IStateManager _stateManager;
+		readonly IIdGenerator  _idGenerator;
 
-		public CreateAccountUseCase(StateManager stateManager, IIdGenerator idGenerator) {
+		public CreateAccountUseCase(IStateManager stateManager, IIdGenerator idGenerator) {
 			_stateManager = stateManager;
 			_idGenerator  = idGenerator;
 		}
@@ -33,7 +33,7 @@ namespace InvestmentReporting.Domain.UseCase {
 				throw new DuplicateAccountException();
 			}
 			var id = new AccountId(_idGenerator.GenerateNewId());
-			await _stateManager.PushCommand(new CreateAccountCommand(date, user, broker, id, currency, displayName));
+			await _stateManager.AddCommand(new CreateAccountCommand(date, user, broker, id, currency, displayName));
 		}
 	}
 }

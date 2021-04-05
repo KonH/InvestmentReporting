@@ -12,11 +12,11 @@ namespace InvestmentReporting.Domain.UseCase {
 		readonly ExpenseCategory _buyAssetCategory    = new("Asset Buy");
 		readonly ExpenseCategory _buyAssetFeeCategory = new("Asset Buy Broker Fee");
 
-		readonly StateManager      _stateManager;
+		readonly IStateManager     _stateManager;
 		readonly IIdGenerator      _idGenerator;
 		readonly AddExpenseUseCase _addExpense;
 
-		public BuyAssetUseCase(StateManager stateManager, IIdGenerator idGenerator, AddExpenseUseCase addExpense) {
+		public BuyAssetUseCase(IStateManager stateManager, IIdGenerator idGenerator, AddExpenseUseCase addExpense) {
 			_stateManager = stateManager;
 			_idGenerator  = idGenerator;
 			_addExpense   = addExpense;
@@ -54,10 +54,10 @@ namespace InvestmentReporting.Domain.UseCase {
 			AssetId id;
 			if ( asset != null ) {
 				id = asset.Id;
-				await _stateManager.PushCommand(new IncreaseAssetCommand(date, user, brokerId, asset.Id, count));
+				await _stateManager.AddCommand(new IncreaseAssetCommand(date, user, brokerId, asset.Id, count));
 			} else {
 				id = new AssetId(_idGenerator.GenerateNewId());
-				await _stateManager.PushCommand(new AddAssetCommand(date, user, brokerId, id, name, category, ticker, count));
+				await _stateManager.AddCommand(new AddAssetCommand(date, user, brokerId, id, name, category, ticker, count));
 			}
 			switch ( price ) {
 				case < 0:

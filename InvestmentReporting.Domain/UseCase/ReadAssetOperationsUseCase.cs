@@ -8,9 +8,9 @@ using InvestmentReporting.Domain.Logic;
 
 namespace InvestmentReporting.Domain.UseCase {
 	public sealed class ReadAssetOperationsUseCase {
-		readonly StateManager _stateManager;
+		readonly IStateManager _stateManager;
 
-		public ReadAssetOperationsUseCase(StateManager stateManager) {
+		public ReadAssetOperationsUseCase(IStateManager stateManager) {
 			_stateManager = stateManager;
 		}
 

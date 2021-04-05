@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using InvestmentReporting.Data.Core.Model;
 using InvestmentReporting.Domain.Command;
 using InvestmentReporting.Domain.Entity;
 using InvestmentReporting.Domain.Logic;
 
 namespace InvestmentReporting.Import.Logic {
-	public sealed class TransactionStateManager {
+	public sealed class TransactionStateManager : IStateManager {
 		readonly StateManager _stateManager;
 
 		readonly List<ICommand> _commands = new();
@@ -15,16 +16,21 @@ namespace InvestmentReporting.Import.Logic {
 			_stateManager = stateManager;
 		}
 
-		public Task<ReadOnlyState> Read(DateTimeOffset date, UserId id) =>
+		public Task<ReadOnlyState> ReadState(DateTimeOffset date, UserId id) =>
 			_stateManager.ReadState(date, id);
 
-		public void Add(ICommand command) {
+		public Task<IReadOnlyCollection<ICommandModel>> ReadCommands(
+			DateTimeOffset startDate, DateTimeOffset endDate, UserId id) =>
+			_stateManager.ReadCommands(startDate, endDate, id);
+
+		public Task AddCommand(ICommand command) {
 			_commands.Add(command);
+			return Task.CompletedTask;
 		}
 
 		public async Task Push() {
 			foreach ( var command in _commands ) {
-				await _stateManager.PushCommand(command);
+				await _stateManager.AddCommand(command);
 			}
 		}
 	}

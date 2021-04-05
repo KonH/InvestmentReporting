@@ -9,10 +9,10 @@ using InvestmentReporting.Domain.UseCase.Exceptions;
 
 namespace InvestmentReporting.Domain.UseCase {
 	public sealed class CreateCurrencyUseCase {
-		readonly StateManager _stateManager;
-		readonly IIdGenerator _idGenerator;
+		readonly IStateManager _stateManager;
+		readonly IIdGenerator  _idGenerator;
 
-		public CreateCurrencyUseCase(StateManager stateManager, IIdGenerator idGenerator) {
+		public CreateCurrencyUseCase(IStateManager stateManager, IIdGenerator idGenerator) {
 			_stateManager = stateManager;
 			_idGenerator  = idGenerator;
 		}
@@ -29,7 +29,7 @@ namespace InvestmentReporting.Domain.UseCase {
 				throw new DuplicateCurrencyException();
 			}
 			var id = new CurrencyId(_idGenerator.GenerateNewId());
-			await _stateManager.PushCommand(new CreateCurrencyCommand(date, user, id, code, format));
+			await _stateManager.AddCommand(new CreateCurrencyCommand(date, user, id, code, format));
 		}
 	}
 }

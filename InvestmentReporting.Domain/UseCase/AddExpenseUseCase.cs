@@ -9,10 +9,10 @@ using InvestmentReporting.Domain.UseCase.Exceptions;
 
 namespace InvestmentReporting.Domain.UseCase {
 	public sealed class AddExpenseUseCase {
-		readonly StateManager _stateManager;
-		readonly IIdGenerator _idGenerator;
+		readonly IStateManager _stateManager;
+		readonly IIdGenerator  _idGenerator;
 
-		public AddExpenseUseCase(StateManager stateManager, IIdGenerator idGenerator) {
+		public AddExpenseUseCase(IStateManager stateManager, IIdGenerator idGenerator) {
 			_stateManager = stateManager;
 			_idGenerator  = idGenerator;
 		}
@@ -38,7 +38,7 @@ namespace InvestmentReporting.Domain.UseCase {
 				throw new AssetNotFoundException();
 			}
 			var id = new OperationId(_idGenerator.GenerateNewId());
-			await _stateManager.PushCommand(new AddExpenseCommand(
+			await _stateManager.AddCommand(new AddExpenseCommand(
 				date, user, broker, account, id, amount, category, asset));
 		}
 	}

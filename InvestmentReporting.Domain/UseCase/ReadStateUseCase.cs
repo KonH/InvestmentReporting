@@ -6,9 +6,9 @@ using InvestmentReporting.Domain.UseCase.Exceptions;
 
 namespace InvestmentReporting.Domain.UseCase {
 	public sealed class ReadStateUseCase {
-		readonly StateManager _stateManager;
+		readonly IStateManager _stateManager;
 
-		public ReadStateUseCase(StateManager stateManager) {
+		public ReadStateUseCase(IStateManager stateManager) {
 			_stateManager = stateManager;
 		}
 

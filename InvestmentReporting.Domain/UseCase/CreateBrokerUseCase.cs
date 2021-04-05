@@ -9,10 +9,10 @@ using InvestmentReporting.Domain.UseCase.Exceptions;
 
 namespace InvestmentReporting.Domain.UseCase {
 	public sealed class CreateBrokerUseCase {
-		readonly StateManager _stateManager;
+		readonly IStateManager _stateManager;
 		readonly IIdGenerator  _idGenerator;
 
-		public CreateBrokerUseCase(StateManager stateManager, IIdGenerator idGenerator) {
+		public CreateBrokerUseCase(IStateManager stateManager, IIdGenerator idGenerator) {
 			_stateManager = stateManager;
 			_idGenerator  = idGenerator;
 		}
@@ -26,7 +26,7 @@ namespace InvestmentReporting.Domain.UseCase {
 				throw new DuplicateBrokerException();
 			}
 			var id = new BrokerId(_idGenerator.GenerateNewId());
-			await _stateManager.PushCommand(new CreateBrokerCommand(date, user, id, displayName));
+			await _stateManager.AddCommand(new CreateBrokerCommand(date, user, id, displayName));
 		}
 	}
 }

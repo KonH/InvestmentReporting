@@ -11,11 +11,11 @@ namespace InvestmentReporting.Domain.UseCase {
 		readonly IncomeCategory  _sellAssetCategory    = new("Asset Sell");
 		readonly ExpenseCategory _sellAssetFeeCategory = new("Asset Sell Broker Fee");
 
-		readonly StateManager      _stateManager;
+		readonly IStateManager     _stateManager;
 		readonly AddIncomeUseCase  _addIncome;
 		readonly AddExpenseUseCase _addExpense;
 
-		public SellAssetUseCase(StateManager stateManager, AddIncomeUseCase addIncome, AddExpenseUseCase addExpense) {
+		public SellAssetUseCase(IStateManager stateManager, AddIncomeUseCase addIncome, AddExpenseUseCase addExpense) {
 			_stateManager = stateManager;
 			_addIncome    = addIncome;
 			_addExpense   = addExpense;
@@ -71,9 +71,9 @@ namespace InvestmentReporting.Domain.UseCase {
 						date, user, brokerId, feeAccountId, fee, _sellAssetFeeCategory, assetId);
 					break;
 			}
-			await _stateManager.PushCommand(new ReduceAssetCommand(date, user, brokerId, assetId, count));
+			await _stateManager.AddCommand(new ReduceAssetCommand(date, user, brokerId, assetId, count));
 			if ( remainingCount == 0 ) {
-				await _stateManager.PushCommand(new RemoveAssetCommand(date, user, brokerId, assetId));
+				await _stateManager.AddCommand(new RemoveAssetCommand(date, user, brokerId, assetId));
 			}
 		}
 	}

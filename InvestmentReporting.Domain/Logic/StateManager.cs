@@ -7,7 +7,7 @@ using InvestmentReporting.Domain.Command;
 using InvestmentReporting.Domain.Entity;
 
 namespace InvestmentReporting.Domain.Logic {
-	public sealed class StateManager {
+	public sealed class StateManager : IStateManager {
 		readonly IStateRepository _repository;
 
 		readonly Dictionary<Type, Func<ICommand, ICommandModel>> _persists = new();
@@ -42,7 +42,7 @@ namespace InvestmentReporting.Domain.Logic {
 			DateTimeOffset startDate, DateTimeOffset endDate, UserId id) =>
 			await _repository.ReadCommands(startDate, endDate, id);
 
-		public async Task PushCommand(ICommand command) {
+		public async Task AddCommand(ICommand command) {
 			var model = _persists[command.GetType()](command);
 			await _repository.SaveCommand(model);
 		}
