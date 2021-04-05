@@ -31,7 +31,6 @@ namespace InvestmentReporting.ImportService.Controllers {
 			var xmlDoc = LoadXml(report);
 			var userId = new UserId(User.Identity?.Name ?? string.Empty);
 			await _useCase.Handle(date, userId, new(broker), xmlDoc);
-			_logger.LogInformation(xmlDoc.InnerXml);
 			return Ok();
 		}
 
