@@ -175,6 +175,58 @@ namespace InvestmentReporting.UnitTests {
 			rubAccount.Balance.Should().Be(-200);
 		}
 
+		[Test]
+		public void IsTradesRead() {
+			var sample = LoadSample("AlphaDirect_BrokerMoneyMove_BuySellAssetSample.xml");
+			var parser = new TradeParser();
+
+			var actualTrades = parser.ReadTrades(sample);
+
+			var expectedTrades = new[] {
+				new Trade(DateTimeOffset.Parse("2000-02-02T01:02:03+3"), "US0000000001", "AssetName1", 2, "USD", 200, 20),
+				new Trade(DateTimeOffset.Parse("2000-02-02T01:02:03+3"), "RU0000000001", "AssetName2", 3, "RUB", 300, 30),
+				new Trade(DateTimeOffset.Parse("2000-03-03T03:04:05+3"), "US0000000001", "AssetName1", -1, "USD", 101, 10.1m),
+				new Trade(DateTimeOffset.Parse("2000-03-03T03:04:05+3"), "RU0000000001", "AssetName2", -1, "RUB", 100, 10),
+			};
+			actualTrades.Should().Contain(expectedTrades);
+		}
+
+		[Test]
+		public async Task IsAssetsImported() {
+			var stateManager = GetStateManager();
+			var sample       = LoadSample("AlphaDirect_BrokerMoneyMove_BuySellAssetSample.xml");
+			var useCase      = GetUseCase(stateManager);
+
+			await useCase.Handle(_date, _userId, _brokerId, sample);
+
+			await AssertAssets(stateManager);
+		}
+
+		[Test]
+		public async Task IsAssetsNotDuplicated() {
+			var stateManager = GetStateManager();
+			var sample       = LoadSample("AlphaDirect_BrokerMoneyMove_BuySellAssetSample.xml");
+			var useCase      = GetUseCase(stateManager);
+
+			await useCase.Handle(_date, _userId, _brokerId, sample);
+			await useCase.Handle(_date, _userId, _brokerId, sample);
+
+			await AssertAssets(stateManager);
+		}
+
+		async Task AssertAssets(StateManager stateManager) {
+			var state  = await stateManager.ReadState(DateTimeOffset.MaxValue, _userId);
+			var broker = state.Brokers.First(b => b.Id == _brokerId);
+			broker.Inventory.Should().Contain(a =>
+				(a.Isin == "US0000000001") && (a.Count == 1));
+			broker.Inventory.Should().Contain(a =>
+				(a.Isin == "RU0000000001") && (a.Count == 2));
+			var usdAccount = broker.Accounts.First(a => a.Id == _usdAccountId);
+			usdAccount.Balance.Should().Be(-200 + 101);
+			var rubAccount = broker.Accounts.First(a => a.Id == _rubAccountId);
+			rubAccount.Balance.Should().Be(-300 + 100 - 20 - 30 - 10.1m - 10);
+		}
+
 		XmlDocument LoadSample(string name) {
 			using var file = File.OpenRead(Path.Combine("Samples", name));
 			var xml = new XmlDocument();
@@ -195,11 +247,16 @@ namespace InvestmentReporting.UnitTests {
 		ImportUseCase GetUseCase(StateManager stateManager) {
 			var transStateManager = new TransactionStateManager(stateManager);
 			var moneyMoveParser   = new BrokerMoneyMoveParser();
+			var tradeParser       = new TradeParser();
 			var idGenerator       = new GuidIdGenerator();
+			var addIncomeUseCase  = new AddIncomeUseCase(stateManager, idGenerator);
+			var addExpenseUseCase = new AddExpenseUseCase(stateManager, idGenerator);
 			return new ImportUseCase(
-				transStateManager, moneyMoveParser,
-				new AddIncomeUseCase(stateManager, idGenerator),
-				new AddExpenseUseCase(stateManager, idGenerator));
+				transStateManager, moneyMoveParser, tradeParser,
+				addIncomeUseCase,
+				addExpenseUseCase,
+				new BuyAssetUseCase(stateManager, idGenerator, addExpenseUseCase),
+				new SellAssetUseCase(stateManager, addIncomeUseCase, addExpenseUseCase));
 		}
 	}
 }

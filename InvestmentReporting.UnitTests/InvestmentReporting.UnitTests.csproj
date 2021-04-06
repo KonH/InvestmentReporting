@@ -25,6 +25,7 @@
       <Content Include="Samples\AlphaDirect_BrokerMoneyMove_DividendSample.xml" CopyToOutputDirectory="Always" />
       <Content Include="Samples\AlphaDirect_BrokerMoneyMove_ExpenseSample.xml" CopyToOutputDirectory="Always" />
       <Content Include="Samples\AlphaDirect_BrokerMoneyMove_IncomeSample.xml" CopyToOutputDirectory="Always" />
+      <Content Include="Samples\AlphaDirect_BrokerMoneyMove_BuySellAssetSample.xml" CopyToOutputDirectory="Always" />
     </ItemGroup>
 
 </Project>

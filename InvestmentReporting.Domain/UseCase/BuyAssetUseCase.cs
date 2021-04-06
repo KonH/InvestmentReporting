@@ -22,7 +22,7 @@ namespace InvestmentReporting.Domain.UseCase {
 			_addExpense   = addExpense;
 		}
 
-		public async Task Handle(
+		public async Task<AssetId> Handle(
 			DateTimeOffset date, UserId user, BrokerId brokerId, AccountId payAccountId, AccountId feeAccountId,
 			string name, AssetCategory category, AssetISIN isin, decimal price, decimal fee, int count) {
 			if ( string.IsNullOrWhiteSpace(name) ) {
@@ -79,6 +79,7 @@ namespace InvestmentReporting.Domain.UseCase {
 						date, user, brokerId, feeAccountId, fee, _buyAssetFeeCategory, id);
 					break;
 			}
+			return id;
 		}
 	}
 }

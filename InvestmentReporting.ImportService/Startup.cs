@@ -43,8 +43,11 @@ namespace InvestmentReporting.ImportService {
 			services.AddScoped<IStateManager>(sp => sp.GetRequiredService<TransactionStateManager>());
 			services.AddScoped<ImportUseCase>();
 			services.AddScoped<BrokerMoneyMoveParser>();
+			services.AddScoped<TradeParser>();
 			services.AddScoped<AddIncomeUseCase>();
 			services.AddScoped<AddExpenseUseCase>();
+			services.AddScoped<BuyAssetUseCase>();
+			services.AddScoped<SellAssetUseCase>();
 		}
 
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
