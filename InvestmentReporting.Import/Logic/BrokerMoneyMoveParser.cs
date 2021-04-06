@@ -6,6 +6,8 @@ using InvestmentReporting.Import.Exceptions;
 
 namespace InvestmentReporting.Import.Logic {
 	public sealed class BrokerMoneyMoveParser {
+		delegate TResult Factory<out TResult>(DateTimeOffset lastUpdate, string fullName, string currency, decimal amount);
+
 		const string OperationsXpath =
 			"Report[@Name=\"MyBroker\"]/*/Report[@Name=\"3_BrokerMoneyMove\"]/Tablix1/settlement_date_Collection/settlement_date/rn_Collection/rn";
 
@@ -30,7 +32,7 @@ namespace InvestmentReporting.Import.Logic {
 
 		IReadOnlyCollection<T> ReadTransfers<T>(
 			XmlDocument report, Func<string, bool> commentFilter,
-			Func<DateTimeOffset, string, string, decimal, T> factory) {
+			Factory<T> factory) {
 			var operations = report.SelectNodes(OperationsXpath);
 			if ( operations == null ) {
 				throw new UnexpectedFormatException($"Failed to retrieve operations via XPath '{OperationsXpath}'");
@@ -44,7 +46,7 @@ namespace InvestmentReporting.Import.Logic {
 
 		static void HandleOperationNode<T>(
 			XmlNode operationNode, List<T> result,
-			Func<string, bool> commentFilter, Func<DateTimeOffset, string, string, decimal, T> factory) {
+			Func<string, bool> commentFilter, Factory<T> factory) {
 			var rawLastUpdateStr =
 				operationNode.Attributes?["last_update"]?.Value ??
 				throw new UnexpectedFormatException("Failed to retrieve 'last_update' operation attribute");
@@ -66,7 +68,7 @@ namespace InvestmentReporting.Import.Logic {
 
 		static void HandleOperationTypeNode<T>(
 			XmlNode operationTypeNode, DateTimeOffset lastUpdate, List<T> result,
-			Func<string, bool> commentFilter, Func<DateTimeOffset, string, string, decimal, T> factory) {
+			Func<string, bool> commentFilter, Factory<T> factory) {
 			var operationType = operationTypeNode.Attributes?["oper_type"]?.Value ?? string.Empty;
 			var commentNode   = operationTypeNode.SelectSingleNode(CommentXpath);
 			if ( commentNode == null ) {
