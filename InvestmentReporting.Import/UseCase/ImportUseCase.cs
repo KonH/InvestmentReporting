@@ -40,6 +40,7 @@ namespace InvestmentReporting.Import.UseCase {
 		}
 
 		public async Task Handle(DateTimeOffset date, UserId user, BrokerId brokerId, XmlDocument report) {
+			await _stateManager.Prepare(user);
 			report = _sanitizer.Sanitize(report);
 			var state = await _stateManager.ReadState(date, user);
 			var broker = state.Brokers.FirstOrDefault(b => b.Id == brokerId);
