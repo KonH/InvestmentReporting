@@ -18,7 +18,7 @@ namespace InvestmentReporting.UnitTests {
 		readonly CurrencyId     _currencyId   = new("currency");
 		readonly AccountId      _payAccountId = new("payAccount");
 		readonly AccountId      _feeAccountId = new("feeAccount");
-		readonly AssetTicker    _ticker       = new("TCKR");
+		readonly AssetISIN      _isin         = new("TCKR");
 		readonly AssetCategory  _category     = new("stock");
 		readonly AssetId        _assetId      = new("asset");
 
@@ -28,13 +28,13 @@ namespace InvestmentReporting.UnitTests {
 			var buyUseCase   = GetBuyUseCase(stateManager);
 
 			await buyUseCase.Handle(
-				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _name, _category, _ticker, 1, 1, 1);
+				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _name, _category, _isin, 1, 1, 1);
 
 			var state  = await stateManager.ReadState(_date, _userId);
 			var broker = state.Brokers.First(b => b.Id == _brokerId);
 			broker.Inventory.Should().Contain(a =>
 				(a.Category == _category) &&
-				(a.Ticker == _ticker) &&
+				(a.Isin == _isin) &&
 				(a.Count == 1));
 		}
 
@@ -45,7 +45,7 @@ namespace InvestmentReporting.UnitTests {
 			var readUseCase  = new ReadAccountOperationsUseCase(stateManager);
 
 			await buyUseCase.Handle(
-				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _name, _category, _ticker, 1, 1, 1);
+				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _name, _category, _isin, 1, 1, 1);
 
 			var operations = await readUseCase.Handle(_date, _date, _userId, _brokerId, _payAccountId);
 			operations.Should().NotBeEmpty();
@@ -59,7 +59,7 @@ namespace InvestmentReporting.UnitTests {
 			var readUseCase  = new ReadAccountOperationsUseCase(stateManager);
 
 			await buyUseCase.Handle(
-				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _name, _category, _ticker, 1, 1, 1);
+				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _name, _category, _isin, 1, 1, 1);
 
 			var operations = await readUseCase.Handle(_date, _date, _userId, _brokerId, _feeAccountId);
 			operations.Should().NotBeEmpty();
@@ -72,12 +72,12 @@ namespace InvestmentReporting.UnitTests {
 			var buyUseCase   = GetBuyUseCase(stateManager);
 
 			await buyUseCase.Handle(
-				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _name, _category, _ticker, 1, 1, 1);
+				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _name, _category, _isin, 1, 1, 1);
 
 			var state  = await stateManager.ReadState(_date, _userId);
 			var broker = state.Brokers.First(b => b.Id == _brokerId);
 			broker.Inventory.Should().Contain(a =>
-				(a.Ticker == _ticker) &&
+				(a.Isin == _isin) &&
 				(a.Count == 3));
 		}
 
@@ -88,7 +88,7 @@ namespace InvestmentReporting.UnitTests {
 			var price        = 100;
 
 			await buyUseCase.Handle(
-				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _name, _category, _ticker, price, 1, 1);
+				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _name, _category, _isin, price, 1, 1);
 
 			var state   = await stateManager.ReadState(_date, _userId);
 			var broker  = state.Brokers.First(b => b.Id == _brokerId);
@@ -103,7 +103,7 @@ namespace InvestmentReporting.UnitTests {
 			var fee          = 100;
 
 			await buyUseCase.Handle(
-				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _name, _category, _ticker, 1, fee, 1);
+				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _name, _category, _isin, 1, fee, 1);
 
 			var state   = await stateManager.ReadState(_date, _userId);
 			var broker  = state.Brokers.First(b => b.Id == _brokerId);
@@ -117,7 +117,7 @@ namespace InvestmentReporting.UnitTests {
 			var buyUseCase   = GetBuyUseCase(stateManager);
 
 			Assert.DoesNotThrowAsync(() => buyUseCase.Handle(
-				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _name, _category, _ticker, 0, 1, 1));
+				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _name, _category, _isin, 0, 1, 1));
 		}
 
 		[Test]
@@ -126,7 +126,7 @@ namespace InvestmentReporting.UnitTests {
 			var buyUseCase   = GetBuyUseCase(stateManager);
 
 			Assert.DoesNotThrowAsync(() => buyUseCase.Handle(
-				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _name, _category, _ticker, 1, 0, 1));
+				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _name, _category, _isin, 1, 0, 1));
 		}
 
 		[Test]
@@ -135,7 +135,7 @@ namespace InvestmentReporting.UnitTests {
 			var buyUseCase   = GetBuyUseCase(stateManager);
 
 			Assert.ThrowsAsync<InvalidBrokerException>(() => buyUseCase.Handle(
-				_date, _userId, new(string.Empty), _payAccountId, _feeAccountId, _name, _category, _ticker, 1, 1, 1));
+				_date, _userId, new(string.Empty), _payAccountId, _feeAccountId, _name, _category, _isin, 1, 1, 1));
 		}
 
 		[Test]
@@ -144,7 +144,7 @@ namespace InvestmentReporting.UnitTests {
 			var buyUseCase   = GetBuyUseCase(stateManager);
 
 			Assert.ThrowsAsync<InvalidAccountException>(() => buyUseCase.Handle(
-				_date, _userId, _brokerId, new(string.Empty), _feeAccountId, _name, _category, _ticker, 1, 1, 1));
+				_date, _userId, _brokerId, new(string.Empty), _feeAccountId, _name, _category, _isin, 1, 1, 1));
 		}
 
 		[Test]
@@ -153,7 +153,7 @@ namespace InvestmentReporting.UnitTests {
 			var buyUseCase   = GetBuyUseCase(stateManager);
 
 			Assert.ThrowsAsync<InvalidAccountException>(() => buyUseCase.Handle(
-				_date, _userId, _brokerId, _payAccountId, new(string.Empty), _name, _category, _ticker, 1, 1, 1));
+				_date, _userId, _brokerId, _payAccountId, new(string.Empty), _name, _category, _isin, 1, 1, 1));
 		}
 
 		[Test]
@@ -162,7 +162,7 @@ namespace InvestmentReporting.UnitTests {
 			var buyUseCase   = GetBuyUseCase(stateManager);
 
 			Assert.ThrowsAsync<InvalidAssetException>(() => buyUseCase.Handle(
-				_date, _userId, _brokerId, _payAccountId, _feeAccountId, string.Empty, _category, _ticker, 1, 1, 1));
+				_date, _userId, _brokerId, _payAccountId, _feeAccountId, string.Empty, _category, _isin, 1, 1, 1));
 		}
 
 		[Test]
@@ -171,11 +171,11 @@ namespace InvestmentReporting.UnitTests {
 			var buyUseCase   = GetBuyUseCase(stateManager);
 
 			Assert.ThrowsAsync<InvalidAssetException>(() => buyUseCase.Handle(
-				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _name, new(string.Empty), _ticker, 1, 1, 1));
+				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _name, new(string.Empty), _isin, 1, 1, 1));
 		}
 
 		[Test]
-		public void IsAssetFailedToBuyWithEmptyTicker() {
+		public void IsAssetFailedToBuyWithEmptyISIN() {
 			var stateManager = GetStateManager();
 			var buyUseCase   = GetBuyUseCase(stateManager);
 
@@ -189,7 +189,7 @@ namespace InvestmentReporting.UnitTests {
 			var buyUseCase   = GetBuyUseCase(stateManager);
 
 			Assert.ThrowsAsync<InvalidCountException>(() => buyUseCase.Handle(
-				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _name, _category, _ticker, 1, 1, 0));
+				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _name, _category, _isin, 1, 1, 0));
 		}
 
 		[Test]
@@ -198,7 +198,7 @@ namespace InvestmentReporting.UnitTests {
 			var buyUseCase   = GetBuyUseCase(stateManager);
 
 			Assert.ThrowsAsync<InvalidPriceException>(() => buyUseCase.Handle(
-				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _name, _category, _ticker,-1, 1, 1));
+				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _name, _category, _isin,-1, 1, 1));
 		}
 
 		[Test]
@@ -207,7 +207,7 @@ namespace InvestmentReporting.UnitTests {
 			var buyUseCase   = GetBuyUseCase(stateManager);
 
 			Assert.ThrowsAsync<InvalidPriceException>(() => buyUseCase.Handle(
-				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _name, _category, _ticker, 1, -1, 1));
+				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _name, _category, _isin, 1, -1, 1));
 		}
 
 		[Test]
@@ -234,7 +234,7 @@ namespace InvestmentReporting.UnitTests {
 			var state  = await stateManager.ReadState(_date, _userId);
 			var broker = state.Brokers.First(b => b.Id == _brokerId);
 			broker.Inventory.Should().Contain(a =>
-				(a.Ticker == _ticker) &&
+				(a.Isin == _isin) &&
 				(a.Count == 1));
 		}
 
@@ -406,6 +406,6 @@ namespace InvestmentReporting.UnitTests {
 		StateManager GetStateManager() => GetStateBuilder().Build();
 
 		StateManager GetStateManagerWithAsset() =>
-			GetStateBuilder().With(_assetId, _ticker, 2).Build();
+			GetStateBuilder().With(_assetId, _isin, 2).Build();
 	}
 }

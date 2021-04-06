@@ -1,5 +1,5 @@
 <template>
-	<b>{{ asset.ticker }} {{ asset.name }} x{{ asset.count }}</b>
+	<b>{{ asset.isin }} {{ asset.name }} x{{ asset.count }}</b>
 	<router-link :to="`/broker/${brokerId}/asset/${asset.id}/operations`" class="btn btn-secondary ml-2"
 		>Operations</router-link
 	>

@@ -29,16 +29,16 @@ namespace InvestmentReporting.StateService.Controllers {
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		public async Task<IActionResult> BuyAsset(
 			[Required] DateTimeOffset date, [Required] string broker, [Required] string payAccount,
-			[Required] string feeAccount, [Required] string name, [Required] string category, [Required] string ticker,
+			[Required] string feeAccount, [Required] string name, [Required] string category, [Required] string isin,
 			[Required] decimal price, [Required] decimal fee, [Required] int count) {
 			var userId = new UserId(User.Identity?.Name ?? string.Empty);
 			_logger.LogInformation(
-				$"Buy asset (name: '{name}', category: '{category}', ticker: '{ticker}', price: {price}, fee: {fee}, count: {count}) " +
+				$"Buy asset (name: '{name}', category: '{category}', isin: '{isin}', price: {price}, fee: {fee}, count: {count}) " +
 				$"at '{date}' for user '{userId}' on broker '{broker}' and pay account '{payAccount}' / fee account '{feeAccount}'");
 			try {
 				await _buyUseCase.Handle(
 					date, userId, new(broker), new(payAccount), new(feeAccount),
-					name, new(category), new(ticker), price, fee, count);
+					name, new(category), new(isin), price, fee, count);
 				return StatusCode(StatusCodes.Status201Created);
 			} catch ( Exception e ) {
 				_logger.LogError(e.ToString());

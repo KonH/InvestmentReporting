@@ -20,8 +20,8 @@
 	</div>
 	<div class="form-group">
 		<label>
-			Ticker:
-			<input ref="ticker" type="text" class="form-control" />
+			ISIN:
+			<input ref="isin" type="text" class="form-control" />
 		</label>
 	</div>
 	<div class="form-group">
@@ -90,8 +90,8 @@ export default class BuyAsset extends Vue {
 	@Ref('category')
 	categoryInput!: HTMLInputElement;
 
-	@Ref('ticker')
-	tickerInput!: HTMLInputElement;
+	@Ref('isin')
+	isinInput!: HTMLInputElement;
 
 	@Ref('price')
 	priceInput!: HTMLInputElement;
@@ -134,7 +134,7 @@ export default class BuyAsset extends Vue {
 				feeAccount: this.feeAccountSelect.value,
 				name: this.nameInput.value,
 				category: this.categoryInput.value,
-				ticker: this.tickerInput.value,
+				isin: this.isinInput.value,
 				price: Number.parseFloat(this.priceInput.value),
 				fee: Number.parseFloat(this.feeInput.value),
 				count: Number.parseFloat(this.countInput.value),

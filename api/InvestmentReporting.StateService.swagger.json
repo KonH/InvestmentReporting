@@ -102,7 +102,7 @@
             }
           },
           {
-            "name": "ticker",
+            "name": "isin",
             "in": "query",
             "required": true,
             "schema": {
@@ -658,7 +658,7 @@
             "type": "string",
             "nullable": true
           },
-          "ticker": {
+          "isin": {
             "type": "string",
             "nullable": true
           },

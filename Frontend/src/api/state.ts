@@ -33,7 +33,7 @@ export interface AssetDto {
   id?: string | null;
   name?: string | null;
   category?: string | null;
-  ticker?: string | null;
+  isin?: string | null;
 
   /** @format int32 */
   count?: number;
@@ -285,7 +285,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         feeAccount: string;
         name: string;
         category: string;
-        ticker: string;
+        isin: string;
         price: number;
         fee: number;
         count: number;

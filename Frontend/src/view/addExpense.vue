@@ -77,7 +77,7 @@ export default class AddExpense extends Vue {
 
 	renderAsset(asset: AssetDto | null) {
 		if (asset?.id) {
-			return `${asset.name} (${asset.ticker})`;
+			return `${asset.name} (${asset.isin})`;
 		}
 		return '';
 	}

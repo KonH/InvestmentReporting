@@ -24,14 +24,14 @@ namespace InvestmentReporting.Domain.UseCase {
 
 		public async Task Handle(
 			DateTimeOffset date, UserId user, BrokerId brokerId, AccountId payAccountId, AccountId feeAccountId,
-			string name, AssetCategory category, AssetTicker ticker, decimal price, decimal fee, int count) {
+			string name, AssetCategory category, AssetISIN isin, decimal price, decimal fee, int count) {
 			if ( string.IsNullOrWhiteSpace(name) ) {
 				throw new InvalidAssetException();
 			}
 			if ( string.IsNullOrWhiteSpace(category.Value) ) {
 				throw new InvalidAssetException();
 			}
-			if ( string.IsNullOrWhiteSpace(ticker.Value) ) {
+			if ( string.IsNullOrWhiteSpace(isin.Value) ) {
 				throw new InvalidAssetException();
 			}
 			if ( count <= 0 ) {
@@ -50,14 +50,14 @@ namespace InvestmentReporting.Domain.UseCase {
 			if ( feeAccount == null ) {
 				throw new InvalidAccountException();
 			}
-			var     asset = broker.Inventory.FirstOrDefault(a => a.Ticker == ticker);
+			var     asset = broker.Inventory.FirstOrDefault(a => a.Isin == isin);
 			AssetId id;
 			if ( asset != null ) {
 				id = asset.Id;
 				await _stateManager.AddCommand(new IncreaseAssetCommand(date, user, brokerId, asset.Id, count));
 			} else {
 				id = new AssetId(_idGenerator.GenerateNewId());
-				await _stateManager.AddCommand(new AddAssetCommand(date, user, brokerId, id, name, category, ticker, count));
+				await _stateManager.AddCommand(new AddAssetCommand(date, user, brokerId, id, name, category, isin, count));
 			}
 			switch ( price ) {
 				case < 0:

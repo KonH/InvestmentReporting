@@ -11,7 +11,7 @@
 			Asset:
 			<select ref="asset" class="form-control">
 				<option v-for="asset in inventory" :key="asset.id" :value="asset.id">
-					{{ asset.ticker }} {{ asset.name }} x{{ asset.count }}
+					{{ asset.isin }} {{ asset.name }} x{{ asset.count }}
 				</option>
 			</select>
 		</label>
