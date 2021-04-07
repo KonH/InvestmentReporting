@@ -6,14 +6,17 @@ using System.Threading.Tasks;
 using InvestmentReporting.Data.Core.Model;
 using InvestmentReporting.Data.Core.Repository;
 using InvestmentReporting.Data.Mongo.Model;
+using Microsoft.Extensions.Logging;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 
 namespace InvestmentReporting.Data.Mongo.Repository {
 	public sealed class MongoStateRepository : IStateRepository {
+		readonly ILogger                           _logger;
 		readonly IMongoCollection<StateEventModel> _collection;
 
-		public MongoStateRepository(IMongoDatabase database) {
+		public MongoStateRepository(ILogger<MongoStateRepository> logger, IMongoDatabase database) {
+			_logger = logger;
 			RegisterCommandModels();
 			_collection = database.GetCollection<StateEventModel>("stateEvents");
 		}
@@ -55,6 +58,7 @@ namespace InvestmentReporting.Data.Mongo.Repository {
 				Model = model
 			};
 			await _collection.InsertOneAsync(dbModel);
+			_logger.LogTrace($"Command saved: {model}");
 		}
 
 		public async Task DeleteCommands(IReadOnlyCollection<ICommandModel> commands) {

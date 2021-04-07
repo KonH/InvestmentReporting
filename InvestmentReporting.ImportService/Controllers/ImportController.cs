@@ -27,10 +27,11 @@ namespace InvestmentReporting.ImportService.Controllers {
 		[ProducesResponseType(StatusCodes.Status201Created)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		public async Task<IActionResult> Post([Required] DateTimeOffset date, [Required] string broker, [Required] IFormFile report) {
-			_logger.LogInformation($"Import for broker: '{broker}'");
+			_logger.LogInformation($"Import for broker '{broker}' started");
 			var xmlDoc = LoadXml(report);
 			var userId = new UserId(User.Identity?.Name ?? string.Empty);
 			await _useCase.Handle(date, userId, new(broker), xmlDoc);
+			_logger.LogInformation($"Import for broker '{broker}' finished");
 			return Ok();
 		}
 
