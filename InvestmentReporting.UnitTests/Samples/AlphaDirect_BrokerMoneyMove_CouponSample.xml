@@ -6,8 +6,8 @@
                 <Details_Collection>
                     <Details trade_no="000000001" db_time="01.01.2000 00:00:00&#xD;&#xA; 01.01.2000 00:00:00"
                              settlement_time="01.01.2000 00:00:00&#xD;&#xA; 01.01.2000 00:00:00" acc_code="000001-000"
-                             place_name="КЦ МФБ" isin_reg="US0000000001" p_name="AssetName1, а.о." qty="1"
-                             Price="100.00000000" summ_trade="100.00" curr_calc="USD" bank_tax="10.00"/>
+                             place_name="МБ ФР" isin_reg="RU0000000001" p_name="ООО &quot;Организация&quot; о.к.б., серия 0000-00" qty="1"
+                             Price="100.00000000" summ_trade="100.00" curr_calc="RUB" bank_tax="10.00"/>
                 </Details_Collection>
             </Tablix2>
         </Report>
@@ -21,25 +21,19 @@
                             <rn last_update="2020-01-01T01:02:03">
                                 <oper_type oper_type="Перевод">
                                     <comment
-                                            comment="{VO00001} Cash Dividend US0000000001 (NAME - XXX YYY) TAX 0.1 USD">
+                                            comment="погашение купона 0000-00-00000-0-0000 (Облигации ООО &quot;Организация&quot;  серии 0000-00) д.ф.22.03.21.(Удержан налог 16 руб.)">
                                         <money_volume_begin1_Collection>
                                             <money_volume_begin1>
                                                 <p_code_Collection>
                                                     <p_code>
-                                                        <p_code p_code="RUB"/>
+                                                        <p_code p_code="RUB" volume="100.00"/>
                                                     </p_code>
                                                     <p_code>
-                                                        <p_code p_code="USD" volume="0.3"/>
+                                                        <p_code p_code="USD"/>
                                                     </p_code>
                                                 </p_code_Collection>
                                             </money_volume_begin1>
                                         </money_volume_begin1_Collection>
-                                        <Textbox95>
-                                            <Textbox83 money_volume="3426.97"/>
-                                            <Textbox84 all_volume="58283.60"/>
-                                        </Textbox95>
-                                        <Textbox93 debet_volume="0.00"/>
-                                        <Textbox11 acc_code="515203-000"/>
                                     </comment>
                                 </oper_type>
                             </rn>

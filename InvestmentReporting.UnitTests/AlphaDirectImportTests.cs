@@ -227,6 +227,92 @@ namespace InvestmentReporting.UnitTests {
 			rubAccount.Balance.Should().Be(-300 + 100 - 20 - 30 - 10.1m - 10);
 		}
 
+		[Test]
+		public void IsDividendTransfersRead() {
+			var sample = LoadSample("AlphaDirect_BrokerMoneyMove_DividendSample.xml");
+			var parser = new BrokerMoneyMoveParser();
+
+			var actualTransfers = parser.ReadDividendTransfers(sample);
+
+			var expectedTransfers = new[] {
+				new IncomeTransfer(DateTimeOffset.Parse("2020-01-01T01:02:03+3"), "Перевод {VO00001} Cash Dividend US0000000001 (NAME - XXX YYY) TAX 0.1 USD", "USD", 0.3m),
+			};
+			actualTransfers.Should().Contain(expectedTransfers);
+		}
+
+		[Test]
+		public async Task IsDividendTransfersImported() {
+			var stateManager = GetStateManager();
+			var sample       = LoadSample("AlphaDirect_BrokerMoneyMove_DividendSample.xml");
+			var useCase      = GetUseCase(stateManager);
+
+			await useCase.Handle(_date, _userId, _brokerId, sample);
+
+			await AssertDividendTransfers(stateManager);
+		}
+
+		[Test]
+		public async Task IsDividendTransfersNotDuplicated() {
+			var stateManager = GetStateManager();
+			var sample       = LoadSample("AlphaDirect_BrokerMoneyMove_DividendSample.xml");
+			var useCase      = GetUseCase(stateManager);
+
+			await useCase.Handle(_date, _userId, _brokerId, sample);
+			await useCase.Handle(_date, _userId, _brokerId, sample);
+
+			await AssertDividendTransfers(stateManager);
+		}
+
+		async Task AssertDividendTransfers(StateManager stateManager) {
+			var state      = await stateManager.ReadState(DateTimeOffset.MaxValue, _userId);
+			var broker     = state.Brokers.First(b => b.Id == _brokerId);
+			var usdAccount = broker.Accounts.First(a => a.Id == _usdAccountId);
+			usdAccount.Balance.Should().Be(-100 + 0.3m);
+		}
+
+		[Test]
+		public void IsCouponTransfersRead() {
+			var sample = LoadSample("AlphaDirect_BrokerMoneyMove_CouponSample.xml");
+			var parser = new BrokerMoneyMoveParser();
+
+			var actualTransfers = parser.ReadCouponTransfers(sample);
+
+			var expectedTransfers = new[] {
+				new IncomeTransfer(DateTimeOffset.Parse("2020-01-01T01:02:03+3"), "Перевод погашение купона 0000-00-00000-0-0000 (Облигации ООО \"Организация\"  серии 0000-00) д.ф.22.03.21.(Удержан налог 16 руб.)", "RUB", 100),
+			};
+			actualTransfers.Should().Contain(expectedTransfers);
+		}
+
+		[Test]
+		public async Task IsCouponTransfersImported() {
+			var stateManager = GetStateManager();
+			var sample       = LoadSample("AlphaDirect_BrokerMoneyMove_CouponSample.xml");
+			var useCase      = GetUseCase(stateManager);
+
+			await useCase.Handle(_date, _userId, _brokerId, sample);
+
+			await AssertCouponTransfers(stateManager);
+		}
+
+		[Test]
+		public async Task IsCouponTransfersNotDuplicated() {
+			var stateManager = GetStateManager();
+			var sample       = LoadSample("AlphaDirect_BrokerMoneyMove_CouponSample.xml");
+			var useCase      = GetUseCase(stateManager);
+
+			await useCase.Handle(_date, _userId, _brokerId, sample);
+			await useCase.Handle(_date, _userId, _brokerId, sample);
+
+			await AssertCouponTransfers(stateManager);
+		}
+
+		async Task AssertCouponTransfers(StateManager stateManager) {
+			var state      = await stateManager.ReadState(DateTimeOffset.MaxValue, _userId);
+			var broker     = state.Brokers.First(b => b.Id == _brokerId);
+			var rubAccount = broker.Accounts.First(a => a.Id == _rubAccountId);
+			rubAccount.Balance.Should().Be(-100 - 10 + 100);
+		}
+
 		XmlDocument LoadSample(string name) {
 			using var file = File.OpenRead(Path.Combine("Samples", name));
 			var xml = new XmlDocument();
@@ -245,7 +331,8 @@ namespace InvestmentReporting.UnitTests {
 				.Build();
 
 		ImportUseCase GetUseCase(StateManager stateManager) {
-			var transStateManager = new TransactionStateManager(stateManager);
+			var loggerFactory     = new TestLoggerFactory();
+			var transStateManager = new TransactionStateManager(loggerFactory, stateManager);
 			var moneyMoveParser   = new BrokerMoneyMoveParser();
 			var tradeParser       = new TradeParser();
 			var idGenerator       = new GuidIdGenerator();

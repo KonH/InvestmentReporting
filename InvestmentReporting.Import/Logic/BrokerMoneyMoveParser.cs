@@ -24,6 +24,18 @@ namespace InvestmentReporting.Import.Logic {
 				comment => comment.StartsWith("из "),
 				(lastUpdate, fullName, currency, amount) => new IncomeTransfer(lastUpdate, fullName, currency, amount));
 
+		public IReadOnlyCollection<IncomeTransfer> ReadDividendTransfers(XmlDocument report) =>
+			ReadTransfers(
+				report,
+				comment => comment.Contains("Cash Dividend"),
+				(lastUpdate, fullName, currency, amount) => new IncomeTransfer(lastUpdate, fullName, currency, amount));
+
+		public IReadOnlyCollection<IncomeTransfer> ReadCouponTransfers(XmlDocument report) =>
+			ReadTransfers(
+				report,
+				comment => comment.StartsWith("погашение купона"),
+				(lastUpdate, fullName, currency, amount) => new IncomeTransfer(lastUpdate, fullName, currency, amount));
+
 		public IReadOnlyCollection<ExpenseTransfer> ReadExpenseTransfers(XmlDocument report) =>
 			ReadTransfers(
 				report,

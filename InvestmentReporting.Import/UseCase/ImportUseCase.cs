@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
 using InvestmentReporting.Data.Core.Model;
@@ -9,11 +10,14 @@ using InvestmentReporting.Domain.Entity;
 using InvestmentReporting.Domain.UseCase;
 using InvestmentReporting.Domain.UseCase.Exceptions;
 using InvestmentReporting.Import.Dto;
+using InvestmentReporting.Import.Exceptions;
 using InvestmentReporting.Import.Logic;
 
 namespace InvestmentReporting.Import.UseCase {
 	public sealed class ImportUseCase {
-		readonly IncomeCategory _incomeTransferCategory   = new("Income Transfer");
+		readonly IncomeCategory  _incomeTransferCategory  = new("Income Transfer");
+		readonly IncomeCategory  _dividendCategory        = new("Share Dividend");
+		readonly IncomeCategory  _couponCategory          = new("Bond Coupon");
 		readonly ExpenseCategory _expenseTransferCategory = new("Expense Transfer");
 
 		readonly XmlSanitizer _sanitizer = new();
@@ -25,6 +29,15 @@ namespace InvestmentReporting.Import.UseCase {
 		readonly AddExpenseUseCase       _addExpenseUseCase;
 		readonly BuyAssetUseCase         _buyAssetUseCase;
 		readonly SellAssetUseCase        _sellAssetUseCase;
+
+		// To receive ISIN from any string
+		readonly Regex _dividendIsinRegex = new("(\\w{2}\\d{10})");
+
+		// To receive organization name and series from coupon comment
+		readonly Regex _couponRegex = new("\\(Облигации (.*) сери.*(\\d{4}-\\d{2})\\)");
+
+		// To receive organization name and series from asset name
+		readonly Regex _bondRegex = new("(.*) сери.*(\\d{4}-\\d{2})");
 
 		public ImportUseCase(
 			TransactionStateManager stateManager, BrokerMoneyMoveParser moneyMoveParser, TradeParser tradeParser,
@@ -63,7 +76,11 @@ namespace InvestmentReporting.Import.UseCase {
 			await FillExpenseTransfers(user, brokerId, expenseTransfers, currencyAccounts, expenseAccountModels);
 			var addAssetModels    = Filter<AddAssetModel>(allCommands);
 			var reduceAssetModels = Filter<ReduceAssetModel>(allCommands);
-			await FillTrades(user, brokerId, trades, currencyAccounts, addAssetModels, reduceAssetModels);
+			var assets            = await FillTrades(user, brokerId, trades, currencyAccounts, addAssetModels, reduceAssetModels);
+			var dividendTransfers = _moneyMoveParser.ReadDividendTransfers(report);
+			await FillDividends(user, brokerId, dividendTransfers, currencyAccounts, incomeAccountModels, assets);
+			var couponTransfers = _moneyMoveParser.ReadCouponTransfers(report);
+			await FillCoupons(user, brokerId, couponTransfers, currencyAccounts, incomeAccountModels, trades, assets);
 			await _stateManager.Push();
 		}
 
@@ -106,7 +123,7 @@ namespace InvestmentReporting.Import.UseCase {
 			}
 		}
 
-		async Task FillTrades(
+		async Task<Dictionary<string, AssetId>> FillTrades(
 			UserId user, BrokerId brokerId, IReadOnlyCollection<Trade> trades,
 			Dictionary<string, AccountId> currencyAccounts,
 			AddAssetModel[] addModels, ReduceAssetModel[] reduceModels) {
@@ -143,6 +160,77 @@ namespace InvestmentReporting.Import.UseCase {
 					await _sellAssetUseCase.Handle(date, user, brokerId, payAccount, feeAccount, assetId, price, fee, reduceCount);
 				}
 			}
+			return assetIds;
+		}
+
+		async Task FillDividends(
+			UserId user, BrokerId brokerId, IReadOnlyCollection<IncomeTransfer> dividendTransfers,
+			Dictionary<string, AccountId> currencyAccounts, Dictionary<AccountId, AddIncomeModel[]> incomeAccountModels,
+			Dictionary<string, AssetId> assets) {
+			foreach ( var dividendTransfer in dividendTransfers ) {
+				var accountId = currencyAccounts[dividendTransfer.Currency];
+				if ( IsAlreadyPresent(dividendTransfer.Date, dividendTransfer.Amount, incomeAccountModels[accountId]) ) {
+					continue;
+				}
+				var asset = DetectAssetFromDividend(dividendTransfer.Comment, assets);
+				await _addIncomeUseCase.Handle(
+					dividendTransfer.Date, user, brokerId, accountId, dividendTransfer.Amount,
+					_dividendCategory, asset);
+			}
+		}
+
+		AssetId DetectAssetFromDividend(string comment, Dictionary<string, AssetId> assets) {
+			var match = _dividendIsinRegex.Match(comment);
+			if ( !match.Success ) {
+				throw new UnexpectedFormatException($"Failed to detect ISIN from comment '{comment}'");
+			}
+			var isin = match.Value;
+			if ( assets.TryGetValue(isin, out var assetId) ) {
+				return assetId;
+			}
+			throw new InvalidOperationException($"Failed to find asset for ISIN '{isin}'");
+		}
+
+		async Task FillCoupons(
+			UserId user, BrokerId brokerId, IReadOnlyCollection<IncomeTransfer> couponTransfers,
+			Dictionary<string, AccountId> currencyAccounts, Dictionary<AccountId, AddIncomeModel[]> incomeAccountModels,
+			IReadOnlyCollection<Trade> trades, Dictionary<string, AssetId> assets) {
+			foreach ( var couponTransfer in couponTransfers ) {
+				var accountId = currencyAccounts[couponTransfer.Currency];
+				if ( IsAlreadyPresent(couponTransfer.Date, couponTransfer.Amount, incomeAccountModels[accountId]) ) {
+					continue;
+				}
+				var asset = DetectAssetFromCoupon(couponTransfer.Comment, trades, assets);
+				await _addIncomeUseCase.Handle(
+					couponTransfer.Date, user, brokerId, accountId, couponTransfer.Amount,
+					_couponCategory, asset);
+			}
+		}
+
+		AssetId DetectAssetFromCoupon(string comment, IReadOnlyCollection<Trade> trades, Dictionary<string, AssetId> assets) {
+			var couponMatch = _couponRegex.Match(comment);
+			if ( !couponMatch.Success ) {
+				throw new UnexpectedFormatException($"Failed to detect organization and/or series from comment '{comment}'");
+			}
+			var organization = couponMatch.Groups[1].Value.Trim();
+			var series       = couponMatch.Groups[2].Value;
+			foreach ( var trade in trades ) {
+				var tradeMatch = _bondRegex.Match(trade.Name);
+				if ( !tradeMatch.Success ) {
+					continue;
+				}
+				var tradeOrganization = tradeMatch.Groups[1].Value;
+				var tradeSeries       = tradeMatch.Groups[2].Value;
+				if ( !tradeOrganization.StartsWith(organization) || (series != tradeSeries) ) {
+					continue;
+				}
+				var isin = trade.Isin;
+				if ( assets.TryGetValue(isin, out var assetId) ) {
+					return assetId;
+				}
+				throw new InvalidOperationException($"Failed to find asset for ISIN '{isin}'");
+			}
+			throw new InvalidOperationException($"Failed to find asset for '{organization}' '{series}'");
 		}
 
 		Dictionary<string, AccountId> CreateCurrencyAccounts(
