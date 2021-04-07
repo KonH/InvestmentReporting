@@ -52,7 +52,18 @@ namespace InvestmentReporting.Import.Logic {
 			if (!decimal.TryParse(bankTax, out var fee)) {
 				throw new UnexpectedFormatException($"Failed to parse fee from '{bankTax}'");
 			}
-			result.Add(new(date, isin, name, count, currency, price, fee));
+			var category = TryDetectCategory(name);
+			result.Add(new(date, isin, name, category, count, currency, price, fee));
+		}
+
+		static string TryDetectCategory(string name) {
+			if ( name.Contains("а.о.") || name.Contains("а.п.") || name.Contains("п.") ) {
+				return "Share";
+			}
+			if ( name.Contains("о.к.б.") ) {
+				return "Bond";
+			}
+			return "Unknown";
 		}
 	}
 }

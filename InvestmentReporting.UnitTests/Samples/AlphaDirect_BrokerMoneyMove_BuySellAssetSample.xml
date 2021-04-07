@@ -6,19 +6,19 @@
                 <Details_Collection>
                     <Details trade_no="000000001" db_time="01.02.2000 01:02:03&#xD;&#xA; 01.02.2000 01:02:03"
                              settlement_time="02.02.2000 01:02:03&#xD;&#xA; 02.02.2000 01:02:03" acc_code="000002-000"
-                             place_name="КЦ МФБ" isin_reg="US0000000001" p_name="AssetName1" qty="2"
+                             place_name="КЦ МФБ" isin_reg="US0000000001" p_name="AssetName1, а.о." qty="2"
                              Price="100.00000000" summ_trade="200.00" curr_calc="USD" bank_tax="20.00"/>
                     <Details trade_no="000000002" db_time="01.02.2000 01:02:03&#xD;&#xA; 01.02.2000 01:02:03"
                              settlement_time="02.02.2000 01:02:03&#xD;&#xA; 02.02.2000 01:02:03" acc_code="000001-000"
-                             place_name="МБ ФР" isin_reg="RU0000000001" p_name="AssetName2" qty="3"
+                             place_name="МБ ФР" isin_reg="RU0000000001" p_name="AssetName2, о.к.б." qty="3"
                              Price="100.00000000" summ_trade="300.00" curr_calc="RUB" bank_tax="30.00"/>
                     <Details trade_no="0000000003" db_time="02.03.2000 03:04:05&#xD;&#xA; 02.03.2000 03:04:05"
                              settlement_time="03.03.2000 03:04:05&#xD;&#xA; 03.03.2000 03:04:05" acc_code="000002-000"
-                             place_name="КЦ МФБ" isin_reg="US0000000001" p_name="AssetName1" qty="-1"
+                             place_name="КЦ МФБ" isin_reg="US0000000001" p_name="AssetName1, а.о." qty="-1"
                              Price="101.00000000" summ_trade="101.00" curr_calc="USD" bank_tax="10.10"/>
                     <Details trade_no="0000000004" db_time="02.03.2000 03:04:05&#xD;&#xA; 02.03.2000 03:04:05"
                              settlement_time="03.03.2000 03:04:05&#xD;&#xA; 03.03.2000 03:04:05" acc_code="000001-000"
-                             place_name="МБ ФР" isin_reg="RU0000000001" p_name="AssetName2" qty="-1"
+                             place_name="МБ ФР" isin_reg="RU0000000001" p_name="AssetName2, о.к.б." qty="-1"
                              Price="100.00000000" summ_trade="100.00" curr_calc="RUB" bank_tax="10.00"/>
                 </Details_Collection>
             </Tablix2>

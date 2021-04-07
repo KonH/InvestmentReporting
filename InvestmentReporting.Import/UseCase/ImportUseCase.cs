@@ -125,7 +125,7 @@ namespace InvestmentReporting.Import.UseCase {
 						continue;
 					}
 					var name     = trade.Name;
-					var category = new AssetCategory("Asset");
+					var category = new AssetCategory(trade.Category);
 					var assetId = await _buyAssetUseCase.Handle(
 						date, user, brokerId, payAccount, feeAccount, name, category, new(isin), price, fee, count);
 					assetIds[isin] = assetId;
