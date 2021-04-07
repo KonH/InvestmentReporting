@@ -13,6 +13,7 @@ export interface OperationDto {
   /** @format date-time */
   date?: string;
   kind?: string | null;
+  currency?: string | null;
 
   /** @format double */
   amount?: number;

@@ -15,21 +15,25 @@ namespace InvestmentReporting.Domain.UseCase {
 		}
 
 		public async Task<IReadOnlyCollection<Operation>> Handle(
-			DateTimeOffset startDate, DateTimeOffset endDate, UserId user, BrokerId broker, AccountId account) {
+			DateTimeOffset startDate, DateTimeOffset endDate, UserId user, BrokerId brokerId, AccountId accountId) {
+			var state    = await _stateManager.ReadState(endDate, user);
+			var broker   = state.Brokers.First(b => b.Id == brokerId);
+			var account  = broker.Accounts.First(a => a.Id == accountId);
+			var currency = account.Currency;
 			var commands = await _stateManager.ReadCommands(startDate, endDate, user);
 			var incomeOperations = ReadOperations<AddIncomeModel>(
 				commands,
-				c => (c.Broker == broker) && (c.Account == account),
+				c => (c.Broker == brokerId) && (c.Account == accountId),
 				c => {
 					var asset = (c.Asset != null) ? new AssetId(c.Asset) : null;
-					return new Operation(c.Date, OperationKind.Income, c.Amount, c.Category, asset);
+					return new Operation(c.Date, OperationKind.Income, currency, c.Amount, c.Category, asset);
 				});
 			var expenseOperations = ReadOperations<AddExpenseModel>(
 				commands,
-				c => (c.Broker == broker) && (c.Account == account),
+				c => (c.Broker == brokerId) && (c.Account == accountId),
 				c => {
 					var asset = (c.Asset != null) ? new AssetId(c.Asset) : null;
-					return new Operation(c.Date, OperationKind.Expense, -c.Amount, c.Category, asset);
+					return new Operation(c.Date, OperationKind.Expense, currency, -c.Amount, c.Category, asset);
 				});
 			return incomeOperations.Concat(expenseOperations)
 				.OrderBy(o => o.Date)

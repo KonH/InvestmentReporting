@@ -606,6 +606,10 @@
             "type": "string",
             "nullable": true
           },
+          "currency": {
+            "type": "string",
+            "nullable": true
+          },
           "amount": {
             "type": "number",
             "format": "double"

@@ -41,7 +41,7 @@ namespace InvestmentReporting.StateService.Controllers {
 			var dto        = operations
 				.Select(op => {
 					var asset = (op.Asset != null) ? op.Asset.ToString() : null;
-					return new OperationDto(op.Date, op.Kind.ToString(), op.Amount, op.Category, asset);
+					return new OperationDto(op.Date, op.Kind.ToString(), op.Currency, op.Amount, op.Category, asset);
 				});
 			return new JsonResult(dto);
 		}
@@ -55,7 +55,7 @@ namespace InvestmentReporting.StateService.Controllers {
 			_logger.LogInformation($"Retrieve operations for user '{userId}', broker '{broker}', asset '{asset}', at {startDate}-{endDate}");
 			var operations = await _readAssetUseCase.Handle(startDate, endDate, userId, new(broker), new(asset));
 			var dto = operations
-				.Select(op => new OperationDto(op.Date, op.Kind.ToString(), op.Amount, op.Category, null));
+				.Select(op => new OperationDto(op.Date, op.Kind.ToString(), op.Currency, op.Amount, op.Category, null));
 			return new JsonResult(dto);
 		}
 
