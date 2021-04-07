@@ -72,9 +72,6 @@ namespace InvestmentReporting.Domain.UseCase {
 					break;
 			}
 			await _stateManager.AddCommand(new ReduceAssetCommand(date, user, brokerId, assetId, count));
-			if ( remainingCount == 0 ) {
-				await _stateManager.AddCommand(new RemoveAssetCommand(date, user, brokerId, assetId));
-			}
 		}
 	}
 }

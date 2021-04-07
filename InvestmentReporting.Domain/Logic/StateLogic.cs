@@ -68,15 +68,6 @@ namespace InvestmentReporting.Domain.Logic {
 						new(m.Id), m.Name, new(m.Category), new(m.Isin), m.Count));
 				}
 			);
-			manager.Bind<RemoveAssetCommand, RemoveAssetModel>(
-				cmd => new(cmd.Date, cmd.User, cmd.Broker, cmd.Id),
-				(state, m) => {
-					var brokerId = new BrokerId(m.Broker);
-					var broker   = state.Brokers.First(b => b.Id == brokerId);
-					var asset    = broker.Inventory.First(a => a.Id == m.Id);
-					broker.Inventory.Remove(asset);
-				}
-			);
 			manager.Bind<ReduceAssetCommand, ReduceAssetModel>(
 				cmd => new(cmd.Date, cmd.User, cmd.Broker, cmd.Id, cmd.Count),
 				(state, m) => {
