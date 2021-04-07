@@ -6,6 +6,7 @@ EXPOSE 8086
 ADD publish /publish
 
 ENV ASPNETCORE_URLS=http://+:8086
+ENV ASPNETCORE_ENVIRONMENT=Development
 
 WORKDIR /publish
 ENTRYPOINT ["./InvestmentReporting.ImportService"]

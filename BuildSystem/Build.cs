@@ -18,7 +18,7 @@ namespace InvestmentReporting.BuildSystem {
 		};
 
 		[Parameter]
-		string Configuration = "Debug";
+		string Configuration = "Development";
 
 		public static int Main() => Execute<Build>(x => x.Compile);
 
@@ -51,7 +51,7 @@ namespace InvestmentReporting.BuildSystem {
 						.SetConfiguration(Configuration));
 				}
 
-				if ( Configuration == "Debug" ) {
+				if ( Configuration == "Development" ) {
 					Environment.SetEnvironmentVariable("SWAGGER_RUN", true.ToString());
 					try {
 						var apiDir = RootDirectory / "api";
@@ -102,9 +102,10 @@ namespace InvestmentReporting.BuildSystem {
 			.DependsOn(Compile)
 			.Executes(() =>
 			{
+				Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", Configuration);
 				Run("Running containers",
 					RootDirectory,
-					"docker-compose", "up -d");
+					"docker-compose", $"up -d");
 			});
 
 		Target Stop => _ => _
