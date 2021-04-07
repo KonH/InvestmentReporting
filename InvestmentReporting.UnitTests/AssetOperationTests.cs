@@ -220,7 +220,9 @@ namespace InvestmentReporting.UnitTests {
 
 			var state  = await stateManager.ReadState(_date, _userId);
 			var broker = state.Brokers.First(b => b.Id == _brokerId);
-			broker.Inventory.Should().BeEmpty();
+			broker.Inventory.Should().Contain(a =>
+				(a.Isin == _isin) &&
+				(a.Count == 0));
 		}
 
 		[Test]
