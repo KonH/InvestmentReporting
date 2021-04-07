@@ -31,13 +31,13 @@ namespace InvestmentReporting.Import.UseCase {
 		readonly SellAssetUseCase        _sellAssetUseCase;
 
 		// To receive ISIN from any string
-		readonly Regex _dividendIsinRegex = new("(\\w{2}\\d{10})");
+		readonly Regex _dividendIsinRegex = new("([A-Z0-9]{12})");
 
 		// To receive organization name and series from coupon comment
-		readonly Regex _couponRegex = new("\\(Облигации (.*) сери.*(\\d{4}-\\d{2})\\)");
+		readonly Regex _couponRegex = new("\\(Облигации (.*) сери.*(\\w{4}-\\w{2})\\)");
 
 		// To receive organization name and series from asset name
-		readonly Regex _bondRegex = new("(.*) сери.*(\\d{4}-\\d{2})");
+		readonly Regex _bondRegex = new("(.*) сери.*(\\w{4}-\\w{2})");
 
 		public ImportUseCase(
 			TransactionStateManager stateManager, BrokerMoneyMoveParser moneyMoveParser, TradeParser tradeParser,
@@ -212,8 +212,9 @@ namespace InvestmentReporting.Import.UseCase {
 			if ( !couponMatch.Success ) {
 				throw new UnexpectedFormatException($"Failed to detect organization and/or series from comment '{comment}'");
 			}
-			var organization = couponMatch.Groups[1].Value.Trim();
-			var series       = couponMatch.Groups[2].Value;
+			var organization      = couponMatch.Groups[1].Value.Trim();
+			var shortOrganization = TryGetShortOrganizationName(organization);
+			var series            = couponMatch.Groups[2].Value;
 			foreach ( var trade in trades ) {
 				var tradeMatch = _bondRegex.Match(trade.Name);
 				if ( !tradeMatch.Success ) {
@@ -222,7 +223,10 @@ namespace InvestmentReporting.Import.UseCase {
 				var tradeOrganization = tradeMatch.Groups[1].Value;
 				var tradeSeries       = tradeMatch.Groups[2].Value;
 				if ( !tradeOrganization.StartsWith(organization) || (series != tradeSeries) ) {
-					continue;
+					var tradeShortOrganization = TryGetShortOrganizationName(organization);
+					if ( shortOrganization != tradeShortOrganization ) {
+						continue;
+					}
 				}
 				var isin = trade.Isin;
 				if ( assets.TryGetValue(isin, out var assetId) ) {
@@ -231,6 +235,11 @@ namespace InvestmentReporting.Import.UseCase {
 				throw new InvalidOperationException($"Failed to find asset for ISIN '{isin}'");
 			}
 			throw new InvalidOperationException($"Failed to find asset for '{organization}' '{series}'");
+		}
+
+		string? TryGetShortOrganizationName(string organization) {
+			var parts = organization.Split('"');
+			return (parts.Length > 1) ? parts[^2] : null;
 		}
 
 		Dictionary<string, AccountId> CreateCurrencyAccounts(
