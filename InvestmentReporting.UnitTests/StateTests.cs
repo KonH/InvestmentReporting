@@ -12,7 +12,7 @@ namespace InvestmentReporting.UnitTests {
 	public sealed class StateTests {
 		[Test]
 		public async Task IsStateCreated() {
-			var stateManager = new StateManager(new InMemoryStateRepository(new()));
+			var stateManager = new StateManagerBuilder().Build();
 			var readUseCase  = new ReadStateUseCase(stateManager);
 
 			var state = await readUseCase.Handle(DateTimeOffset.MinValue, new("user"));
@@ -23,7 +23,7 @@ namespace InvestmentReporting.UnitTests {
 		[Test]
 		public void IsStateFailedToCreateForUnknownUser() {
 			var user         = new UserId(string.Empty);
-			var stateManager = new StateManager(new InMemoryStateRepository(new()));
+			var stateManager = new StateManagerBuilder().Build();
 			var readUseCase  = new ReadStateUseCase(stateManager);
 
 			Assert.ThrowsAsync<InvalidUserException>(() => readUseCase.Handle(DateTimeOffset.MinValue, user));

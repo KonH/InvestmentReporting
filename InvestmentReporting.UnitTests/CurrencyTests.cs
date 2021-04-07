@@ -58,6 +58,6 @@ namespace InvestmentReporting.UnitTests {
 			Assert.ThrowsAsync<InvalidCurrencyException>(() => createUseCase.Handle(_date, _userId, code, format));
 		}
 
-		StateManager GetStateManager() => new(new InMemoryStateRepository(new()));
+		StateManager GetStateManager() => new StateManagerBuilder().Build();
 	}
 }

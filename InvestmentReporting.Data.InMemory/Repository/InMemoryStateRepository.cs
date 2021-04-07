@@ -4,12 +4,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using InvestmentReporting.Data.Core.Model;
 using InvestmentReporting.Data.Core.Repository;
+using Microsoft.Extensions.Logging;
 
 namespace InvestmentReporting.Data.InMemory.Repository {
 	public sealed class InMemoryStateRepository : IStateRepository {
+		readonly ILogger             _logger;
 		readonly List<ICommandModel> _commands;
 
-		public InMemoryStateRepository(List<ICommandModel> commands) {
+		public InMemoryStateRepository(ILogger<InMemoryStateRepository> logger, List<ICommandModel> commands) {
+			_logger   = logger;
 			_commands = commands;
 		}
 
@@ -23,6 +26,7 @@ namespace InvestmentReporting.Data.InMemory.Repository {
 
 		public Task SaveCommand(ICommandModel model) {
 			_commands.Add(model);
+			_logger.LogTrace($"Command saved: {model}");
 			return Task.CompletedTask;
 		}
 

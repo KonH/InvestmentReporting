@@ -7,22 +7,28 @@ using InvestmentReporting.Data.InMemory.Repository;
 using InvestmentReporting.Domain.Command;
 using InvestmentReporting.Domain.Entity;
 using InvestmentReporting.Domain.Logic;
+using Microsoft.Extensions.Logging;
 
 namespace InvestmentReporting.Import.Logic {
 	public sealed class TransactionStateManager : IStateManager {
-		readonly StateManager _storeStateManager;
+		readonly ILoggerFactory _loggerFactory;
+		readonly ILogger        _logger;
+		readonly StateManager   _storeStateManager;
 
 		StateManager? _simulatedStateManager;
 
 		readonly List<ICommand> _commands = new();
 
-		public TransactionStateManager(StateManager storeStateManager) {
+		public TransactionStateManager(ILoggerFactory loggerFactory, StateManager storeStateManager) {
+			_loggerFactory     = loggerFactory;
+			_logger            = loggerFactory.CreateLogger<TransactionStateManager>();
 			_storeStateManager = storeStateManager;
 		}
 
 		public async Task Prepare(UserId id) {
+			_logger.LogTrace($"Prepare for '{id}'");
 			var commands   = await _storeStateManager.ReadCommands(DateTimeOffset.MinValue, DateTimeOffset.MaxValue, id);
-			var repository = new InMemoryStateRepository(commands.ToList());
+			var repository = new InMemoryStateRepository(_loggerFactory.CreateLogger<InMemoryStateRepository>(), commands.ToList());
 			_simulatedStateManager = new StateManager(repository);
 		}
 
@@ -39,9 +45,11 @@ namespace InvestmentReporting.Import.Logic {
 		}
 
 		public async Task Push() {
+			_logger.LogTrace("Pushing in memory commands started");
 			foreach ( var command in _commands ) {
 				await _storeStateManager.AddCommand(command);
 			}
+			_logger.LogTrace("Pushing in memory commands finished");
 		}
 	}
 }

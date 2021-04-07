@@ -5,6 +5,7 @@ using InvestmentReporting.Data.InMemory.Repository;
 using InvestmentReporting.Domain.Command;
 using InvestmentReporting.Domain.Entity;
 using InvestmentReporting.Domain.Logic;
+using Microsoft.Extensions.Logging;
 
 namespace InvestmentReporting.UnitTests {
 	sealed class StateManagerBuilder {
@@ -54,6 +55,7 @@ namespace InvestmentReporting.UnitTests {
 		}
 
 		public StateManager Build() =>
-			new(new InMemoryStateRepository(_commands));
+			new(new InMemoryStateRepository(
+				new TestLoggerFactory().CreateLogger<InMemoryStateRepository>(), _commands));
 	}
 }

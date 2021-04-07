@@ -56,6 +56,6 @@ namespace InvestmentReporting.UnitTests {
 			state.Brokers.Should().BeEmpty();
 		}
 
-		StateManager GetStateManager() => new(new InMemoryStateRepository(new()));
+		StateManager GetStateManager() => new StateManagerBuilder().Build();
 	}
 }
