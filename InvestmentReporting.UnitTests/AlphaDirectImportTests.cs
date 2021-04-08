@@ -51,8 +51,8 @@ namespace InvestmentReporting.UnitTests {
 			var actualTransfers = parser.ReadIncomeTransfers(sample);
 
 			var expectedTransfers = new[] {
-				new IncomeTransfer(DateTimeOffset.Parse("2020-01-01T01:02:03+3"), "Перевод из BankName", "USD", 100),
-				new IncomeTransfer(DateTimeOffset.Parse("2020-01-02T02:03:04+3"), "Перевод из BankName", "RUB", 200),
+				new Transfer(DateTimeOffset.Parse("2020-01-01T01:02:03+3"), "Перевод из BankName", "USD", 100),
+				new Transfer(DateTimeOffset.Parse("2020-01-02T02:03:04+3"), "Перевод из BankName", "RUB", 200),
 			};
 			actualTransfers.Should().Contain(expectedTransfers);
 		}
@@ -118,8 +118,8 @@ namespace InvestmentReporting.UnitTests {
 			var actualTransfers = parser.ReadExpenseTransfers(sample);
 
 			var expectedTransfers = new[] {
-				new ExpenseTransfer(DateTimeOffset.Parse("2020-01-01T01:02:03+3"), "Перевод Списание по поручению клиента.", "USD", -100),
-				new ExpenseTransfer(DateTimeOffset.Parse("2020-01-02T02:03:04+3"), "Перевод Списание по поручению клиента.", "RUB", -200),
+				new Transfer(DateTimeOffset.Parse("2020-01-01T01:02:03+3"), "Перевод Списание по поручению клиента.", "USD", -100),
+				new Transfer(DateTimeOffset.Parse("2020-01-02T02:03:04+3"), "Перевод Списание по поручению клиента.", "RUB", -200),
 			};
 			actualTransfers.Should().Contain(expectedTransfers);
 		}
@@ -238,7 +238,7 @@ namespace InvestmentReporting.UnitTests {
 			var actualTransfers = parser.ReadDividendTransfers(sample);
 
 			var expectedTransfers = new[] {
-				new IncomeTransfer(DateTimeOffset.Parse("2020-01-01T01:02:03+3"), "Перевод {VO00001} Cash Dividend US0000000001 (NAME - XXX YYY) TAX 0.1 USD", "USD", 0.3m),
+				new Transfer(DateTimeOffset.Parse("2020-01-01T01:02:03+3"), "Перевод {VO00001} Cash Dividend US0000000001 (NAME - XXX YYY) TAX 0.1 USD", "USD", 0.3m),
 			};
 			actualTransfers.Should().Contain(expectedTransfers);
 		}
@@ -282,7 +282,7 @@ namespace InvestmentReporting.UnitTests {
 			var actualTransfers = parser.ReadCouponTransfers(sample);
 
 			var expectedTransfers = new[] {
-				new IncomeTransfer(DateTimeOffset.Parse("2020-01-01T01:02:03+3"), "Перевод погашение купона 0000-00-00000-0-0000 (Облигации ООО \"Организация\"  серии 0000-00) д.ф.22.03.21.(Удержан налог 16 руб.)", "RUB", 100),
+				new Transfer(DateTimeOffset.Parse("2020-01-01T01:02:03+3"), "Перевод погашение купона 0000-00-00000-0-0000 (Облигации ООО \"Организация\"  серии 0000-00) д.ф.22.03.21.(Удержан налог 16 руб.)", "RUB", 100),
 			};
 			actualTransfers.Should().Contain(expectedTransfers);
 		}

@@ -102,7 +102,7 @@ namespace InvestmentReporting.Import.AlphaDirectMyBroker {
 				.ToArray();
 
 		async Task FillIncomeTransfers(
-			UserId user, BrokerId brokerId, IReadOnlyCollection<IncomeTransfer> incomeTransfers,
+			UserId user, BrokerId brokerId, IReadOnlyCollection<Transfer> incomeTransfers,
 			Dictionary<string, AccountId> currencyAccounts,
 			Dictionary<AccountId, AddIncomeModel[]> incomeAccountModels) {
 			foreach ( var incomeTransfer in incomeTransfers ) {
@@ -117,7 +117,7 @@ namespace InvestmentReporting.Import.AlphaDirectMyBroker {
 		}
 
 		async Task FillExpenseTransfers(
-			UserId user, BrokerId brokerId, IReadOnlyCollection<ExpenseTransfer> expenseTransfers,
+			UserId user, BrokerId brokerId, IReadOnlyCollection<Transfer> expenseTransfers,
 			Dictionary<string, AccountId> currencyAccounts,
 			Dictionary<AccountId, AddExpenseModel[]> expenseAccountModels) {
 			foreach ( var expenseTransfer in expenseTransfers ) {
@@ -173,7 +173,7 @@ namespace InvestmentReporting.Import.AlphaDirectMyBroker {
 		}
 
 		async Task FillDividends(
-			UserId user, BrokerId brokerId, IReadOnlyCollection<IncomeTransfer> dividendTransfers,
+			UserId user, BrokerId brokerId, IReadOnlyCollection<Transfer> dividendTransfers,
 			Dictionary<string, AccountId> currencyAccounts, Dictionary<AccountId, AddIncomeModel[]> incomeAccountModels,
 			Dictionary<string, AssetId> assets) {
 			foreach ( var dividendTransfer in dividendTransfers ) {
@@ -201,7 +201,7 @@ namespace InvestmentReporting.Import.AlphaDirectMyBroker {
 		}
 
 		async Task FillCoupons(
-			UserId user, BrokerId brokerId, IReadOnlyCollection<IncomeTransfer> couponTransfers,
+			UserId user, BrokerId brokerId, IReadOnlyCollection<Transfer> couponTransfers,
 			Dictionary<string, AccountId> currencyAccounts, Dictionary<AccountId, AddIncomeModel[]> incomeAccountModels,
 			IReadOnlyCollection<Trade> trades, Dictionary<string, AssetId> assets) {
 			foreach ( var couponTransfer in couponTransfers ) {

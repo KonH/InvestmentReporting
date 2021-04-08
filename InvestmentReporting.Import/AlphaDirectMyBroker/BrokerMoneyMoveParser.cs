@@ -6,8 +6,6 @@ using InvestmentReporting.Import.Exceptions;
 
 namespace InvestmentReporting.Import.AlphaDirectMyBroker {
 	public sealed class BrokerMoneyMoveParser {
-		delegate TResult Factory<out TResult>(DateTimeOffset lastUpdate, string fullName, string currency, decimal amount);
-
 		const string OperationsXpath =
 			"Report[@Name=\"MyBroker\"]/*/Report[@Name=\"3_BrokerMoneyMove\"]/Tablix1/settlement_date_Collection/settlement_date/rn_Collection/rn";
 
@@ -18,47 +16,41 @@ namespace InvestmentReporting.Import.AlphaDirectMyBroker {
 		const string PCodesXpath =
 			"money_volume_begin1_Collection/money_volume_begin1/p_code_Collection/p_code/p_code";
 
-		public IReadOnlyCollection<IncomeTransfer> ReadIncomeTransfers(XmlDocument report) =>
+		public IReadOnlyCollection<Transfer> ReadIncomeTransfers(XmlDocument report) =>
 			ReadTransfers(
 				report,
-				comment => comment.StartsWith("из "),
-				(lastUpdate, fullName, currency, amount) => new IncomeTransfer(lastUpdate, fullName, currency, amount));
+				comment => comment.StartsWith("из "));
 
-		public IReadOnlyCollection<IncomeTransfer> ReadDividendTransfers(XmlDocument report) =>
+		public IReadOnlyCollection<Transfer> ReadDividendTransfers(XmlDocument report) =>
 			ReadTransfers(
 				report,
-				comment => comment.Contains("Cash Dividend"),
-				(lastUpdate, fullName, currency, amount) => new IncomeTransfer(lastUpdate, fullName, currency, amount));
+				comment => comment.Contains("Cash Dividend"));
 
-		public IReadOnlyCollection<IncomeTransfer> ReadCouponTransfers(XmlDocument report) =>
+		public IReadOnlyCollection<Transfer> ReadCouponTransfers(XmlDocument report) =>
 			ReadTransfers(
 				report,
-				comment => comment.StartsWith("погашение купона"),
-				(lastUpdate, fullName, currency, amount) => new IncomeTransfer(lastUpdate, fullName, currency, amount));
+				comment => comment.StartsWith("погашение купона"));
 
-		public IReadOnlyCollection<ExpenseTransfer> ReadExpenseTransfers(XmlDocument report) =>
+		public IReadOnlyCollection<Transfer> ReadExpenseTransfers(XmlDocument report) =>
 			ReadTransfers(
 				report,
-				comment => comment.StartsWith("Списание по поручению клиента"),
-				(lastUpdate, fullName, currency, amount) => new ExpenseTransfer(lastUpdate, fullName, currency, amount));
+				comment => comment.StartsWith("Списание по поручению клиента"));
 
-		IReadOnlyCollection<T> ReadTransfers<T>(
-			XmlDocument report, Func<string, bool> commentFilter,
-			Factory<T> factory) {
+		IReadOnlyCollection<Transfer> ReadTransfers(
+			XmlDocument report, Func<string, bool> commentFilter) {
 			var operations = report.SelectNodes(OperationsXpath);
 			if ( operations == null ) {
 				throw new UnexpectedFormatException($"Failed to retrieve operations via XPath '{OperationsXpath}'");
 			}
-			var result = new List<T>();
+			var result = new List<Transfer>();
 			foreach ( XmlNode operationNode in operations ) {
-				HandleOperationNode(operationNode, result, commentFilter, factory);
+				HandleOperationNode(operationNode, result, commentFilter);
 			}
 			return result;
 		}
 
-		static void HandleOperationNode<T>(
-			XmlNode operationNode, List<T> result,
-			Func<string, bool> commentFilter, Factory<T> factory) {
+		static void HandleOperationNode(
+			XmlNode operationNode, List<Transfer> result, Func<string, bool> commentFilter) {
 			var rawLastUpdateStr =
 				operationNode.Attributes?["last_update"]?.Value ??
 				throw new UnexpectedFormatException("Failed to retrieve 'last_update' operation attribute");
@@ -74,13 +66,13 @@ namespace InvestmentReporting.Import.AlphaDirectMyBroker {
 					$"Failed to retrieve operations via XPath '{OperationsXpath}/{OperationTypesXPath}'");
 			}
 			foreach ( XmlNode operationTypeNode in operationTypeNodes ) {
-				HandleOperationTypeNode(operationTypeNode, lastUpdate, result, commentFilter, factory);
+				HandleOperationTypeNode(operationTypeNode, lastUpdate, result, commentFilter);
 			}
 		}
 
-		static void HandleOperationTypeNode<T>(
-			XmlNode operationTypeNode, DateTimeOffset lastUpdate, List<T> result,
-			Func<string, bool> commentFilter, Factory<T> factory) {
+		static void HandleOperationTypeNode(
+			XmlNode operationTypeNode, DateTimeOffset lastUpdate, List<Transfer> result,
+			Func<string, bool> commentFilter) {
 			var operationType = operationTypeNode.Attributes?["oper_type"]?.Value ?? string.Empty;
 			var commentNode   = operationTypeNode.SelectSingleNode(CommentXpath);
 			if ( commentNode == null ) {
@@ -109,7 +101,7 @@ namespace InvestmentReporting.Import.AlphaDirectMyBroker {
 						$"Too much valid values for '{fullName}' operation");
 				default:
 					var (currency, amount) = nonZeroVolumeCodes[0];
-					result.Add(factory(lastUpdate, fullName, currency, amount));
+					result.Add(new(lastUpdate, fullName, currency, amount));
 					break;
 			}
 		}
