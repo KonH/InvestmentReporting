@@ -4,7 +4,7 @@ using System.Xml;
 using InvestmentReporting.Import.Dto;
 using InvestmentReporting.Import.Exceptions;
 
-namespace InvestmentReporting.Import.Logic {
+namespace InvestmentReporting.Import.AlphaDirectMyBroker {
 	public sealed class BrokerMoneyMoveParser {
 		delegate TResult Factory<out TResult>(DateTimeOffset lastUpdate, string fullName, string currency, decimal amount);
 

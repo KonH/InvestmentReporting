@@ -27,6 +27,14 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "importer",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "requestBody": {

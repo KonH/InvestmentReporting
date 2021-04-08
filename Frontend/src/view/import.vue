@@ -2,6 +2,14 @@
 	<h1>Import</h1>
 	<div class="form-group">
 		<label>
+			Importer:
+			<select ref="importer" class="form-control">
+				<option>AlphaDirectMyBroker</option>
+			</select>
+		</label>
+	</div>
+	<div class="form-group">
+		<label>
 			File:
 			<input ref="file" type="file" class="form-control-file" />
 		</label>
@@ -23,6 +31,9 @@ export default class Import extends Vue {
 	@Action('fetchActiveState')
 	fetchActiveState!: () => void;
 
+	@Ref('importer')
+	importerInput!: HTMLInputElement;
+
 	@Ref('file')
 	fileInput!: HTMLInputElement;
 
@@ -38,6 +49,7 @@ export default class Import extends Vue {
 				{
 					date: new Date().toISOString(),
 					broker: brokerId,
+					importer: this.importerInput.value,
 				},
 				{
 					report: report,

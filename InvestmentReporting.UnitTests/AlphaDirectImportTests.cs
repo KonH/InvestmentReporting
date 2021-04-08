@@ -9,9 +9,9 @@ using InvestmentReporting.Domain.Entity;
 using InvestmentReporting.Domain.Logic;
 using InvestmentReporting.Domain.UseCase;
 using InvestmentReporting.Domain.UseCase.Exceptions;
+using InvestmentReporting.Import.AlphaDirectMyBroker;
 using InvestmentReporting.Import.Dto;
 using InvestmentReporting.Import.Logic;
-using InvestmentReporting.Import.UseCase;
 using NUnit.Framework;
 
 namespace InvestmentReporting.UnitTests {
@@ -25,8 +25,8 @@ namespace InvestmentReporting.UnitTests {
 		[Test]
 		public void IsFailedToImportToUnknownBroker() {
 			var stateManager = new StateManagerBuilder().Build();
-			var sample       = LoadSample("AlphaDirect_BrokerMoneyMove_IncomeSample.xml");
-			var useCase      = GetUseCase(stateManager);
+			using var sample = LoadStream("AlphaDirect_BrokerMoneyMove_IncomeSample.xml");
+			var useCase = GetUseCase(stateManager);
 
 			Assert.ThrowsAsync<BrokerNotFoundException>(() => useCase.Handle(_date, _userId, _brokerId, sample));
 		}
@@ -37,7 +37,7 @@ namespace InvestmentReporting.UnitTests {
 				.With(_userId)
 				.With(_brokerId)
 				.Build();
-			var sample  = LoadSample("AlphaDirect_BrokerMoneyMove_IncomeSample.xml");
+			using var sample = LoadStream("AlphaDirect_BrokerMoneyMove_IncomeSample.xml");
 			var useCase = GetUseCase(stateManager);
 
 			Assert.ThrowsAsync<AccountNotFoundException>(() => useCase.Handle(_date, _userId, _brokerId, sample));
@@ -45,7 +45,7 @@ namespace InvestmentReporting.UnitTests {
 
 		[Test]
 		public void IsIncomeTransfersRead() {
-			var sample = LoadSample("AlphaDirect_BrokerMoneyMove_IncomeSample.xml");
+			var sample = LoadXml("AlphaDirect_BrokerMoneyMove_IncomeSample.xml");
 			var parser = new BrokerMoneyMoveParser();
 
 			var actualTransfers = parser.ReadIncomeTransfers(sample);
@@ -59,7 +59,7 @@ namespace InvestmentReporting.UnitTests {
 
 		[Test]
 		public void IsIncomeTransfersSkipDividend() {
-			var sample = LoadSample("AlphaDirect_BrokerMoneyMove_DividendSample.xml");
+			var sample = LoadXml("AlphaDirect_BrokerMoneyMove_DividendSample.xml");
 			var parser = new BrokerMoneyMoveParser();
 
 			var actualTransfers = parser.ReadIncomeTransfers(sample);
@@ -69,7 +69,7 @@ namespace InvestmentReporting.UnitTests {
 
 		[Test]
 		public void IsIncomeTransfersSkipExpenseTransfer() {
-			var sample = LoadSample("AlphaDirect_BrokerMoneyMove_ExpenseSample.xml");
+			var sample = LoadXml("AlphaDirect_BrokerMoneyMove_ExpenseSample.xml");
 			var parser = new BrokerMoneyMoveParser();
 
 			var actualTransfers = parser.ReadIncomeTransfers(sample);
@@ -80,8 +80,8 @@ namespace InvestmentReporting.UnitTests {
 		[Test]
 		public async Task IsIncomeTransfersImported() {
 			var stateManager = GetStateManager();
-			var sample       = LoadSample("AlphaDirect_BrokerMoneyMove_IncomeSample.xml");
-			var useCase      = GetUseCase(stateManager);
+			await using var sample = LoadStream("AlphaDirect_BrokerMoneyMove_IncomeSample.xml");
+			var useCase = GetUseCase(stateManager);
 
 			await useCase.Handle(_date, _userId, _brokerId, sample);
 
@@ -91,10 +91,11 @@ namespace InvestmentReporting.UnitTests {
 		[Test]
 		public async Task IsIncomeTransfersNotDuplicated() {
 			var stateManager = GetStateManager();
-			var sample       = LoadSample("AlphaDirect_BrokerMoneyMove_IncomeSample.xml");
-			var useCase      = GetUseCase(stateManager);
+			await using var sample = LoadStream("AlphaDirect_BrokerMoneyMove_IncomeSample.xml");
+			var useCase = GetUseCase(stateManager);
 
 			await useCase.Handle(_date, _userId, _brokerId, sample);
+			sample.Position = 0;
 			await useCase.Handle(_date, _userId, _brokerId, sample);
 
 			await AssertIncomeTransfers(stateManager);
@@ -111,7 +112,7 @@ namespace InvestmentReporting.UnitTests {
 
 		[Test]
 		public void IsExpenseTransfersRead() {
-			var sample = LoadSample("AlphaDirect_BrokerMoneyMove_ExpenseSample.xml");
+			var sample = LoadXml("AlphaDirect_BrokerMoneyMove_ExpenseSample.xml");
 			var parser = new BrokerMoneyMoveParser();
 
 			var actualTransfers = parser.ReadExpenseTransfers(sample);
@@ -125,7 +126,7 @@ namespace InvestmentReporting.UnitTests {
 
 		[Test]
 		public void IsExpenseTransfersSkipDividend() {
-			var sample = LoadSample("AlphaDirect_BrokerMoneyMove_DividendSample.xml");
+			var sample = LoadXml("AlphaDirect_BrokerMoneyMove_DividendSample.xml");
 			var parser = new BrokerMoneyMoveParser();
 
 			var actualTransfers = parser.ReadExpenseTransfers(sample);
@@ -135,7 +136,7 @@ namespace InvestmentReporting.UnitTests {
 
 		[Test]
 		public void IsExpenseTransfersSkipIncomeTransfer() {
-			var sample = LoadSample("AlphaDirect_BrokerMoneyMove_IncomeSample.xml");
+			var sample = LoadXml("AlphaDirect_BrokerMoneyMove_IncomeSample.xml");
 			var parser = new BrokerMoneyMoveParser();
 
 			var actualTransfers = parser.ReadExpenseTransfers(sample);
@@ -146,8 +147,8 @@ namespace InvestmentReporting.UnitTests {
 		[Test]
 		public async Task IsExpenseTransfersImported() {
 			var stateManager = GetStateManager();
-			var sample       = LoadSample("AlphaDirect_BrokerMoneyMove_ExpenseSample.xml");
-			var useCase      = GetUseCase(stateManager);
+			await using var sample = LoadStream("AlphaDirect_BrokerMoneyMove_ExpenseSample.xml");
+			var useCase = GetUseCase(stateManager);
 
 			await useCase.Handle(_date, _userId, _brokerId, sample);
 
@@ -157,10 +158,11 @@ namespace InvestmentReporting.UnitTests {
 		[Test]
 		public async Task IsExpenseTransfersNotDuplicated() {
 			var stateManager = GetStateManager();
-			var sample       = LoadSample("AlphaDirect_BrokerMoneyMove_ExpenseSample.xml");
-			var useCase      = GetUseCase(stateManager);
+			await using var sample = LoadStream("AlphaDirect_BrokerMoneyMove_ExpenseSample.xml");
+			var useCase = GetUseCase(stateManager);
 
 			await useCase.Handle(_date, _userId, _brokerId, sample);
+			sample.Position = 0;
 			await useCase.Handle(_date, _userId, _brokerId, sample);
 
 			await AssertExpenseTransfers(stateManager);
@@ -177,7 +179,7 @@ namespace InvestmentReporting.UnitTests {
 
 		[Test]
 		public void IsTradesRead() {
-			var sample = LoadSample("AlphaDirect_BrokerMoneyMove_BuySellAssetSample.xml");
+			var sample = LoadXml("AlphaDirect_BrokerMoneyMove_BuySellAssetSample.xml");
 			var parser = new TradeParser();
 
 			var actualTrades = parser.ReadTrades(sample);
@@ -194,8 +196,8 @@ namespace InvestmentReporting.UnitTests {
 		[Test]
 		public async Task IsAssetsImported() {
 			var stateManager = GetStateManager();
-			var sample       = LoadSample("AlphaDirect_BrokerMoneyMove_BuySellAssetSample.xml");
-			var useCase      = GetUseCase(stateManager);
+			await using var sample = LoadStream("AlphaDirect_BrokerMoneyMove_BuySellAssetSample.xml");
+			var useCase = GetUseCase(stateManager);
 
 			await useCase.Handle(_date, _userId, _brokerId, sample);
 
@@ -205,10 +207,11 @@ namespace InvestmentReporting.UnitTests {
 		[Test]
 		public async Task IsAssetsNotDuplicated() {
 			var stateManager = GetStateManager();
-			var sample       = LoadSample("AlphaDirect_BrokerMoneyMove_BuySellAssetSample.xml");
-			var useCase      = GetUseCase(stateManager);
+			await using var sample = LoadStream("AlphaDirect_BrokerMoneyMove_BuySellAssetSample.xml");
+			var useCase = GetUseCase(stateManager);
 
 			await useCase.Handle(_date, _userId, _brokerId, sample);
+			sample.Position = 0;
 			await useCase.Handle(_date, _userId, _brokerId, sample);
 
 			await AssertAssets(stateManager);
@@ -229,7 +232,7 @@ namespace InvestmentReporting.UnitTests {
 
 		[Test]
 		public void IsDividendTransfersRead() {
-			var sample = LoadSample("AlphaDirect_BrokerMoneyMove_DividendSample.xml");
+			var sample = LoadXml("AlphaDirect_BrokerMoneyMove_DividendSample.xml");
 			var parser = new BrokerMoneyMoveParser();
 
 			var actualTransfers = parser.ReadDividendTransfers(sample);
@@ -243,8 +246,8 @@ namespace InvestmentReporting.UnitTests {
 		[Test]
 		public async Task IsDividendTransfersImported() {
 			var stateManager = GetStateManager();
-			var sample       = LoadSample("AlphaDirect_BrokerMoneyMove_DividendSample.xml");
-			var useCase      = GetUseCase(stateManager);
+			await using var sample = LoadStream("AlphaDirect_BrokerMoneyMove_DividendSample.xml");
+			var useCase = GetUseCase(stateManager);
 
 			await useCase.Handle(_date, _userId, _brokerId, sample);
 
@@ -254,10 +257,11 @@ namespace InvestmentReporting.UnitTests {
 		[Test]
 		public async Task IsDividendTransfersNotDuplicated() {
 			var stateManager = GetStateManager();
-			var sample       = LoadSample("AlphaDirect_BrokerMoneyMove_DividendSample.xml");
-			var useCase      = GetUseCase(stateManager);
+			await using var sample = LoadStream("AlphaDirect_BrokerMoneyMove_DividendSample.xml");
+			var useCase = GetUseCase(stateManager);
 
 			await useCase.Handle(_date, _userId, _brokerId, sample);
+			sample.Position = 0;
 			await useCase.Handle(_date, _userId, _brokerId, sample);
 
 			await AssertDividendTransfers(stateManager);
@@ -272,7 +276,7 @@ namespace InvestmentReporting.UnitTests {
 
 		[Test]
 		public void IsCouponTransfersRead() {
-			var sample = LoadSample("AlphaDirect_BrokerMoneyMove_CouponSample.xml");
+			var sample = LoadXml("AlphaDirect_BrokerMoneyMove_CouponSample.xml");
 			var parser = new BrokerMoneyMoveParser();
 
 			var actualTransfers = parser.ReadCouponTransfers(sample);
@@ -286,8 +290,8 @@ namespace InvestmentReporting.UnitTests {
 		[Test]
 		public async Task IsCouponTransfersImported() {
 			var stateManager = GetStateManager();
-			var sample       = LoadSample("AlphaDirect_BrokerMoneyMove_CouponSample.xml");
-			var useCase      = GetUseCase(stateManager);
+			await using var sample = LoadStream("AlphaDirect_BrokerMoneyMove_CouponSample.xml");
+			var useCase = GetUseCase(stateManager);
 
 			await useCase.Handle(_date, _userId, _brokerId, sample);
 
@@ -297,10 +301,11 @@ namespace InvestmentReporting.UnitTests {
 		[Test]
 		public async Task IsCouponTransfersNotDuplicated() {
 			var stateManager = GetStateManager();
-			var sample       = LoadSample("AlphaDirect_BrokerMoneyMove_CouponSample.xml");
-			var useCase      = GetUseCase(stateManager);
+			await using var sample = LoadStream("AlphaDirect_BrokerMoneyMove_CouponSample.xml");
+			var useCase = GetUseCase(stateManager);
 
 			await useCase.Handle(_date, _userId, _brokerId, sample);
+			sample.Position = 0;
 			await useCase.Handle(_date, _userId, _brokerId, sample);
 
 			await AssertCouponTransfers(stateManager);
@@ -313,8 +318,10 @@ namespace InvestmentReporting.UnitTests {
 			rubAccount.Balance.Should().Be(-100 - 10 + 100);
 		}
 
-		XmlDocument LoadSample(string name) {
-			using var file = File.OpenRead(Path.Combine("Samples", name));
+		Stream LoadStream(string name) => File.OpenRead(Path.Combine("Samples", name));
+
+		XmlDocument LoadXml(string name) {
+			using var file = LoadStream(name);
 			var xml = new XmlDocument();
 			xml.Load(file);
 			return xml;
@@ -330,7 +337,7 @@ namespace InvestmentReporting.UnitTests {
 				.With(_rubAccountId)
 				.Build();
 
-		ImportUseCase GetUseCase(StateManager stateManager) {
+		AlphaDirectImportUseCase GetUseCase(StateManager stateManager) {
 			var loggerFactory     = new TestLoggerFactory();
 			var transStateManager = new TransactionStateManager(loggerFactory, stateManager);
 			var moneyMoveParser   = new BrokerMoneyMoveParser();
@@ -338,7 +345,7 @@ namespace InvestmentReporting.UnitTests {
 			var idGenerator       = new GuidIdGenerator();
 			var addIncomeUseCase  = new AddIncomeUseCase(stateManager, idGenerator);
 			var addExpenseUseCase = new AddExpenseUseCase(stateManager, idGenerator);
-			return new ImportUseCase(
+			return new AlphaDirectImportUseCase(
 				transStateManager, moneyMoveParser, tradeParser,
 				addIncomeUseCase,
 				addExpenseUseCase,

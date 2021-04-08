@@ -213,7 +213,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name ImportCreate
      * @request POST:/Import
      */
-    importCreate: (query: { date: string; broker: string }, data: { report: File }, params: RequestParams = {}) =>
+    importCreate: (
+      query: { date: string; broker: string; importer: string },
+      data: { report: File },
+      params: RequestParams = {},
+    ) =>
       this.request<void, void>({
         path: `/Import`,
         method: "POST",

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using System.IO;
 using System.Threading.Tasks;
-using System.Xml;
 using InvestmentReporting.Domain.Entity;
 using InvestmentReporting.Import.UseCase;
 using Microsoft.AspNetCore.Authorization;
@@ -15,33 +13,26 @@ namespace InvestmentReporting.ImportService.Controllers {
 	[ApiController]
 	[Route("[controller]")]
 	public class ImportController : ControllerBase {
-		readonly ILogger       _logger;
-		readonly ImportUseCase _useCase;
+		readonly ILogger              _logger;
+		readonly ImportUseCaseFactory _useCaseFactory;
 
-		public ImportController(ILogger<ImportController> logger, ImportUseCase useCase) {
-			_logger  = logger;
-			_useCase = useCase;
+		public ImportController(ILogger<ImportController> logger, ImportUseCaseFactory useCaseFactory) {
+			_logger         = logger;
+			_useCaseFactory = useCaseFactory;
 		}
 
 		[HttpPost]
 		[ProducesResponseType(StatusCodes.Status201Created)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		public async Task<IActionResult> Post([Required] DateTimeOffset date, [Required] string broker, [Required] IFormFile report) {
-			_logger.LogInformation($"Import for broker '{broker}' started");
-			var xmlDoc = LoadXml(report);
-			var userId = new UserId(User.Identity?.Name ?? string.Empty);
-			await _useCase.Handle(date, userId, new(broker), xmlDoc);
-			_logger.LogInformation($"Import for broker '{broker}' finished");
+		public async Task<IActionResult> Post(
+			[Required] DateTimeOffset date, [Required] string broker, [Required] string importer, [Required] IFormFile report) {
+			_logger.LogInformation($"Import '{importer}' for broker '{broker}' started");
+			var useCase = _useCaseFactory.Create(importer);
+			await using var stream  = report.OpenReadStream();
+			var userId  = new UserId(User.Identity?.Name ?? string.Empty);
+			await useCase.Handle(date, userId, new(broker), stream);
+			_logger.LogInformation($"Import '{importer}' for broker '{broker}' finished");
 			return Ok();
-		}
-
-		static XmlDocument LoadXml(IFormFile file) {
-			using var reader = new StreamReader(file.OpenReadStream());
-
-			var content     = reader.ReadToEnd();
-			var xmlDocument = new XmlDocument();
-			xmlDocument.LoadXml(content);
-			return xmlDocument;
 		}
 	}
 }

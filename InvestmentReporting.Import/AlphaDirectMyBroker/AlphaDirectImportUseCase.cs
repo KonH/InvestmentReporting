@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -12,9 +13,10 @@ using InvestmentReporting.Domain.UseCase.Exceptions;
 using InvestmentReporting.Import.Dto;
 using InvestmentReporting.Import.Exceptions;
 using InvestmentReporting.Import.Logic;
+using InvestmentReporting.Import.UseCase;
 
-namespace InvestmentReporting.Import.UseCase {
-	public sealed class ImportUseCase {
+namespace InvestmentReporting.Import.AlphaDirectMyBroker {
+	public sealed class AlphaDirectImportUseCase : IImportUseCase {
 		readonly IncomeCategory  _incomeTransferCategory  = new("Income Transfer");
 		readonly IncomeCategory  _dividendCategory        = new("Share Dividend");
 		readonly IncomeCategory  _couponCategory          = new("Bond Coupon");
@@ -39,7 +41,7 @@ namespace InvestmentReporting.Import.UseCase {
 		// To receive organization name and series from asset name
 		readonly Regex _bondRegex = new("(.*) сери.*(\\w{4}-\\w{2})");
 
-		public ImportUseCase(
+		public AlphaDirectImportUseCase(
 			TransactionStateManager stateManager, BrokerMoneyMoveParser moneyMoveParser, TradeParser tradeParser,
 			AddIncomeUseCase addIncomeUseCase, AddExpenseUseCase addExpenseUseCase,
 			BuyAssetUseCase buyAssetUseCase, SellAssetUseCase sellAssetUseCase) {
@@ -52,7 +54,8 @@ namespace InvestmentReporting.Import.UseCase {
 			_sellAssetUseCase  = sellAssetUseCase;
 		}
 
-		public async Task Handle(DateTimeOffset date, UserId user, BrokerId brokerId, XmlDocument report) {
+		public async Task Handle(DateTimeOffset date, UserId user, BrokerId brokerId, Stream stream) {
+			var report = LoadXml(stream);
 			await _stateManager.Prepare(user);
 			report = _sanitizer.Sanitize(report);
 			var state = await _stateManager.ReadState(date, user);
@@ -82,6 +85,12 @@ namespace InvestmentReporting.Import.UseCase {
 			var couponTransfers = _moneyMoveParser.ReadCouponTransfers(report);
 			await FillCoupons(user, brokerId, couponTransfers, currencyAccounts, incomeAccountModels, trades, assets);
 			await _stateManager.Push();
+		}
+
+		static XmlDocument LoadXml(Stream stream) {
+			var xmlDocument = new XmlDocument();
+			xmlDocument.Load(stream);
+			return xmlDocument;
 		}
 
 		T[] Filter<T>(IReadOnlyCollection<ICommandModel> allCommands)

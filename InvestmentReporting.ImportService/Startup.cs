@@ -2,6 +2,7 @@ using InvestmentReporting.Data.Core.Repository;
 using InvestmentReporting.Data.Mongo.Repository;
 using InvestmentReporting.Domain.Logic;
 using InvestmentReporting.Domain.UseCase;
+using InvestmentReporting.Import.AlphaDirectMyBroker;
 using InvestmentReporting.Import.Logic;
 using InvestmentReporting.Import.UseCase;
 using InvestmentReporting.Shared.Extensions;
@@ -41,7 +42,8 @@ namespace InvestmentReporting.ImportService {
 			services.AddSingleton<StateManager>();
 			services.AddScoped<TransactionStateManager>();
 			services.AddScoped<IStateManager>(sp => sp.GetRequiredService<TransactionStateManager>());
-			services.AddScoped<ImportUseCase>();
+			services.AddScoped(sp => new ImportUseCaseFactory(t => (IImportUseCase)sp.GetRequiredService(t)));
+			services.AddScoped<AlphaDirectImportUseCase>();
 			services.AddScoped<BrokerMoneyMoveParser>();
 			services.AddScoped<TradeParser>();
 			services.AddScoped<AddIncomeUseCase>();
