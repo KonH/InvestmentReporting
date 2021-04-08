@@ -21,7 +21,8 @@ namespace InvestmentReporting.Domain.UseCase {
 			if ( string.IsNullOrWhiteSpace(code.ToString()) ) {
 				throw new InvalidCurrencyException();
 			}
-			if ( !format.ToString().Contains("{0}") ) {
+			var formatStr = format.ToString();
+			if ( !formatStr.Contains("{sign}") && !formatStr.Contains("{value}") ) {
 				throw new InvalidCurrencyException();
 			}
 			var state = await _stateManager.ReadState(date, user);

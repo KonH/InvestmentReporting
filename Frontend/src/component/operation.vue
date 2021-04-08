@@ -1,30 +1,24 @@
 <template>
 	<td>{{ operation.date }}</td>
-	<td>{{ amountFormat }}</td>
+	<td><money :currency-id="operation.currency" :value="operation.amount" /></td>
 	<td>{{ operation.kind }}</td>
 	<td>{{ operation.category }}</td>
 	<td v-if="operation.asset">{{ operation.asset }}</td>
 </template>
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import { CurrencyDto, OperationDto, StateDto } from '@/api/state';
+import { OperationDto } from '@/api/state';
 import { Prop } from 'vue-property-decorator';
-import { State } from 'vuex-class';
+import Money from '@/component/money.vue';
 
 @Options({
 	name: 'Operation',
+	components: {
+		Money,
+	},
 })
 export default class Operation extends Vue {
-	@State('activeState')
-	activeState!: StateDto;
-
 	@Prop()
 	operation!: OperationDto;
-
-	get amountFormat() {
-		const accountCurrency = this.activeState.currencies?.find((c) => c.id == this.operation.currency) as CurrencyDto;
-		const format = accountCurrency.format;
-		return format?.replace('{0}', (this.operation.amount ?? 0).toString());
-	}
 }
 </script>

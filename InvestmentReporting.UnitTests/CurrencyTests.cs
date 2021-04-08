@@ -16,7 +16,7 @@ namespace InvestmentReporting.UnitTests {
 		[Test]
 		public async Task IsCurrencyAdded() {
 			var code          = new CurrencyCode("USD");
-			var format        = new CurrencyFormat("${0}");
+			var format        = new CurrencyFormat("{sign}${value}");
 			var stateManager  = GetStateManager();
 			var createUseCase = new CreateCurrencyUseCase(stateManager, new GuidIdGenerator());
 
@@ -30,7 +30,7 @@ namespace InvestmentReporting.UnitTests {
 		[Test]
 		public async Task IsCurrencyWithSameCodeFailedToAdd() {
 			var code          = new CurrencyCode("USD");
-			var format        = new CurrencyFormat("${0}");
+			var format        = new CurrencyFormat("{sign}${value}");
 			var stateManager  = GetStateManager();
 			var createUseCase = new CreateCurrencyUseCase(stateManager, new GuidIdGenerator());
 			await createUseCase.Handle(_date, _userId, code, format);
@@ -41,7 +41,7 @@ namespace InvestmentReporting.UnitTests {
 		[Test]
 		public void IsCurrencyWithEmptyCodeFailedToAdd() {
 			var code          = new CurrencyCode(string.Empty);
-			var format        = new CurrencyFormat("${0}");
+			var format        = new CurrencyFormat("{sign}${value}");
 			var stateManager  = GetStateManager();
 			var createUseCase = new CreateCurrencyUseCase(stateManager, new GuidIdGenerator());
 
