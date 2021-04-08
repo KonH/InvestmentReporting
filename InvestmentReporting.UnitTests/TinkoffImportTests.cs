@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using ClosedXML.Excel;
 using FluentAssertions;
 using InvestmentReporting.Data.InMemory.Repository;
 using InvestmentReporting.Domain.Entity;
@@ -50,8 +51,8 @@ namespace InvestmentReporting.UnitTests {
 			var actualTransfers = parser.ReadIncomeTransfers(sample);
 
 			var expectedTransfers = new[] {
-				new Transfer(DateTimeOffset.Parse("2020-01-01T01:02:03+3"), "Перевод из BankName", "USD", 100),
-				new Transfer(DateTimeOffset.Parse("2020-01-02T02:03:04+3"), "Перевод из BankName", "RUB", 200),
+				new Transfer(DateTimeOffset.Parse("2020-01-01T00:00:01+3"), "Пополнение счета", "RUB", 100),
+				new Transfer(DateTimeOffset.Parse("2020-01-02T00:00:02+3"), "Пополнение счета", "USD", 200),
 			};
 			actualTransfers.Should().Contain(expectedTransfers);
 		}
@@ -103,10 +104,10 @@ namespace InvestmentReporting.UnitTests {
 		async Task AssertIncomeTransfers(StateManager stateManager) {
 			var state      = await stateManager.ReadState(DateTimeOffset.MaxValue, _userId);
 			var broker     = state.Brokers.First(b => b.Id == _brokerId);
-			var usdAccount = broker.Accounts.First(a => a.Id == _usdAccountId);
-			usdAccount.Balance.Should().Be(100);
 			var rubAccount = broker.Accounts.First(a => a.Id == _rubAccountId);
-			rubAccount.Balance.Should().Be(200);
+			rubAccount.Balance.Should().Be(100);
+			var usdAccount = broker.Accounts.First(a => a.Id == _usdAccountId);
+			usdAccount.Balance.Should().Be(200);
 		}
 
 		[Test]
@@ -319,9 +320,9 @@ namespace InvestmentReporting.UnitTests {
 
 		Stream LoadStream(string name) => File.OpenRead(Path.Combine("Samples", name));
 
-		object LoadDocument(string name) {
+		IXLWorkbook LoadDocument(string name) {
 			using var file = LoadStream(name);
-			return file;
+			return new XLWorkbook(file);
 		}
 
 		StateManager GetStateManager() =>

@@ -5,6 +5,7 @@
 			Importer:
 			<select ref="importer" class="form-control">
 				<option>AlphaDirectMyBroker</option>
+				<option>TinkoffBrokerReport</option>
 			</select>
 		</label>
 	</div>

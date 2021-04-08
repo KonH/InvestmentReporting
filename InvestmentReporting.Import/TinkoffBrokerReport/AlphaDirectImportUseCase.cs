@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using ClosedXML.Excel;
 using InvestmentReporting.Domain.Entity;
 using InvestmentReporting.Domain.UseCase;
 using InvestmentReporting.Import.Logic;
@@ -36,6 +37,8 @@ namespace InvestmentReporting.Import.TinkoffBrokerReport {
 
 		public async Task Handle(DateTimeOffset date, UserId user, BrokerId brokerId, Stream stream) {
 			await _stateManager.Prepare(user);
+			var report = new XLWorkbook(stream);
+			_moneyMoveParser.ReadIncomeTransfers(report);
 			await _stateManager.Push();
 		}
 	}

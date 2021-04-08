@@ -16,8 +16,8 @@ using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
 using AlphaBrokerMoneyMoveParser = InvestmentReporting.Import.AlphaDirectMyBroker.BrokerMoneyMoveParser;
 using AlphaTradeParser = InvestmentReporting.Import.AlphaDirectMyBroker.TradeParser;
-using TinkoffBrokerMoneyMoveParser = InvestmentReporting.Import.AlphaDirectMyBroker.BrokerMoneyMoveParser;
-using TinkoffTradeParser = InvestmentReporting.Import.AlphaDirectMyBroker.TradeParser;
+using TinkoffBrokerMoneyMoveParser = InvestmentReporting.Import.TinkoffBrokerReport.BrokerMoneyMoveParser;
+using TinkoffTradeParser = InvestmentReporting.Import.TinkoffBrokerReport.TradeParser;
 
 namespace InvestmentReporting.ImportService {
 	public class Startup {
