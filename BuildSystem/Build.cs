@@ -51,7 +51,8 @@ namespace InvestmentReporting.BuildSystem {
 						.SetConfiguration(Configuration));
 				}
 
-				if ( Configuration == "Development" ) {
+				var shouldUseSwagger = (Configuration == "Development") && (architecture != Architecture.Arm64);
+				if ( shouldUseSwagger ) {
 					Environment.SetEnvironmentVariable("SWAGGER_RUN", true.ToString());
 					try {
 						var apiDir = RootDirectory / "api";
