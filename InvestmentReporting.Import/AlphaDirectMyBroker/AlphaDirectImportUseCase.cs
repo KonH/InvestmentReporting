@@ -13,21 +13,16 @@ using InvestmentReporting.Domain.UseCase.Exceptions;
 using InvestmentReporting.Import.Dto;
 using InvestmentReporting.Import.Exceptions;
 using InvestmentReporting.Import.Logic;
+using InvestmentReporting.Import.TinkoffBrokerReport;
 using InvestmentReporting.Import.UseCase;
 
 namespace InvestmentReporting.Import.AlphaDirectMyBroker {
-	public sealed class AlphaDirectImportUseCase : IImportUseCase {
-		readonly IncomeCategory  _incomeTransferCategory  = new("Income Transfer");
-		readonly IncomeCategory  _dividendCategory        = new("Share Dividend");
-		readonly IncomeCategory  _couponCategory          = new("Bond Coupon");
-		readonly ExpenseCategory _expenseTransferCategory = new("Expense Transfer");
-
+	public sealed class AlphaDirectImportUseCase : ImportUseCase, IImportUseCase {
 		readonly XmlSanitizer _sanitizer = new();
 
 		readonly TransactionStateManager _stateManager;
 		readonly BrokerMoneyMoveParser   _moneyMoveParser;
 		readonly TradeParser             _tradeParser;
-		readonly AddIncomeUseCase        _addIncomeUseCase;
 		readonly AddExpenseUseCase       _addExpenseUseCase;
 		readonly BuyAssetUseCase         _buyAssetUseCase;
 		readonly SellAssetUseCase        _sellAssetUseCase;
@@ -44,11 +39,10 @@ namespace InvestmentReporting.Import.AlphaDirectMyBroker {
 		public AlphaDirectImportUseCase(
 			TransactionStateManager stateManager, BrokerMoneyMoveParser moneyMoveParser, TradeParser tradeParser,
 			AddIncomeUseCase addIncomeUseCase, AddExpenseUseCase addExpenseUseCase,
-			BuyAssetUseCase buyAssetUseCase, SellAssetUseCase sellAssetUseCase) {
+			BuyAssetUseCase buyAssetUseCase, SellAssetUseCase sellAssetUseCase) : base(addIncomeUseCase) {
 			_stateManager      = stateManager;
 			_moneyMoveParser   = moneyMoveParser;
 			_tradeParser       = tradeParser;
-			_addIncomeUseCase  = addIncomeUseCase;
 			_addExpenseUseCase = addExpenseUseCase;
 			_buyAssetUseCase   = buyAssetUseCase;
 			_sellAssetUseCase  = sellAssetUseCase;
@@ -93,29 +87,6 @@ namespace InvestmentReporting.Import.AlphaDirectMyBroker {
 			return xmlDocument;
 		}
 
-		T[] Filter<T>(IReadOnlyCollection<ICommandModel> allCommands)
-			where T : class, ICommandModel =>
-			allCommands
-				.Select(c => c as T)
-				.Where(c => c != null)
-				.Select(c => c!)
-				.ToArray();
-
-		async Task FillIncomeTransfers(
-			UserId user, BrokerId brokerId, IReadOnlyCollection<Transfer> incomeTransfers,
-			Dictionary<string, AccountId> currencyAccounts,
-			Dictionary<AccountId, AddIncomeModel[]> incomeAccountModels) {
-			foreach ( var incomeTransfer in incomeTransfers ) {
-				var accountId = currencyAccounts[incomeTransfer.Currency];
-				if ( IsAlreadyPresent(incomeTransfer.Date, incomeTransfer.Amount, incomeAccountModels[accountId]) ) {
-					continue;
-				}
-				await _addIncomeUseCase.Handle(
-					incomeTransfer.Date, user, brokerId, accountId, incomeTransfer.Amount,
-					_incomeTransferCategory, asset: null);
-			}
-		}
-
 		async Task FillExpenseTransfers(
 			UserId user, BrokerId brokerId, IReadOnlyCollection<Transfer> expenseTransfers,
 			Dictionary<string, AccountId> currencyAccounts,
@@ -128,7 +99,7 @@ namespace InvestmentReporting.Import.AlphaDirectMyBroker {
 				}
 				await _addExpenseUseCase.Handle(
 					expenseTransfer.Date, user, brokerId, accountId, amount,
-					_expenseTransferCategory, asset: null);
+					ExpenseTransferCategory, asset: null);
 			}
 		}
 
@@ -182,9 +153,9 @@ namespace InvestmentReporting.Import.AlphaDirectMyBroker {
 					continue;
 				}
 				var asset = DetectAssetFromDividend(dividendTransfer.Comment, assets);
-				await _addIncomeUseCase.Handle(
+				await AddIncomeUseCase.Handle(
 					dividendTransfer.Date, user, brokerId, accountId, dividendTransfer.Amount,
-					_dividendCategory, asset);
+					DividendCategory, asset);
 			}
 		}
 
@@ -210,9 +181,9 @@ namespace InvestmentReporting.Import.AlphaDirectMyBroker {
 					continue;
 				}
 				var asset = DetectAssetFromCoupon(couponTransfer.Comment, trades, assets);
-				await _addIncomeUseCase.Handle(
+				await AddIncomeUseCase.Handle(
 					couponTransfer.Date, user, brokerId, accountId, couponTransfer.Amount,
-					_couponCategory, asset);
+					CouponCategory, asset);
 			}
 		}
 
@@ -251,28 +222,6 @@ namespace InvestmentReporting.Import.AlphaDirectMyBroker {
 			return (parts.Length > 1) ? parts[^2] : null;
 		}
 
-		Dictionary<string, AccountId> CreateCurrencyAccounts(
-			string[] requiredCurrencyCodes, IReadOnlyCollection<ReadOnlyCurrency> currencies,
-			IReadOnlyCollection<ReadOnlyAccount> accounts) =>
-			requiredCurrencyCodes
-				.ToDictionary(
-					currencyCode => currencyCode,
-					currencyCode => {
-						var accountId = GetAccountIdForCurrencyCode(currencyCode, currencies, accounts);
-						if ( accountId == null ) {
-							throw new AccountNotFoundException();
-						}
-						return accountId;
-					});
-
-		static Dictionary<AccountId, AddIncomeModel[]> CreateIncomeModels(
-			Dictionary<string, AccountId> currencyAccounts, AddIncomeModel[] allIncomeModels) =>
-			currencyAccounts.Values.ToDictionary(
-				accountId => accountId,
-				accountId => allIncomeModels
-					.Where(m => m.Account == accountId)
-					.ToArray());
-
 		static Dictionary<AccountId, AddExpenseModel[]> CreateExpenseModels(
 			Dictionary<string, AccountId> currencyAccounts, AddExpenseModel[] allExpenseModels) =>
 			currencyAccounts.Values.ToDictionary(
@@ -280,37 +229,5 @@ namespace InvestmentReporting.Import.AlphaDirectMyBroker {
 				accountId => allExpenseModels
 					.Where(m => m.Account == accountId)
 					.ToArray());
-
-		string[] GetRequiredCurrencyCodes(params IEnumerable<string>[] codes) =>
-			codes.Aggregate(new List<string>(), (acc, cur) => {
-					acc.AddRange(cur);
-					return acc;
-				})
-				.Distinct()
-				.ToArray();
-
-		AccountId? GetAccountIdForCurrencyCode(
-			string code,
-			IReadOnlyCollection<ReadOnlyCurrency> currencies,
-			IReadOnlyCollection<ReadOnlyAccount> accounts) {
-			var currency = currencies.FirstOrDefault(c => c.Code == code);
-			return (currency != null) ? accounts.FirstOrDefault(a => a.Currency == currency.Id)?.Id : null;
-		}
-
-		bool IsAlreadyPresent(DateTimeOffset date, decimal amount, AddIncomeModel[] models) =>
-			models
-				.Any(model => (model.Date == date) && (model.Amount == amount));
-
-		bool IsAlreadyPresent(DateTimeOffset date, decimal amount, AddExpenseModel[] models) =>
-			models
-				.Any(model => (model.Date == date) && (model.Amount == amount));
-
-		bool IsAlreadyPresent(DateTimeOffset date, string isin, int count, AddAssetModel[] models) =>
-			models
-				.Any(model => (model.Date == date) && (model.Isin == isin) && (model.Count == count));
-
-		bool IsAlreadyPresent(DateTimeOffset date, AssetId id, int count, ReduceAssetModel[] models) =>
-			models
-				.Any(model => (model.Date == date) && (model.Id == id) && (model.Count == count));
 	}
 }
