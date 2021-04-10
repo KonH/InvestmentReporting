@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using ClosedXML.Excel;
 using InvestmentReporting.Import.Dto;
-using InvestmentReporting.Import.Exceptions;
 
 namespace InvestmentReporting.Import.TinkoffBrokerReport {
 	public sealed class TradeParser {
@@ -17,51 +16,26 @@ namespace InvestmentReporting.Import.TinkoffBrokerReport {
 				(r.RowNumber() >= startRow) &&
 				(r.RowNumber() <= endRow));
 			foreach ( var row in rows ) {
-				var cells = row.CellsUsed()
-					.Select(c => (column: c.Address.ColumnLetter, value: c.Value.ToString()?.Trim() ?? string.Empty))
-					.Where(c => !string.IsNullOrEmpty(c.value))
-					.ToArray();
-				var rawDateStr = cells.First(c => c.column == "H").value;
-				var rawTimeStr = cells.First(c => c.column == "L").value;
 				// We expect that it's Moscow time, but no timezone provided
 				// and for backward-compatibility we should use fixed value
-				var dateStr = $"{rawDateStr}+3";
-				if ( !DateTimeOffset.TryParse(dateStr, out var date) ) {
-					throw new UnexpectedFormatException($"Failed to parse DateTimeOffset from '{dateStr}'");
-				}
-				var timeStr = $"{rawTimeStr}+3";
-				if ( !DateTimeOffset.TryParse(timeStr, out var time) ) {
-					throw new UnexpectedFormatException($"Failed to parse DateTimeOffset from '{rawTimeStr}'");
-				}
+				var dateDt   = row.Cell("H").GetDateTimeExact("dd.MM.yyyy");
+				var date     = new DateTimeOffset(dateDt, TimeSpan.FromHours(3));
+				var timeDt   = row.Cell("L").GetDateTime();
+				var time     = new DateTimeOffset(timeDt, TimeSpan.FromHours(3));
 				var fullDate = new DateTimeOffset(date.Year, date.Month, date.Day, time.Hour, time.Minute, time.Second, time.Offset);
-				var type     = cells.First(c => c.column == "AB").value;
+				var type     = row.Cell("AB").GetString().Trim();
 				var buy      = (type == "Покупка");
-				var name     = cells.First(c => c.column == "AF").value;
+				var name     = row.Cell("AF").GetString().Trim();
 				var isin     = assets.Single(a => a.Name == name).Isin;
 				var category = assets.Single(a => a.Name == name).Category;
-				var countStr = cells.First(c => c.column == "BB").value;
-				if ( !int.TryParse(countStr, out var count) ) {
-					throw new UnexpectedFormatException($"Failed to parse count from '{countStr}'");
-				}
+				var count = (int)row.Cell("BB").GetDouble();
 				count = buy ? count : -count;
-				var currency = cells.First(c => c.column == "AW").value;
-				var sumStr   = cells.First(c => c.column == "BQ").value;
-				if ( !decimal.TryParse(sumStr, out var sum) ) {
-					throw new UnexpectedFormatException($"Failed to parse sum from '{sumStr}'");
-				}
-				var brokerFeeStr = cells.First(c => c.column == "CC").value;
-				if ( !decimal.TryParse(brokerFeeStr, out var brokerFee) ) {
-					throw new UnexpectedFormatException($"Failed to parse broker fee from '{brokerFeeStr}'");
-				}
-				var marketFeeStr = cells.First(c => c.column == "CL").value;
-				if ( !decimal.TryParse(marketFeeStr, out var marketFee) ) {
-					throw new UnexpectedFormatException($"Failed to parse market fee from '{marketFeeStr}'");
-				}
-				var clearCenterFeeStr = cells.First(c => c.column == "CW").value;
-				if ( !decimal.TryParse(clearCenterFeeStr, out var clearCenterFee) ) {
-					throw new UnexpectedFormatException($"Failed to parse clear center fee from '{clearCenterFeeStr}'");
-				}
-				var fee = brokerFee + marketFee + clearCenterFee;
+				var currency       = row.Cell("AW").GetString().Trim();
+				var sum            = row.Cell("BQ").GetDecimal();
+				var brokerFee      = row.Cell("CC").GetDecimal();
+				var marketFee      = row.Cell("CL").GetDecimal();
+				var clearCenterFee = row.Cell("CW").GetDecimal();
+				var fee            = brokerFee + marketFee + clearCenterFee;
 				result.Add(new(fullDate, isin, name, category, count, currency, sum, fee));
 			}
 			return result;

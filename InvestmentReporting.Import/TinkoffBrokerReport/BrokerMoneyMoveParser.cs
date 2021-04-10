@@ -54,56 +54,42 @@ namespace InvestmentReporting.Import.TinkoffBrokerReport {
 					(r.RowNumber() <= endRow));
 				var currency = header.Value.ToString()?.Trim() ?? string.Empty;
 				foreach ( var row in rows ) {
-					var cells = row.CellsUsed()
-						.Select(c => (column: c.Address.ColumnLetter, value: c.Value.ToString()?.Trim()))
-						.Where(t => !string.IsNullOrEmpty(t.Item2))
-						.Select(t => (t.column, value: t.value!))
-						.ToArray();
-					var rawDateStr = GetStrAtRowOrAbove(row.RowNumber(), "A", cells, report);
-					var rawTimeStr = GetStrAtRowOrAbove(row.RowNumber(), "N", cells, report);
-					var operation  = cells.First(c => c.column == "AZ").value;
+					var rawDateCell = GetCellAtRowOrAbove(report, row.RowNumber(), "A");
+					var rawTimeCell = GetCellAtRowOrAbove(report, row.RowNumber(), "N");
+					var operation  = row.Cell("AZ").GetString().Trim();
 					if ( !filter(operation) ) {
 						continue;
 					}
 					var sumLetter = income ? "BV" : "CS";
-					var sumStr  = cells.First(c => c.column == sumLetter).value;
-
+					var sum    = row.Cell(sumLetter).GetDecimal();
 					// We expect that it's Moscow time, but no timezone provided
 					// and for backward-compatibility we should use fixed value
-					var dateStr = $"{rawDateStr}+3";
-					if ( !DateTimeOffset.TryParse(dateStr, out var date) ) {
-						throw new UnexpectedFormatException($"Failed to parse DateTimeOffset from '{dateStr}'");
-					}
-					var timeStr = $"{rawTimeStr}+3";
-					if ( !DateTimeOffset.TryParse(timeStr, out var time) ) {
-						throw new UnexpectedFormatException($"Failed to parse DateTimeOffset from '{rawTimeStr}'");
-					}
+					var dateDt   = rawDateCell.GetDateTimeExact("dd.MM.yyyy");
+					var date     = new DateTimeOffset(dateDt, TimeSpan.FromHours(3));
+					var timeDt   = rawTimeCell.GetDateTime();
+					var time     = new DateTimeOffset(timeDt, TimeSpan.FromHours(3));
 					var fullDate = new DateTimeOffset(date.Year, date.Month, date.Day, time.Hour, time.Minute, time.Second, time.Offset);
-					if ( !decimal.TryParse(sumStr, out var sum) ) {
-						throw new UnexpectedFormatException($"Failed to parse sum from '{sumStr}'");
-					}
 					sum = income ? sum : -sum;
-					result.Add(new(fullDate, operation, currency, sum));
+					result.Add(new(fullDate, operation, currency, (decimal)sum));
 				}
 			}
 			return result;
 		}
 
-		string GetStrAtRowOrAbove(int row, string column, (string column, string value)[] cells, IXLWorkbook report) {
-			var currentRowCell = cells.FirstOrDefault(c => c.column == column);
-			if ( !string.IsNullOrEmpty(currentRowCell.column) ) {
-				return currentRowCell.value;
+		IXLCell GetCellAtRowOrAbove(IXLWorkbook report, int row, string column) {
+			var currentRowCell = report.FindCells(c => (c.Address.ColumnLetter == column) && (c.Address.RowNumber == row)).Single();
+			if ( !string.IsNullOrEmpty(currentRowCell.GetString().Trim()) ) {
+				return currentRowCell;
 			}
 			var aboveCells = report.FindCells(c => (c.Address.ColumnLetter == column) && (c.Address.RowNumber < row))
 				.Reverse()
 				.ToArray();
 			foreach ( var aboveCell in aboveCells ) {
-				var value = aboveCell.Value.ToString()?.Trim() ?? string.Empty;
-				if ( !string.IsNullOrEmpty(value) ) {
-					return value;
+				if ( !string.IsNullOrEmpty(aboveCell.GetString()?.Trim()) ) {
+					return aboveCell;
 				}
 			}
-			return string.Empty;
+			throw new UnexpectedFormatException($"Failed to find non-empty cell at {column}{row} or above");
 		}
 	}
 }

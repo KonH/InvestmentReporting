@@ -15,13 +15,9 @@ namespace InvestmentReporting.Import.TinkoffBrokerReport {
 				(r.RowNumber() >= startRow) &&
 				(r.RowNumber() <= endRow));
 			foreach ( var row in rows ) {
-				var cells = row.CellsUsed()
-					.Select(c => (column: c.Address.ColumnLetter, value: c.Value.ToString()?.Trim() ?? string.Empty))
-					.Where(c => !string.IsNullOrEmpty(c.value))
-					.ToArray();
-				var name     = cells.First(c => c.column == "A").value;
-				var isin     = cells.First(c => c.column == "AK").value;
-				var type     = cells.First(c => c.column == "CV").value;
+				var name     = row.Cell("A").GetString().Trim();
+				var isin     = row.Cell("AK").GetString().Trim();
+				var type     = row.Cell("CV").GetString().Trim();
 				var category = type.Contains("обл") ? "Bond" : "Share";
 				result.Add(new(isin, name, category));
 			}
