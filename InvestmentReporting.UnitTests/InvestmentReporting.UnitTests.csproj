@@ -28,7 +28,8 @@
       <Content Include="Samples\AlphaDirect_BrokerMoneyMove_IncomeSample.xml" CopyToOutputDirectory="Always" />
       <Content Include="Samples\AlphaDirect_BrokerMoneyMove_BuySellAssetSample.xml" CopyToOutputDirectory="Always" />
       <Content Include="Samples\Tinkoff_BrokerMoneyMove_IncomeSample.xlsx" CopyToOutputDirectory="Always" />
-        <Content Include="Samples\Tinkoff_BrokerMoneyMove_ExpenseSample.xlsx" CopyToOutputDirectory="Always" />
+      <Content Include="Samples\Tinkoff_BrokerMoneyMove_ExpenseSample.xlsx" CopyToOutputDirectory="Always" />
+      <Content Include="Samples\Tinkoff_BrokerMoneyMove_BuySellAssetSample.xlsx" CopyToOutputDirectory="Always" />
     </ItemGroup>
 
 </Project>

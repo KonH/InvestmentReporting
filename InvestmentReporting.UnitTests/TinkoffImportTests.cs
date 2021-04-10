@@ -182,13 +182,14 @@ namespace InvestmentReporting.UnitTests {
 			var sample = LoadDocument("Tinkoff_BrokerMoneyMove_BuySellAssetSample.xlsx");
 			var parser = new TradeParser();
 
-			var actualTrades = parser.ReadTrades(sample);
+			var assets       = new AssetParser().ReadAssets(sample);
+			var actualTrades = parser.ReadTrades(sample, assets);
 
 			var expectedTrades = new[] {
-				new Trade(DateTimeOffset.Parse("2000-02-02T01:02:03+3"), "US0000000001", "AssetName1, а.о.", "Share", 2, "USD", 200, 20),
-				new Trade(DateTimeOffset.Parse("2000-02-02T01:02:03+3"), "RU0000000001", "AssetName2, о.к.б.", "Bond", 3, "RUB", 300, 30),
-				new Trade(DateTimeOffset.Parse("2000-03-03T03:04:05+3"), "US0000000001", "AssetName1, а.о.", "Share", -1, "USD", 101, 10.1m),
-				new Trade(DateTimeOffset.Parse("2000-03-03T03:04:05+3"), "RU0000000001", "AssetName2, о.к.б.", "Bond", -1, "RUB", 100, 10),
+				new Trade(DateTimeOffset.Parse("2000-02-02T01:02:03+3"), "US0000000001", "AssetName1", "Share", 2, "USD", 200, 15),
+				new Trade(DateTimeOffset.Parse("2000-02-02T01:02:03+3"), "RU0000000001", "AssetName2", "Bond", 3, "RUB", 300, 18),
+				new Trade(DateTimeOffset.Parse("2000-03-03T03:04:05+3"), "US0000000001", "AssetName1", "Share", -1, "USD", 101, 15),
+				new Trade(DateTimeOffset.Parse("2000-03-03T03:04:05+3"), "RU0000000001", "AssetName2", "Bond", -1, "RUB", 100, 18),
 			};
 			actualTrades.Should().Contain(expectedTrades);
 		}
@@ -227,7 +228,7 @@ namespace InvestmentReporting.UnitTests {
 			var usdAccount = broker.Accounts.First(a => a.Id == _usdAccountId);
 			usdAccount.Balance.Should().Be(-200 + 101);
 			var rubAccount = broker.Accounts.First(a => a.Id == _rubAccountId);
-			rubAccount.Balance.Should().Be(-300 + 100 - 20 - 30 - 10.1m - 10);
+			rubAccount.Balance.Should().Be(-300 + 100 - 15 - 18 - 15 - 18);
 		}
 
 		[Test]
@@ -339,12 +340,13 @@ namespace InvestmentReporting.UnitTests {
 			var loggerFactory     = new TestLoggerFactory();
 			var transStateManager = new TransactionStateManager(loggerFactory, stateManager);
 			var moneyMoveParser   = new BrokerMoneyMoveParser();
+			var assetParser       = new AssetParser();
 			var tradeParser       = new TradeParser();
 			var idGenerator       = new GuidIdGenerator();
 			var addIncomeUseCase  = new AddIncomeUseCase(stateManager, idGenerator);
 			var addExpenseUseCase = new AddExpenseUseCase(stateManager, idGenerator);
 			return new TinkoffImportUseCase(
-				transStateManager, moneyMoveParser, tradeParser,
+				transStateManager, moneyMoveParser, assetParser, tradeParser,
 				addIncomeUseCase,
 				addExpenseUseCase,
 				new BuyAssetUseCase(stateManager, idGenerator, addExpenseUseCase),

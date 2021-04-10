@@ -53,6 +53,7 @@ namespace InvestmentReporting.ImportService {
 			services.AddScoped<AlphaTradeParser>();
 			services.AddScoped<TinkoffImportUseCase>();
 			services.AddScoped<TinkoffBrokerMoneyMoveParser>();
+			services.AddScoped<AssetParser>();
 			services.AddScoped<TinkoffTradeParser>();
 			services.AddScoped<AddIncomeUseCase>();
 			services.AddScoped<AddExpenseUseCase>();

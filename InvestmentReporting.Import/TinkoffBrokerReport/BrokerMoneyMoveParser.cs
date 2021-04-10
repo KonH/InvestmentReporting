@@ -55,17 +55,18 @@ namespace InvestmentReporting.Import.TinkoffBrokerReport {
 				var currency = header.Value.ToString()?.Trim() ?? string.Empty;
 				foreach ( var row in rows ) {
 					var cells = row.CellsUsed()
-						.Select(c => c.Value.ToString()?.Trim())
-						.Where(value => !string.IsNullOrEmpty(value))
+						.Select(c => (column: c.Address.ColumnLetter, value: c.Value.ToString()?.Trim()))
+						.Where(t => !string.IsNullOrEmpty(t.Item2))
+						.Select(t => (t.column, value: t.value!))
 						.ToArray();
-					var rawDateStr = cells[0];
-					var rawTimeStr = cells[1];
-					var operation  = cells[3]?.Trim() ?? string.Empty;
+					var rawDateStr = GetStrAtRowOrAbove(row.RowNumber(), "A", cells, report);
+					var rawTimeStr = GetStrAtRowOrAbove(row.RowNumber(), "N", cells, report);
+					var operation  = cells.First(c => c.column == "AZ").value;
 					if ( !filter(operation) ) {
 						continue;
 					}
-					var sumCell = income ? 4 : 5;
-					var sumStr  = cells[sumCell];
+					var sumLetter = income ? "BV" : "CS";
+					var sumStr  = cells.First(c => c.column == sumLetter).value;
 
 					// We expect that it's Moscow time, but no timezone provided
 					// and for backward-compatibility we should use fixed value
@@ -86,6 +87,23 @@ namespace InvestmentReporting.Import.TinkoffBrokerReport {
 				}
 			}
 			return result;
+		}
+
+		string GetStrAtRowOrAbove(int row, string column, (string column, string value)[] cells, IXLWorkbook report) {
+			var currentRowCell = cells.FirstOrDefault(c => c.column == column);
+			if ( !string.IsNullOrEmpty(currentRowCell.column) ) {
+				return currentRowCell.value;
+			}
+			var aboveCells = report.FindCells(c => (c.Address.ColumnLetter == column) && (c.Address.RowNumber < row))
+				.Reverse()
+				.ToArray();
+			foreach ( var aboveCell in aboveCells ) {
+				var value = aboveCell.Value.ToString()?.Trim() ?? string.Empty;
+				if ( !string.IsNullOrEmpty(value) ) {
+					return value;
+				}
+			}
+			return string.Empty;
 		}
 	}
 }
