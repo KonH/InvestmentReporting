@@ -118,8 +118,8 @@ namespace InvestmentReporting.UnitTests {
 			var actualTransfers = parser.ReadExpenseTransfers(sample);
 
 			var expectedTransfers = new[] {
-				new Transfer(DateTimeOffset.Parse("2020-01-01T01:02:03+3"), "Перевод Списание по поручению клиента.", "USD", -100),
-				new Transfer(DateTimeOffset.Parse("2020-01-02T02:03:04+3"), "Перевод Списание по поручению клиента.", "RUB", -200),
+				new Transfer(DateTimeOffset.Parse("2000-01-01T01:02:03+3"), "Вывод средств", "USD", -100),
+				new Transfer(DateTimeOffset.Parse("2000-01-01T02:03:04+3"), "Вывод средств", "RUB", -200),
 			};
 			actualTransfers.Should().Contain(expectedTransfers);
 		}

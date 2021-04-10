@@ -7,7 +7,25 @@ using InvestmentReporting.Import.Exceptions;
 
 namespace InvestmentReporting.Import.TinkoffBrokerReport {
 	public sealed class BrokerMoneyMoveParser {
-		public IReadOnlyCollection<Transfer> ReadIncomeTransfers(IXLWorkbook report) {
+		public IReadOnlyCollection<Transfer> ReadIncomeTransfers(IXLWorkbook report) =>
+			ReadTransfers(
+				report,
+				operation => operation == "Пополнение счета",
+				income: true);
+
+		public IReadOnlyCollection<Transfer> ReadDividendTransfers(IXLWorkbook report) =>
+			throw new NotImplementedException();
+
+		public IReadOnlyCollection<Transfer> ReadCouponTransfers(IXLWorkbook report) =>
+			throw new NotImplementedException();
+
+		public IReadOnlyCollection<Transfer> ReadExpenseTransfers(IXLWorkbook report) =>
+			ReadTransfers(
+				report,
+				operation => operation == "Вывод средств",
+				income: false);
+
+		IReadOnlyCollection<Transfer> ReadTransfers(IXLWorkbook report, Func<string, bool> filter, bool income) {
 			var result           = new List<Transfer>();
 			var operationsHeader = report.Search("2. Операции с денежными средствами").Single();
 			var nextCatHeader    = report.Search("3.1 Движение по ценным бумагам инвестора").Single();
@@ -42,8 +60,12 @@ namespace InvestmentReporting.Import.TinkoffBrokerReport {
 						.ToArray();
 					var rawDateStr = cells[0];
 					var rawTimeStr = cells[1];
-					var operation  = cells[3]?.Trim();
-					var sumStr     = cells[4];
+					var operation  = cells[3]?.Trim() ?? string.Empty;
+					if ( !filter(operation) ) {
+						continue;
+					}
+					var sumCell = income ? 4 : 5;
+					var sumStr  = cells[sumCell];
 
 					// We expect that it's Moscow time, but no timezone provided
 					// and for backward-compatibility we should use fixed value
@@ -59,19 +81,11 @@ namespace InvestmentReporting.Import.TinkoffBrokerReport {
 					if ( !decimal.TryParse(sumStr, out var sum) ) {
 						throw new UnexpectedFormatException($"Failed to parse sum from '{sumStr}'");
 					}
-					result.Add(new(fullDate, operation ?? string.Empty, currency, sum));
+					sum = income ? sum : -sum;
+					result.Add(new(fullDate, operation, currency, sum));
 				}
 			}
 			return result;
 		}
-
-		public IReadOnlyCollection<Transfer> ReadDividendTransfers(IXLWorkbook report) =>
-			throw new NotImplementedException();
-
-		public IReadOnlyCollection<Transfer> ReadCouponTransfers(IXLWorkbook report) =>
-			throw new NotImplementedException();
-
-		public IReadOnlyCollection<Transfer> ReadExpenseTransfers(IXLWorkbook report) =>
-			throw new NotImplementedException();
 	}
 }

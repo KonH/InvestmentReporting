@@ -23,7 +23,6 @@ namespace InvestmentReporting.Import.AlphaDirectMyBroker {
 		readonly TransactionStateManager _stateManager;
 		readonly BrokerMoneyMoveParser   _moneyMoveParser;
 		readonly TradeParser             _tradeParser;
-		readonly AddExpenseUseCase       _addExpenseUseCase;
 		readonly BuyAssetUseCase         _buyAssetUseCase;
 		readonly SellAssetUseCase        _sellAssetUseCase;
 
@@ -39,13 +38,12 @@ namespace InvestmentReporting.Import.AlphaDirectMyBroker {
 		public AlphaDirectImportUseCase(
 			TransactionStateManager stateManager, BrokerMoneyMoveParser moneyMoveParser, TradeParser tradeParser,
 			AddIncomeUseCase addIncomeUseCase, AddExpenseUseCase addExpenseUseCase,
-			BuyAssetUseCase buyAssetUseCase, SellAssetUseCase sellAssetUseCase) : base(addIncomeUseCase) {
-			_stateManager      = stateManager;
-			_moneyMoveParser   = moneyMoveParser;
-			_tradeParser       = tradeParser;
-			_addExpenseUseCase = addExpenseUseCase;
-			_buyAssetUseCase   = buyAssetUseCase;
-			_sellAssetUseCase  = sellAssetUseCase;
+			BuyAssetUseCase buyAssetUseCase, SellAssetUseCase sellAssetUseCase) : base(addIncomeUseCase, addExpenseUseCase) {
+			_stateManager     = stateManager;
+			_moneyMoveParser  = moneyMoveParser;
+			_tradeParser      = tradeParser;
+			_buyAssetUseCase  = buyAssetUseCase;
+			_sellAssetUseCase = sellAssetUseCase;
 		}
 
 		public async Task Handle(DateTimeOffset date, UserId user, BrokerId brokerId, Stream stream) {
@@ -85,22 +83,6 @@ namespace InvestmentReporting.Import.AlphaDirectMyBroker {
 			var xmlDocument = new XmlDocument();
 			xmlDocument.Load(stream);
 			return xmlDocument;
-		}
-
-		async Task FillExpenseTransfers(
-			UserId user, BrokerId brokerId, IReadOnlyCollection<Transfer> expenseTransfers,
-			Dictionary<string, AccountId> currencyAccounts,
-			Dictionary<AccountId, AddExpenseModel[]> expenseAccountModels) {
-			foreach ( var expenseTransfer in expenseTransfers ) {
-				var amount    = -expenseTransfer.Amount;
-				var accountId = currencyAccounts[expenseTransfer.Currency];
-				if ( IsAlreadyPresent(expenseTransfer.Date, amount, expenseAccountModels[accountId]) ) {
-					continue;
-				}
-				await _addExpenseUseCase.Handle(
-					expenseTransfer.Date, user, brokerId, accountId, amount,
-					ExpenseTransferCategory, asset: null);
-			}
 		}
 
 		async Task<Dictionary<string, AssetId>> FillTrades(
@@ -221,13 +203,5 @@ namespace InvestmentReporting.Import.AlphaDirectMyBroker {
 			var parts = organization.Split('"');
 			return (parts.Length > 1) ? parts[^2] : null;
 		}
-
-		static Dictionary<AccountId, AddExpenseModel[]> CreateExpenseModels(
-			Dictionary<string, AccountId> currencyAccounts, AddExpenseModel[] allExpenseModels) =>
-			currencyAccounts.Values.ToDictionary(
-				accountId => accountId,
-				accountId => allExpenseModels
-					.Where(m => m.Account == accountId)
-					.ToArray());
 	}
 }

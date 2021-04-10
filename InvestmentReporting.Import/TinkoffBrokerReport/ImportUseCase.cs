@@ -16,10 +16,12 @@ namespace InvestmentReporting.Import.TinkoffBrokerReport {
 		protected readonly IncomeCategory  CouponCategory          = new("Bond Coupon");
 		protected readonly ExpenseCategory ExpenseTransferCategory = new("Expense Transfer");
 
-		protected readonly AddIncomeUseCase AddIncomeUseCase;
+		protected readonly AddIncomeUseCase  AddIncomeUseCase;
+		protected readonly AddExpenseUseCase AddExpenseUseCase;
 
-		public ImportUseCase(AddIncomeUseCase addIncomeUseCase) {
-			AddIncomeUseCase = addIncomeUseCase;
+		public ImportUseCase(AddIncomeUseCase addIncomeUseCase, AddExpenseUseCase addExpenseUseCase) {
+			AddIncomeUseCase  = addIncomeUseCase;
+			AddExpenseUseCase = addExpenseUseCase;
 		}
 
 		protected T[] Filter<T>(IReadOnlyCollection<ICommandModel> allCommands)
@@ -75,6 +77,22 @@ namespace InvestmentReporting.Import.TinkoffBrokerReport {
 			}
 		}
 
+		protected async Task FillExpenseTransfers(
+			UserId user, BrokerId brokerId, IReadOnlyCollection<Transfer> expenseTransfers,
+			Dictionary<string, AccountId> currencyAccounts,
+			Dictionary<AccountId, AddExpenseModel[]> expenseAccountModels) {
+			foreach ( var expenseTransfer in expenseTransfers ) {
+				var amount    = -expenseTransfer.Amount;
+				var accountId = currencyAccounts[expenseTransfer.Currency];
+				if ( IsAlreadyPresent(expenseTransfer.Date, amount, expenseAccountModels[accountId]) ) {
+					continue;
+				}
+				await AddExpenseUseCase.Handle(
+					expenseTransfer.Date, user, brokerId, accountId, amount,
+					ExpenseTransferCategory, asset: null);
+			}
+		}
+
 		protected bool IsAlreadyPresent(DateTimeOffset date, decimal amount, AddIncomeModel[] models) =>
 			models
 				.Any(model => (model.Date == date) && (model.Amount == amount));
@@ -96,6 +114,14 @@ namespace InvestmentReporting.Import.TinkoffBrokerReport {
 			currencyAccounts.Values.ToDictionary(
 				accountId => accountId,
 				accountId => allIncomeModels
+					.Where(m => m.Account == accountId)
+					.ToArray());
+
+		protected Dictionary<AccountId, AddExpenseModel[]> CreateExpenseModels(
+			Dictionary<string, AccountId> currencyAccounts, AddExpenseModel[] allExpenseModels) =>
+			currencyAccounts.Values.ToDictionary(
+				accountId => accountId,
+				accountId => allExpenseModels
 					.Where(m => m.Account == accountId)
 					.ToArray());
 	}
