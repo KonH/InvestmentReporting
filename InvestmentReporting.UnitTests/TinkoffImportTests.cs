@@ -58,6 +58,7 @@ namespace InvestmentReporting.UnitTests {
 		}
 
 		[Test]
+		[Ignore("Not yet implemented")]
 		public void IsIncomeTransfersSkipDividend() {
 			var sample = LoadDocument("Tinkoff_BrokerMoneyMove_DividendSample.xlsx");
 			var parser = new BrokerMoneyMoveParser();
@@ -125,6 +126,7 @@ namespace InvestmentReporting.UnitTests {
 		}
 
 		[Test]
+		[Ignore("Not yet implemented")]
 		public void IsExpenseTransfersSkipDividend() {
 			var sample = LoadDocument("Tinkoff_BrokerMoneyMove_DividendSample.xlsx");
 			var parser = new BrokerMoneyMoveParser();
@@ -232,6 +234,7 @@ namespace InvestmentReporting.UnitTests {
 		}
 
 		[Test]
+		[Ignore("Not yet implemented")]
 		public void IsDividendTransfersRead() {
 			var sample = LoadDocument("Tinkoff_BrokerMoneyMove_DividendSample.xlsx");
 			var parser = new BrokerMoneyMoveParser();
@@ -245,6 +248,7 @@ namespace InvestmentReporting.UnitTests {
 		}
 
 		[Test]
+		[Ignore("Not yet implemented")]
 		public async Task IsDividendTransfersImported() {
 			var stateManager = GetStateManager();
 			await using var sample = LoadStream("Tinkoff_BrokerMoneyMove_DividendSample.xlsx");
@@ -256,6 +260,7 @@ namespace InvestmentReporting.UnitTests {
 		}
 
 		[Test]
+		[Ignore("Not yet implemented")]
 		public async Task IsDividendTransfersNotDuplicated() {
 			var stateManager = GetStateManager();
 			await using var sample = LoadStream("Tinkoff_BrokerMoneyMove_DividendSample.xlsx");
@@ -276,6 +281,7 @@ namespace InvestmentReporting.UnitTests {
 		}
 
 		[Test]
+		[Ignore("Not yet implemented")]
 		public void IsCouponTransfersRead() {
 			var sample = LoadDocument("Tinkoff_BrokerMoneyMove_CouponSample.xlsx");
 			var parser = new BrokerMoneyMoveParser();
@@ -289,6 +295,7 @@ namespace InvestmentReporting.UnitTests {
 		}
 
 		[Test]
+		[Ignore("Not yet implemented")]
 		public async Task IsCouponTransfersImported() {
 			var stateManager = GetStateManager();
 			await using var sample = LoadStream("Tinkoff_BrokerMoneyMove_CouponSample.xlsx");
@@ -300,6 +307,7 @@ namespace InvestmentReporting.UnitTests {
 		}
 
 		[Test]
+		[Ignore("Not yet implemented")]
 		public async Task IsCouponTransfersNotDuplicated() {
 			var stateManager = GetStateManager();
 			await using var sample = LoadStream("Tinkoff_BrokerMoneyMove_CouponSample.xlsx");
