@@ -25,6 +25,8 @@ namespace InvestmentReporting.BuildSystem {
 		[Parameter]
 		bool LegacyEnv = true;
 
+		string DotNetConfiguration => (Configuration == "Production") ? "Release" : "Debug";
+
 		public static int Main() => Execute<Build>(x => x.Compile);
 
 		Target Restore => _ => _
@@ -53,7 +55,7 @@ namespace InvestmentReporting.BuildSystem {
 				foreach ( var (project, _) in DotNetProjects ) {
 					DotNetBuild(s => s
 						.SetProjectFile(RootDirectory / project)
-						.SetConfiguration(Configuration));
+						.SetConfiguration(DotNetConfiguration));
 				}
 
 				var shouldUseSwagger = (Configuration == "Development") && (architecture != Architecture.Arm64);
@@ -64,7 +66,7 @@ namespace InvestmentReporting.BuildSystem {
 						EnsureExistingDirectory(apiDir);
 						foreach ( var (project, api) in DotNetProjects ) {
 							var swaggerPath = apiDir / $"{project}.swagger.json";
-							var dllPath     = RootDirectory / project / "bin" / Configuration / "net5.0" / $"{project}.dll";
+							var dllPath     = RootDirectory / project / "bin" / DotNetConfiguration / "net5.0" / $"{project}.dll";
 							Run("Generate swagger api file",
 								RootDirectory / project,
 								"swagger", $"tofile --output {swaggerPath} {dllPath} v1");
@@ -80,7 +82,7 @@ namespace InvestmentReporting.BuildSystem {
 				foreach ( var (project, _) in DotNetProjects ) {
 					DotNetPublish(s => s
 						.SetProject(RootDirectory / project)
-						.SetConfiguration(Configuration)
+						.SetConfiguration(DotNetConfiguration)
 						.SetRuntime($"linux-musl-{dotNetPlatform}")
 						.EnablePublishSingleFile()
 						.EnableSelfContained()
