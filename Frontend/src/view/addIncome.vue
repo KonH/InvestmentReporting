@@ -77,7 +77,7 @@ export default class AddIncome extends Vue {
 
 	renderAsset(asset: AssetDto | null) {
 		if (asset?.id) {
-			return `${asset.name} (${asset.isin})`;
+			return `${asset.isin}`;
 		}
 		return '';
 	}

@@ -24,13 +24,7 @@ namespace InvestmentReporting.Domain.UseCase {
 
 		public async Task<AssetId> Handle(
 			DateTimeOffset date, UserId user, BrokerId brokerId, AccountId payAccountId, AccountId feeAccountId,
-			string name, AssetCategory category, AssetISIN isin, decimal price, decimal fee, int count) {
-			if ( string.IsNullOrWhiteSpace(name) ) {
-				throw new InvalidAssetException();
-			}
-			if ( string.IsNullOrWhiteSpace(category.Value) ) {
-				throw new InvalidAssetException();
-			}
+			AssetISIN isin, decimal price, decimal fee, int count) {
 			if ( string.IsNullOrWhiteSpace(isin.Value) ) {
 				throw new InvalidAssetException();
 			}
@@ -57,7 +51,7 @@ namespace InvestmentReporting.Domain.UseCase {
 				await _stateManager.AddCommand(new IncreaseAssetCommand(date, user, brokerId, asset.Id, count));
 			} else {
 				id = new AssetId(_idGenerator.GenerateNewId());
-				await _stateManager.AddCommand(new AddAssetCommand(date, user, brokerId, id, name, category, isin, count));
+				await _stateManager.AddCommand(new AddAssetCommand(date, user, brokerId, id, isin, count));
 			}
 			switch ( price ) {
 				case < 0:

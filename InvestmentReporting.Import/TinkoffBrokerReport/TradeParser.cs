@@ -27,7 +27,6 @@ namespace InvestmentReporting.Import.TinkoffBrokerReport {
 				var buy      = (type == "Покупка");
 				var name     = row.Cell("AF").GetString().Trim();
 				var isin     = assets.Single(a => a.Name == name).Isin;
-				var category = assets.Single(a => a.Name == name).Category;
 				var count = (int)row.Cell("BB").GetDouble();
 				count = buy ? count : -count;
 				var currency       = row.Cell("AW").GetString().Trim();
@@ -36,7 +35,7 @@ namespace InvestmentReporting.Import.TinkoffBrokerReport {
 				var marketFee      = row.Cell("CL").GetDecimal();
 				var clearCenterFee = row.Cell("CW").GetDecimal();
 				var fee            = brokerFee + marketFee + clearCenterFee;
-				result.Add(new(fullDate, isin, name, category, count, currency, sum, fee));
+				result.Add(new(fullDate, isin, name, count, currency, sum, fee));
 			}
 			return result;
 		}

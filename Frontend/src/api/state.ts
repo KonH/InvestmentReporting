@@ -32,8 +32,6 @@ export interface AccountDto {
 
 export interface AssetDto {
   id?: string | null;
-  name?: string | null;
-  category?: string | null;
   isin?: string | null;
 
   /** @format int32 */

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using InvestmentReporting.Data.Core.Model;
 using InvestmentReporting.Data.InMemory.Repository;
-using InvestmentReporting.Domain.Command;
 using InvestmentReporting.Domain.Entity;
 using InvestmentReporting.Domain.Logic;
 using Microsoft.Extensions.Logging;
@@ -44,8 +43,7 @@ namespace InvestmentReporting.UnitTests {
 		}
 
 		public StateManagerBuilder With(AssetId asset, AssetISIN isin, int count) {
-			With(new AddAssetModel(
-				_date, _userId, _brokerId, asset, string.Empty, string.Empty, isin, count));
+			With(new AddAssetModel(_date, _userId, _brokerId, asset, isin, count));
 			return this;
 		}
 

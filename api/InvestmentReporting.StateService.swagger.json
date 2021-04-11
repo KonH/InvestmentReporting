@@ -654,14 +654,6 @@
             "type": "string",
             "nullable": true
           },
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "category": {
-            "type": "string",
-            "nullable": true
-          },
           "isin": {
             "type": "string",
             "nullable": true

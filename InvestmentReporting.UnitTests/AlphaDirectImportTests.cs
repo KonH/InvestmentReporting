@@ -185,10 +185,10 @@ namespace InvestmentReporting.UnitTests {
 			var actualTrades = parser.ReadTrades(sample);
 
 			var expectedTrades = new[] {
-				new Trade(DateTimeOffset.Parse("2000-02-02T01:02:03+3"), "US0000000001", "AssetName1, а.о.", "Share", 2, "USD", 200, 20),
-				new Trade(DateTimeOffset.Parse("2000-02-02T01:02:03+3"), "RU0000000001", "AssetName2, о.к.б.", "Bond", 3, "RUB", 300, 30),
-				new Trade(DateTimeOffset.Parse("2000-03-03T03:04:05+3"), "US0000000001", "AssetName1, а.о.", "Share", -1, "USD", 101, 10.1m),
-				new Trade(DateTimeOffset.Parse("2000-03-03T03:04:05+3"), "RU0000000001", "AssetName2, о.к.б.", "Bond", -1, "RUB", 100, 10),
+				new Trade(DateTimeOffset.Parse("2000-02-02T01:02:03+3"), "US0000000001", "AssetName1, а.о.", 2, "USD", 200, 20),
+				new Trade(DateTimeOffset.Parse("2000-02-02T01:02:03+3"), "RU0000000001", "AssetName2, о.к.б.", 3, "RUB", 300, 30),
+				new Trade(DateTimeOffset.Parse("2000-03-03T03:04:05+3"), "US0000000001", "AssetName1, а.о.", -1, "USD", 101, 10.1m),
+				new Trade(DateTimeOffset.Parse("2000-03-03T03:04:05+3"), "RU0000000001", "AssetName2, о.к.б.", -1, "RUB", 100, 10),
 			};
 			actualTrades.Should().Contain(expectedTrades);
 		}

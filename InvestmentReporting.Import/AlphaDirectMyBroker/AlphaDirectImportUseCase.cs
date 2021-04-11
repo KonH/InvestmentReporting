@@ -6,7 +6,6 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
 using InvestmentReporting.Data.Core.Model;
-using InvestmentReporting.Domain.Command;
 using InvestmentReporting.Domain.Entity;
 using InvestmentReporting.Domain.UseCase;
 using InvestmentReporting.Domain.UseCase.Exceptions;
@@ -103,10 +102,8 @@ namespace InvestmentReporting.Import.AlphaDirectMyBroker {
 					if ( IsAlreadyPresent(date, isin, count, addModels) ) {
 						continue;
 					}
-					var name     = trade.Name;
-					var category = new AssetCategory(trade.Category);
 					var assetId = await _buyAssetUseCase.Handle(
-						date, user, brokerId, payAccount, feeAccount, name, category, new(isin), price, fee, count);
+						date, user, brokerId, payAccount, feeAccount, new(isin), price, fee, count);
 					assetIds[isin] = assetId;
 				} else {
 					var allAssetIds = addModels

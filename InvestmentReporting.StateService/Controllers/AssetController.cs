@@ -38,7 +38,7 @@ namespace InvestmentReporting.StateService.Controllers {
 			try {
 				await _buyUseCase.Handle(
 					date, userId, new(broker), new(payAccount), new(feeAccount),
-					name, new(category), new(isin), price, fee, count);
+					new(isin), price, fee, count);
 				return StatusCode(StatusCodes.Status201Created);
 			} catch ( Exception e ) {
 				_logger.LogError(e.ToString());

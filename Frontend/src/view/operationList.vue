@@ -62,7 +62,7 @@ export default class OperationList extends Vue {
 		const broker = this.activeState.brokers?.find((b) => b.id == this.brokerId);
 		const asset = broker?.inventory?.find((a) => a.id == assetId);
 		if (asset) {
-			return `${asset.name} (${asset.isin})`;
+			return `${asset.isin}`;
 		}
 		return '';
 	}
