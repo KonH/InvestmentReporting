@@ -102,6 +102,7 @@ services:
       ASPNETCORE_ENVIRONMENT: Development
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
+      TINKOFF_API_SANDBOX_KEY: none
     ports:
       - 8087:8087
     volumes:
