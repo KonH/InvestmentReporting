@@ -106,7 +106,7 @@ namespace InvestmentReporting.BuildSystem {
 				Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", Configuration);
 				Run("Running containers",
 					RootDirectory,
-					"docker-compose", $"up -d");
+					"docker-compose", $"--env-file {RootDirectory}/{Configuration}.env up -d");
 			});
 
 		Target Stop => _ => _
