@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Runtime.InteropServices;
 using Nuke.Common;
 using Nuke.Common.Execution;
@@ -19,6 +20,9 @@ namespace InvestmentReporting.BuildSystem {
 
 		[Parameter]
 		string Configuration = "Development";
+
+		[Parameter]
+		bool LegacyEnv = true;
 
 		public static int Main() => Execute<Build>(x => x.Compile);
 
@@ -103,10 +107,27 @@ namespace InvestmentReporting.BuildSystem {
 			.DependsOn(Compile)
 			.Executes(() =>
 			{
+				Logger.Info("Define 'ASPNETCORE_ENVIRONMENT'");
 				Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", Configuration);
+				var envFile = $"{RootDirectory}/{Configuration}.env";
+				var command = "up -d";
+				if ( LegacyEnv ) {
+					Logger.Info($"Use env file '{envFile}' manually");
+					var envLines = File.ReadAllLines(envFile);
+					foreach ( var envLine in envLines ) {
+						if ( string.IsNullOrEmpty(envLine) ) {
+							continue;
+						}
+						var parts = envLine.Split('=');
+						Logger.Info($"Define '{parts[0]}'");
+						Environment.SetEnvironmentVariable(parts[0], parts[1]);
+					}
+				} else {
+					command = $"--env-file {envFile} " + command;
+				}
 				Run("Running containers",
 					RootDirectory,
-					"docker-compose", $"--env-file {RootDirectory}/{Configuration}.env up -d");
+					"docker-compose", command);
 			});
 
 		Target Stop => _ => _
