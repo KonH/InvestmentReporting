@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using InvestmentReporting.Data.Core.Model;
 using InvestmentReporting.Data.Core.Repository;
@@ -33,6 +34,20 @@ namespace InvestmentReporting.Domain.Logic {
 				apply(state, model);
 			}
 			return state;
+		}
+
+		public async Task<IReadOnlyDictionary<UserId, ReadOnlyState>> ReadStates(DateTimeOffset date) {
+			var users = await _repository.ReadUsers(date);
+			var tasks = users
+				.Select(async u => {
+					var userId = new UserId(u);
+					var state = await ReadState(date, userId);
+					return (userId, state);
+				})
+				.ToArray();
+			var results = await Task.WhenAll(tasks);
+			return results
+				.ToDictionary(t => t.userId, t => t.state);
 		}
 
 		public async Task<ReadOnlyState> ReadState(DateTimeOffset date, UserId id) =>

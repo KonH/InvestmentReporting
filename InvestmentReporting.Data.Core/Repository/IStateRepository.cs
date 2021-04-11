@@ -5,6 +5,8 @@ using InvestmentReporting.Data.Core.Model;
 
 namespace InvestmentReporting.Data.Core.Repository {
 	public interface IStateRepository {
+		public Task<IReadOnlyCollection<string>> ReadUsers(DateTimeOffset endDate);
+
 		public Task<IReadOnlyCollection<ICommandModel>> ReadCommands(
 			DateTimeOffset startDate, DateTimeOffset endDate, string userId);
 

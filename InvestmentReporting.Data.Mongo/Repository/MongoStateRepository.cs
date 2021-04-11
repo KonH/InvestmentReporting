@@ -38,6 +38,18 @@ namespace InvestmentReporting.Data.Mongo.Repository {
 			}
 		}
 
+		public Task<IReadOnlyCollection<string>> ReadUsers(DateTimeOffset endDate) {
+			var users = _collection.AsQueryable()
+				.Select(e => e.Model)
+				.Where(e => (e != null))
+				.Select(e => e!)
+				.ToArray()
+				.Select(e => e.User)
+				.Distinct()
+				.ToArray();
+			return Task.FromResult<IReadOnlyCollection<string>>(users);
+		}
+
 		public Task<IReadOnlyCollection<ICommandModel>> ReadCommands(
 			DateTimeOffset startDate, DateTimeOffset endDate, string userId) {
 			var dbModels = _collection.AsQueryable()

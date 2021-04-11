@@ -32,6 +32,12 @@ namespace InvestmentReporting.Import.Logic {
 			_simulatedStateManager = new StateManager(repository);
 		}
 
+		public Task<IReadOnlyDictionary<UserId, ReadOnlyState>> ReadStates(DateTimeOffset date) {
+			return (_simulatedStateManager != null)
+				? _simulatedStateManager.ReadStates(date)
+				: Task.FromResult<IReadOnlyDictionary<UserId, ReadOnlyState>>(new Dictionary<UserId, ReadOnlyState>());
+		}
+
 		public Task<ReadOnlyState> ReadState(DateTimeOffset date, UserId id) =>
 			_simulatedStateManager!.ReadState(date, id);
 
