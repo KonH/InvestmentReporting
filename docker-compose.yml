@@ -10,11 +10,13 @@ services:
       - invite-service
       - state-service
       - import-service
+      - market-service
     links:
       - auth-service
       - invite-service
       - state-service
       - import-service
+      - market-service
     restart: unless-stopped
   mongo:
     build:
@@ -87,6 +89,21 @@ services:
       - state-service
     links:
       - state-service
+    volumes:
+      - key_ring_storage:/publish/key_ring_storage
+    restart: unless-stopped
+  market-service:
+    build:
+      context: ./InvestmentReporting.MarketService
+      args:
+        - DOTNET_IMAGE_SUFFIX
+    container_name: market-service
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    ports:
+      - 8087:8087
     volumes:
       - key_ring_storage:/publish/key_ring_storage
     restart: unless-stopped

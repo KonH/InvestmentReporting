@@ -15,7 +15,8 @@ namespace InvestmentReporting.BuildSystem {
 			("InvestmentReporting.AuthService", "auth.ts"),
 			("InvestmentReporting.InviteService", "invite.ts"),
 			("InvestmentReporting.StateService", "state.ts"),
-			("InvestmentReporting.ImportService", "import.ts")
+			("InvestmentReporting.ImportService", "import.ts"),
+			("InvestmentReporting.MarketService", "market.ts")
 		};
 
 		[Parameter]
