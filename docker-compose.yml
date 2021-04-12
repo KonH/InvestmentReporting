@@ -25,8 +25,8 @@ services:
         - MONGO_IMAGE
     container_name: mongo
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
     restart: unless-stopped
   auth-service:
     build:
@@ -37,9 +37,9 @@ services:
     ports:
       - 8083:8083
     environment:
-      ASPNETCORE_ENVIRONMENT: Development
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
     volumes:
     - key_ring_storage:/publish/key_ring_storage
     restart: unless-stopped
@@ -50,9 +50,9 @@ services:
         - DOTNET_IMAGE_SUFFIX
     container_name: invite-service
     environment:
-      ASPNETCORE_ENVIRONMENT: Development
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
     ports:
       - 8084:8084
     volumes:
@@ -65,9 +65,9 @@ services:
         - DOTNET_IMAGE_SUFFIX
     container_name: state-service
     environment:
-      ASPNETCORE_ENVIRONMENT: Development
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
     ports:
       - 8085:8085
     volumes:
@@ -80,9 +80,9 @@ services:
         - DOTNET_IMAGE_SUFFIX
     container_name: import-service
     environment:
-      ASPNETCORE_ENVIRONMENT: Development
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
     ports:
       - 8086:8086
     depends_on:
@@ -99,9 +99,9 @@ services:
         - DOTNET_IMAGE_SUFFIX
     container_name: market-service
     environment:
-      ASPNETCORE_ENVIRONMENT: Development
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
       TINKOFF_API_SANDBOX_KEY: ${TINKOFF_API_SANDBOX_KEY}
     ports:
       - 8087:8087
