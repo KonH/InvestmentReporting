@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using InvestmentReporting.Data.Core.Model;
-using InvestmentReporting.Domain.Command;
 using InvestmentReporting.Domain.Entity;
 using InvestmentReporting.Domain.UseCase;
 using InvestmentReporting.Domain.UseCase.Exceptions;

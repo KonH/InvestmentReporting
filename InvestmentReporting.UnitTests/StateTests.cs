@@ -1,9 +1,6 @@
 using System;
-using System.Threading.Tasks;
 using FluentAssertions;
-using InvestmentReporting.Data.InMemory.Repository;
 using InvestmentReporting.Domain.Entity;
-using InvestmentReporting.Domain.Logic;
 using InvestmentReporting.Domain.UseCase;
 using InvestmentReporting.Domain.UseCase.Exceptions;
 using NUnit.Framework;
@@ -11,11 +8,11 @@ using NUnit.Framework;
 namespace InvestmentReporting.UnitTests {
 	public sealed class StateTests {
 		[Test]
-		public async Task IsStateCreated() {
+		public void IsStateCreated() {
 			var stateManager = new StateManagerBuilder().Build();
 			var readUseCase  = new ReadStateUseCase(stateManager);
 
-			var state = await readUseCase.Handle(DateTimeOffset.MinValue, new("user"));
+			var state = readUseCase.Handle(DateTimeOffset.MinValue, new("user"));
 
 			state.Should().NotBeNull();
 		}
@@ -26,7 +23,7 @@ namespace InvestmentReporting.UnitTests {
 			var stateManager = new StateManagerBuilder().Build();
 			var readUseCase  = new ReadStateUseCase(stateManager);
 
-			Assert.ThrowsAsync<InvalidUserException>(() => readUseCase.Handle(DateTimeOffset.MinValue, user));
+			Assert.Throws<InvalidUserException>(() => readUseCase.Handle(DateTimeOffset.MinValue, user));
 		}
 	}
 }

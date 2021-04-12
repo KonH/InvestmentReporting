@@ -38,7 +38,7 @@ namespace InvestmentReporting.Data.Mongo.Repository {
 			}
 		}
 
-		public Task<IReadOnlyCollection<string>> ReadUsers(DateTimeOffset endDate) {
+		public IReadOnlyCollection<string> ReadUsers(DateTimeOffset endDate) {
 			var users = _collection.AsQueryable()
 				.Select(e => e.Model)
 				.Where(e => (e != null))
@@ -47,10 +47,23 @@ namespace InvestmentReporting.Data.Mongo.Repository {
 				.Select(e => e.User)
 				.Distinct()
 				.ToArray();
-			return Task.FromResult<IReadOnlyCollection<string>>(users);
+			return users;
 		}
 
-		public Task<IReadOnlyCollection<ICommandModel>> ReadCommands(
+		public IReadOnlyCollection<ICommandModel> ReadCommands(DateTimeOffset startDate, DateTimeOffset endDate) {
+			var dbModels = _collection.AsQueryable()
+				.Select(e => e.Model)
+				.Where(e => (e != null))
+				.Select(e => e!)
+				.ToArray();
+			var models = dbModels
+				.Where(e => e.Date >= startDate)
+				.Where(e => e.Date <= endDate)
+				.ToArray();
+			return models;
+		}
+
+		public IReadOnlyCollection<ICommandModel> ReadCommands(
 			DateTimeOffset startDate, DateTimeOffset endDate, string userId) {
 			var dbModels = _collection.AsQueryable()
 				.Select(e => e.Model)
@@ -62,7 +75,7 @@ namespace InvestmentReporting.Data.Mongo.Repository {
 				.Where(e => e.Date <= endDate)
 				.Where(e => e.User == userId)
 				.ToArray();
-			return Task.FromResult<IReadOnlyCollection<ICommandModel>>(models);
+			return models;
 		}
 
 		public async Task SaveCommand(ICommandModel model) {

@@ -26,7 +26,7 @@ namespace InvestmentReporting.Domain.UseCase {
 			if ( string.IsNullOrWhiteSpace(category.ToString()) ) {
 				throw new InvalidCategoryException();
 			}
-			var state       = await _stateManager.ReadState(date, user);
+			var state       = _stateManager.ReadState(date, user);
 			var brokerState = state.Brokers.FirstOrDefault(b => b.Id == broker);
 			if ( brokerState == null ) {
 				throw new BrokerNotFoundException();

@@ -21,7 +21,7 @@ namespace InvestmentReporting.Domain.UseCase {
 			if ( string.IsNullOrWhiteSpace(displayName) ) {
 				throw new InvalidBrokerException();
 			}
-			var state = await _stateManager.ReadState(date, user);
+			var state = _stateManager.ReadState(date, user);
 			if ( state.Brokers.Any(b => b.DisplayName == displayName) ) {
 				throw new DuplicateBrokerException();
 			}

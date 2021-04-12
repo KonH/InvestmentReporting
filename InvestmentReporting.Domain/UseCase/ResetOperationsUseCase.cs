@@ -18,7 +18,7 @@ namespace InvestmentReporting.Domain.UseCase {
 			if ( string.IsNullOrWhiteSpace(user.Value) ) {
 				throw new InvalidUserException();
 			}
-			var commands = await _stateManager.ReadCommands(DateTimeOffset.MinValue, DateTimeOffset.MaxValue, user);
+			var commands = _stateManager.ReadCommands(DateTimeOffset.MinValue, DateTimeOffset.MaxValue, user);
 			var filterCommands = commands
 				.Where(c => !(c is CreateCurrencyModel) && !(c is CreateBrokerModel) && !(c is CreateAccountModel))
 				.ToArray();

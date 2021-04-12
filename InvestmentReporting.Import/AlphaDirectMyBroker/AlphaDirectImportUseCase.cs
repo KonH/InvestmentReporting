@@ -47,9 +47,9 @@ namespace InvestmentReporting.Import.AlphaDirectMyBroker {
 
 		public async Task Handle(DateTimeOffset date, UserId user, BrokerId brokerId, Stream stream) {
 			var report = LoadXml(stream);
-			await _stateManager.Prepare(user);
+			_stateManager.Prepare(user);
 			report = _sanitizer.Sanitize(report);
-			var state = await _stateManager.ReadState(date, user);
+			var state = _stateManager.ReadState(date, user);
 			var broker = state.Brokers.FirstOrDefault(b => b.Id == brokerId);
 			if ( broker == null ) {
 				throw new BrokerNotFoundException();
@@ -61,7 +61,7 @@ namespace InvestmentReporting.Import.AlphaDirectMyBroker {
 				incomeTransfers.Select(t => t.Currency), expenseTransfers.Select(t => t.Currency),
 				trades.Select(t => t.Currency), new [] { "RUB" });
 			var currencyAccounts     = CreateCurrencyAccounts(requiredCurrencyCodes, state.Currencies, broker.Accounts);
-			var allCommands          = await _stateManager.ReadCommands(DateTimeOffset.MinValue, DateTimeOffset.MaxValue, user);
+			var allCommands          = _stateManager.ReadCommands(DateTimeOffset.MinValue, DateTimeOffset.MaxValue, user);
 			var allIncomeModels      = Filter<AddIncomeModel>(allCommands);
 			var incomeAccountModels  = CreateIncomeModels(currencyAccounts, allIncomeModels);
 			var allExpenseModels     = Filter<AddExpenseModel>(allCommands);

@@ -1,5 +1,4 @@
 using System;
-using InvestmentReporting.Data.Core.Model;
 
 namespace InvestmentReporting.Data.Core.Model {
 	public record AddAssetModel(

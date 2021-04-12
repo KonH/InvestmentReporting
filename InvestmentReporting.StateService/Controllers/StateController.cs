@@ -29,10 +29,10 @@ namespace InvestmentReporting.StateService.Controllers {
 		[HttpGet]
 		[Produces("application/json")]
 		[ProducesResponseType(typeof(StateDto), StatusCodes.Status200OK)]
-		public async Task<IActionResult> Get([Required] DateTimeOffset date) {
+		public IActionResult Get([Required] DateTimeOffset date) {
 			var userId = new UserId(User.Identity?.Name ?? string.Empty);
 			_logger.LogInformation($"Retrieve state for user '{userId}' at {date}");
-			var state  = await _readUseCase.Handle(date, userId);
+			var state  = _readUseCase.Handle(date, userId);
 			var brokers = state.Brokers
 				.Select(b => new BrokerDto(
 					b.Id,

@@ -22,7 +22,7 @@ namespace InvestmentReporting.UnitTests {
 
 			await createUseCase.Handle(_date, _userId, code, format);
 
-			var state = await stateManager.ReadState(_date, _userId);
+			var state = stateManager.ReadState(_date, _userId);
 			state.Currencies.Should().NotBeEmpty();
 			state.Currencies.Should().Contain(c => (c.Code == code) && (c.Format == format));
 		}

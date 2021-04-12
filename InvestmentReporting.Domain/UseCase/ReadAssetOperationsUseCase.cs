@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using InvestmentReporting.Data.Core.Model;
 using InvestmentReporting.Domain.Entity;
 using InvestmentReporting.Domain.Logic;
@@ -14,11 +13,11 @@ namespace InvestmentReporting.Domain.UseCase {
 			_stateManager = stateManager;
 		}
 
-		public async Task<IReadOnlyCollection<Operation>> Handle(
+		public IReadOnlyCollection<Operation> Handle(
 			DateTimeOffset startDate, DateTimeOffset endDate, UserId user, BrokerId brokerId, AssetId assetId) {
-			var state    = await _stateManager.ReadState(endDate, user);
+			var state    = _stateManager.ReadState(endDate, user);
 			var broker   = state.Brokers.First(b => b.Id == brokerId);
-			var commands = await _stateManager.ReadCommands(startDate, endDate, user);
+			var commands = _stateManager.ReadCommands(startDate, endDate, user);
 			var incomeOperations = ReadOperations<AddIncomeModel>(
 				commands,
 				c => (c.Broker == brokerId) && (c.Asset == assetId),

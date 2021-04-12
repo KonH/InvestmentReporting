@@ -70,7 +70,7 @@ namespace InvestmentReporting.Import.TinkoffBrokerReport {
 					var time     = new DateTimeOffset(timeDt, TimeSpan.FromHours(3));
 					var fullDate = new DateTimeOffset(date.Year, date.Month, date.Day, time.Hour, time.Minute, time.Second, time.Offset);
 					sum = income ? sum : -sum;
-					result.Add(new(fullDate, operation, currency, (decimal)sum));
+					result.Add(new(fullDate, operation, currency, sum));
 				}
 			}
 			return result;

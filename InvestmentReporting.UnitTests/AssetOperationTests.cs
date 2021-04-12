@@ -28,7 +28,7 @@ namespace InvestmentReporting.UnitTests {
 			await buyUseCase.Handle(
 				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _isin, 1, 1, 1);
 
-			var state  = await stateManager.ReadState(_date, _userId);
+			var state  = stateManager.ReadState(_date, _userId);
 			var broker = state.Brokers.First(b => b.Id == _brokerId);
 			broker.Inventory.Should().Contain(a =>
 				(a.Isin == _isin) &&
@@ -44,7 +44,7 @@ namespace InvestmentReporting.UnitTests {
 			await buyUseCase.Handle(
 				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _isin, 1, 1, 1);
 
-			var operations = await readUseCase.Handle(_date, _date, _userId, _brokerId, _payAccountId);
+			var operations = readUseCase.Handle(_date, _date, _userId, _brokerId, _payAccountId);
 			operations.Should().NotBeEmpty();
 			operations.Should().Contain(o => o.Asset == _assetId);
 		}
@@ -58,7 +58,7 @@ namespace InvestmentReporting.UnitTests {
 			await buyUseCase.Handle(
 				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _isin, 1, 1, 1);
 
-			var operations = await readUseCase.Handle(_date, _date, _userId, _brokerId, _feeAccountId);
+			var operations = readUseCase.Handle(_date, _date, _userId, _brokerId, _feeAccountId);
 			operations.Should().NotBeEmpty();
 			operations.Should().Contain(o => o.Asset == _assetId);
 		}
@@ -71,7 +71,7 @@ namespace InvestmentReporting.UnitTests {
 			await buyUseCase.Handle(
 				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _isin, 1, 1, 1);
 
-			var state  = await stateManager.ReadState(_date, _userId);
+			var state  = stateManager.ReadState(_date, _userId);
 			var broker = state.Brokers.First(b => b.Id == _brokerId);
 			broker.Inventory.Should().Contain(a =>
 				(a.Isin == _isin) &&
@@ -87,7 +87,7 @@ namespace InvestmentReporting.UnitTests {
 			await buyUseCase.Handle(
 				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _isin, price, 1, 1);
 
-			var state   = await stateManager.ReadState(_date, _userId);
+			var state   = stateManager.ReadState(_date, _userId);
 			var broker  = state.Brokers.First(b => b.Id == _brokerId);
 			var account = broker.Accounts.First(a => a.Id == _payAccountId);
 			account.Balance.Should().Be(-price);
@@ -102,7 +102,7 @@ namespace InvestmentReporting.UnitTests {
 			await buyUseCase.Handle(
 				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _isin, 1, fee, 1);
 
-			var state   = await stateManager.ReadState(_date, _userId);
+			var state   = stateManager.ReadState(_date, _userId);
 			var broker  = state.Brokers.First(b => b.Id == _brokerId);
 			var account = broker.Accounts.First(a => a.Id == _feeAccountId);
 			account.Balance.Should().Be(-fee);
@@ -197,7 +197,7 @@ namespace InvestmentReporting.UnitTests {
 			await sellUseCase.Handle(
 				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _assetId, 1, 1, 2);
 
-			var state  = await stateManager.ReadState(_date, _userId);
+			var state  = stateManager.ReadState(_date, _userId);
 			var broker = state.Brokers.First(b => b.Id == _brokerId);
 			broker.Inventory.Should().Contain(a =>
 				(a.Isin == _isin) &&
@@ -212,7 +212,7 @@ namespace InvestmentReporting.UnitTests {
 			await sellUseCase.Handle(
 				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _assetId, 1, 1, 1);
 
-			var state  = await stateManager.ReadState(_date, _userId);
+			var state  = stateManager.ReadState(_date, _userId);
 			var broker = state.Brokers.First(b => b.Id == _brokerId);
 			broker.Inventory.Should().Contain(a =>
 				(a.Isin == _isin) &&
@@ -228,7 +228,7 @@ namespace InvestmentReporting.UnitTests {
 			await sellUseCase.Handle(
 				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _assetId, 1, 1, 1);
 
-			var operations = await readUseCase.Handle(_date, _date, _userId, _brokerId, _payAccountId);
+			var operations = readUseCase.Handle(_date, _date, _userId, _brokerId, _payAccountId);
 			operations.Should().NotBeEmpty();
 			operations.Should().Contain(o => o.Asset == _assetId);
 		}
@@ -242,7 +242,7 @@ namespace InvestmentReporting.UnitTests {
 			await sellUseCase.Handle(
 				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _assetId, 1, 1, 1);
 
-			var operations = await readUseCase.Handle(_date, _date, _userId, _brokerId, _feeAccountId);
+			var operations = readUseCase.Handle(_date, _date, _userId, _brokerId, _feeAccountId);
 			operations.Should().NotBeEmpty();
 			operations.Should().Contain(o => o.Asset == _assetId);
 		}
@@ -256,7 +256,7 @@ namespace InvestmentReporting.UnitTests {
 			await sellUseCase.Handle(
 				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _assetId, price, 1, 1);
 
-			var state   = await stateManager.ReadState(_date, _userId);
+			var state   = stateManager.ReadState(_date, _userId);
 			var broker  = state.Brokers.First(b => b.Id == _brokerId);
 			var account = broker.Accounts.First(a => a.Id == _payAccountId);
 			account.Balance.Should().Be(price);
@@ -271,7 +271,7 @@ namespace InvestmentReporting.UnitTests {
 			await sellUseCase.Handle(
 				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _assetId, 1, fee, 1);
 
-			var state   = await stateManager.ReadState(_date, _userId);
+			var state   = stateManager.ReadState(_date, _userId);
 			var broker  = state.Brokers.First(b => b.Id == _brokerId);
 			var account = broker.Accounts.First(a => a.Id == _feeAccountId);
 			account.Balance.Should().Be(-fee);

@@ -1,6 +1,8 @@
 using InvestmentReporting.Data.Core.Repository;
 using InvestmentReporting.Data.Mongo.Repository;
 using InvestmentReporting.Domain.Logic;
+using InvestmentReporting.Market.Logic;
+using InvestmentReporting.Market.UseCase;
 using InvestmentReporting.MarketService.Services;
 using InvestmentReporting.Shared.Extensions;
 using Microsoft.AspNetCore.Builder;
@@ -37,8 +39,16 @@ namespace InvestmentReporting.MarketService {
 			services.AddSingleton<IIdGenerator, ObjectIdGenerator>();
 			services.AddSingleton<IStateRepository, MongoStateRepository>();
 			services.AddSingleton<IStateManager, StateManager>();
-			services.AddSingleton<ApiKeyProvider>();
+			services.AddSingleton<IAssetMetadataRepository, MongoAssetMetadataRepository>();
+			services.AddSingleton<IAssetPriceRepository, MongoAssetPriceRepository>();
+			services.AddSingleton<IApiKeyProvider, EnvironmentApiKeyProvider>();
+			services.AddSingleton<IsinProvider>();
+			services.AddSingleton<MetadataManager>();
+			services.AddSingleton<PriceManager>();
+			services.AddSingleton<IntervalCalculator>();
 			services.AddSingleton<MarketMetadataCollector>();
+			services.AddSingleton<MarketCandleCollector>();
+			services.AddSingleton<SynchronizationUseCase>();
 			services.AddHostedService<SynchronizationHostedService>();
 		}
 

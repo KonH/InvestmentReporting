@@ -25,7 +25,7 @@ namespace InvestmentReporting.Domain.UseCase {
 			if ( !formatStr.Contains("{sign}") && !formatStr.Contains("{value}") ) {
 				throw new InvalidCurrencyException();
 			}
-			var state = await _stateManager.ReadState(date, user);
+			var state = _stateManager.ReadState(date, user);
 			if ( state.Currencies.Any(c => c.Code == code) ) {
 				throw new DuplicateCurrencyException();
 			}

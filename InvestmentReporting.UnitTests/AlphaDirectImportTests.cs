@@ -85,7 +85,7 @@ namespace InvestmentReporting.UnitTests {
 
 			await useCase.Handle(_date, _userId, _brokerId, sample);
 
-			await AssertIncomeTransfers(stateManager);
+			AssertIncomeTransfers(stateManager);
 		}
 
 		[Test]
@@ -98,11 +98,11 @@ namespace InvestmentReporting.UnitTests {
 			sample.Position = 0;
 			await useCase.Handle(_date, _userId, _brokerId, sample);
 
-			await AssertIncomeTransfers(stateManager);
+			AssertIncomeTransfers(stateManager);
 		}
 
-		async Task AssertIncomeTransfers(StateManager stateManager) {
-			var state      = await stateManager.ReadState(DateTimeOffset.MaxValue, _userId);
+		void AssertIncomeTransfers(StateManager stateManager) {
+			var state      = stateManager.ReadState(DateTimeOffset.MaxValue, _userId);
 			var broker     = state.Brokers.First(b => b.Id == _brokerId);
 			var usdAccount = broker.Accounts.First(a => a.Id == _usdAccountId);
 			usdAccount.Balance.Should().Be(100);
@@ -152,7 +152,7 @@ namespace InvestmentReporting.UnitTests {
 
 			await useCase.Handle(_date, _userId, _brokerId, sample);
 
-			await AssertExpenseTransfers(stateManager);
+			AssertExpenseTransfers(stateManager);
 		}
 
 		[Test]
@@ -165,11 +165,11 @@ namespace InvestmentReporting.UnitTests {
 			sample.Position = 0;
 			await useCase.Handle(_date, _userId, _brokerId, sample);
 
-			await AssertExpenseTransfers(stateManager);
+			AssertExpenseTransfers(stateManager);
 		}
 
-		async Task AssertExpenseTransfers(StateManager stateManager) {
-			var state      = await stateManager.ReadState(DateTimeOffset.MaxValue, _userId);
+		void AssertExpenseTransfers(StateManager stateManager) {
+			var state      = stateManager.ReadState(DateTimeOffset.MaxValue, _userId);
 			var broker     = state.Brokers.First(b => b.Id == _brokerId);
 			var usdAccount = broker.Accounts.First(a => a.Id == _usdAccountId);
 			usdAccount.Balance.Should().Be(-100);
@@ -201,7 +201,7 @@ namespace InvestmentReporting.UnitTests {
 
 			await useCase.Handle(_date, _userId, _brokerId, sample);
 
-			await AssertAssets(stateManager);
+			AssertAssets(stateManager);
 		}
 
 		[Test]
@@ -214,11 +214,11 @@ namespace InvestmentReporting.UnitTests {
 			sample.Position = 0;
 			await useCase.Handle(_date, _userId, _brokerId, sample);
 
-			await AssertAssets(stateManager);
+			AssertAssets(stateManager);
 		}
 
-		async Task AssertAssets(StateManager stateManager) {
-			var state  = await stateManager.ReadState(DateTimeOffset.MaxValue, _userId);
+		void AssertAssets(StateManager stateManager) {
+			var state  = stateManager.ReadState(DateTimeOffset.MaxValue, _userId);
 			var broker = state.Brokers.First(b => b.Id == _brokerId);
 			broker.Inventory.Should().Contain(a =>
 				(a.Isin == "US0000000001") && (a.Count == 1));
@@ -251,7 +251,7 @@ namespace InvestmentReporting.UnitTests {
 
 			await useCase.Handle(_date, _userId, _brokerId, sample);
 
-			await AssertDividendTransfers(stateManager);
+			AssertDividendTransfers(stateManager);
 		}
 
 		[Test]
@@ -264,11 +264,11 @@ namespace InvestmentReporting.UnitTests {
 			sample.Position = 0;
 			await useCase.Handle(_date, _userId, _brokerId, sample);
 
-			await AssertDividendTransfers(stateManager);
+			AssertDividendTransfers(stateManager);
 		}
 
-		async Task AssertDividendTransfers(StateManager stateManager) {
-			var state      = await stateManager.ReadState(DateTimeOffset.MaxValue, _userId);
+		void AssertDividendTransfers(StateManager stateManager) {
+			var state      = stateManager.ReadState(DateTimeOffset.MaxValue, _userId);
 			var broker     = state.Brokers.First(b => b.Id == _brokerId);
 			var usdAccount = broker.Accounts.First(a => a.Id == _usdAccountId);
 			usdAccount.Balance.Should().Be(-100 + 0.3m);
@@ -295,7 +295,7 @@ namespace InvestmentReporting.UnitTests {
 
 			await useCase.Handle(_date, _userId, _brokerId, sample);
 
-			await AssertCouponTransfers(stateManager);
+			AssertCouponTransfers(stateManager);
 		}
 
 		[Test]
@@ -308,11 +308,11 @@ namespace InvestmentReporting.UnitTests {
 			sample.Position = 0;
 			await useCase.Handle(_date, _userId, _brokerId, sample);
 
-			await AssertCouponTransfers(stateManager);
+			AssertCouponTransfers(stateManager);
 		}
 
-		async Task AssertCouponTransfers(StateManager stateManager) {
-			var state      = await stateManager.ReadState(DateTimeOffset.MaxValue, _userId);
+		void AssertCouponTransfers(StateManager stateManager) {
+			var state      = stateManager.ReadState(DateTimeOffset.MaxValue, _userId);
 			var broker     = state.Brokers.First(b => b.Id == _brokerId);
 			var rubAccount = broker.Accounts.First(a => a.Id == _rubAccountId);
 			rubAccount.Balance.Should().Be(-100 - 10 + 100);

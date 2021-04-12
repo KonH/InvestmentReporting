@@ -25,23 +25,27 @@ namespace InvestmentReporting.Import.Logic {
 			_storeStateManager = storeStateManager;
 		}
 
-		public async Task Prepare(UserId id) {
+		public void Prepare(UserId id) {
 			_logger.LogTrace($"Prepare for '{id}'");
-			var commands   = await _storeStateManager.ReadCommands(DateTimeOffset.MinValue, DateTimeOffset.MaxValue, id);
+			var commands   = _storeStateManager.ReadCommands(DateTimeOffset.MinValue, DateTimeOffset.MaxValue, id);
 			var repository = new InMemoryStateRepository(_loggerFactory.CreateLogger<InMemoryStateRepository>(), commands.ToList());
 			_simulatedStateManager = new StateManager(repository);
 		}
 
-		public Task<IReadOnlyDictionary<UserId, ReadOnlyState>> ReadStates(DateTimeOffset date) {
+		public IReadOnlyDictionary<UserId, ReadOnlyState> ReadStates(DateTimeOffset date) {
 			return (_simulatedStateManager != null)
 				? _simulatedStateManager.ReadStates(date)
-				: Task.FromResult<IReadOnlyDictionary<UserId, ReadOnlyState>>(new Dictionary<UserId, ReadOnlyState>());
+				: new Dictionary<UserId, ReadOnlyState>();
 		}
 
-		public Task<ReadOnlyState> ReadState(DateTimeOffset date, UserId id) =>
+		public ReadOnlyState ReadState(DateTimeOffset date, UserId id) =>
 			_simulatedStateManager!.ReadState(date, id);
 
-		public Task<IReadOnlyCollection<ICommandModel>> ReadCommands(
+		public IReadOnlyCollection<ICommandModel> ReadCommands(
+			DateTimeOffset startDate, DateTimeOffset endDate) =>
+			_simulatedStateManager!.ReadCommands(startDate, endDate);
+
+		public IReadOnlyCollection<ICommandModel> ReadCommands(
 			DateTimeOffset startDate, DateTimeOffset endDate, UserId id) =>
 			_simulatedStateManager!.ReadCommands(startDate, endDate, id);
 

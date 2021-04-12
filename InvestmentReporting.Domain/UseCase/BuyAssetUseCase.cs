@@ -31,7 +31,7 @@ namespace InvestmentReporting.Domain.UseCase {
 			if ( count <= 0 ) {
 				throw new InvalidCountException();
 			}
-			var state  = await _stateManager.ReadState(date, user);
+			var state  = _stateManager.ReadState(date, user);
 			var broker = state.Brokers.FirstOrDefault(b => b.Id == brokerId);
 			if ( broker == null ) {
 				throw new InvalidBrokerException();

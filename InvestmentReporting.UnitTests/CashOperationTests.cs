@@ -28,7 +28,7 @@ namespace InvestmentReporting.UnitTests {
 
 			await addUseCase.Handle(_date, _userId, _brokerId, _accountId, 100, _incomeCategory, _assetId);
 
-			var state   = await stateManager.ReadState(_date, _userId);
+			var state   = stateManager.ReadState(_date, _userId);
 			var broker  = state.Brokers.First(b => b.Id == _brokerId);
 			var account = broker.Accounts.First(a => a.Id == _accountId);
 			account.Balance.Should().Be(100);
@@ -86,7 +86,7 @@ namespace InvestmentReporting.UnitTests {
 
 			await addUseCase.Handle(_date, _userId, _brokerId, _accountId, 100, _expenseCategory, null);
 
-			var state   = await stateManager.ReadState(_date, _userId);
+			var state   = stateManager.ReadState(_date, _userId);
 			var broker  = state.Brokers.First(b => b.Id == _brokerId);
 			var account = broker.Accounts.First(a => a.Id == _accountId);
 			account.Balance.Should().Be(-100);
@@ -138,13 +138,13 @@ namespace InvestmentReporting.UnitTests {
 		}
 
 		[Test]
-		public async Task IsIncomeOperationFound() {
+		public void IsIncomeOperationFound() {
 			var stateManager = GetStateBuilder()
 				.With(new AddIncomeModel(_date, _userId, _brokerId, _accountId, string.Empty, 100, _incomeCategory, _assetId))
 				.Build();
 			var readUseCase = new ReadAccountOperationsUseCase(stateManager);
 
-			var operations = await readUseCase.Handle(_date, _date, _userId, _brokerId, _accountId);
+			var operations = readUseCase.Handle(_date, _date, _userId, _brokerId, _accountId);
 
 			operations.Should().Contain(op =>
 				(op.Date == _date) &&
@@ -155,13 +155,13 @@ namespace InvestmentReporting.UnitTests {
 		}
 
 		[Test]
-		public async Task IsExpenseOperationFound() {
+		public void IsExpenseOperationFound() {
 			var stateManager = GetStateBuilder()
 				.With(new AddExpenseModel(_date, _userId, _brokerId, _accountId, string.Empty, 50, _expenseCategory, _assetId))
 				.Build();
 			var readUseCase = new ReadAccountOperationsUseCase(stateManager);
 
-			var operations = await readUseCase.Handle(_date, _date, _userId, _brokerId, _accountId);
+			var operations = readUseCase.Handle(_date, _date, _userId, _brokerId, _accountId);
 
 			operations.Should().Contain(op =>
 				(op.Date == _date) &&

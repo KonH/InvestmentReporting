@@ -16,7 +16,7 @@ namespace InvestmentReporting.Domain.UseCase {
 			if ( string.IsNullOrWhiteSpace(user.Value) ) {
 				throw new InvalidUserException();
 			}
-			var commands = await _stateManager.ReadCommands(DateTimeOffset.MinValue, DateTimeOffset.MaxValue, user);
+			var commands = _stateManager.ReadCommands(DateTimeOffset.MinValue, DateTimeOffset.MaxValue, user);
 			await _stateManager.DeleteCommands(commands);
 		}
 	}

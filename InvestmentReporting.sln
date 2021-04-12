@@ -26,6 +26,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InvestmentReporting.Import"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InvestmentReporting.MarketService", "InvestmentReporting.MarketService\InvestmentReporting.MarketService.csproj", "{3D1C723A-3556-4D52-BB33-9335F984534C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InvestmentReporting.Market", "InvestmentReporting.Market\InvestmentReporting.Market.csproj", "{8480C2A9-AFE5-4021-BEFA-632B7D9792FB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -84,5 +86,9 @@ Global
 		{3D1C723A-3556-4D52-BB33-9335F984534C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3D1C723A-3556-4D52-BB33-9335F984534C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3D1C723A-3556-4D52-BB33-9335F984534C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8480C2A9-AFE5-4021-BEFA-632B7D9792FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8480C2A9-AFE5-4021-BEFA-632B7D9792FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8480C2A9-AFE5-4021-BEFA-632B7D9792FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8480C2A9-AFE5-4021-BEFA-632B7D9792FB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

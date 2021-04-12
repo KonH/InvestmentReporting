@@ -16,19 +16,26 @@ namespace InvestmentReporting.Data.InMemory.Repository {
 			_commands = commands;
 		}
 
-		public Task<IReadOnlyCollection<string>> ReadUsers(DateTimeOffset endDate) =>
-			Task.FromResult<IReadOnlyCollection<string>>(_commands
+		public IReadOnlyCollection<string> ReadUsers(DateTimeOffset endDate) =>
+			_commands
 				.Select(c => c.User)
 				.Distinct()
-				.ToArray());
+				.ToArray();
 
-		public Task<IReadOnlyCollection<ICommandModel>> ReadCommands(
+		public IReadOnlyCollection<ICommandModel> ReadCommands(
+			DateTimeOffset startDate, DateTimeOffset endDate) =>
+			_commands
+				.Where(c => c.Date >= startDate)
+				.Where(c => c.Date <= endDate)
+				.ToArray();
+
+		public IReadOnlyCollection<ICommandModel> ReadCommands(
 			DateTimeOffset startDate, DateTimeOffset endDate, string userId) =>
-			Task.FromResult((IReadOnlyCollection<ICommandModel>)_commands
+			_commands
 				.Where(c => c.Date >= startDate)
 				.Where(c => c.Date <= endDate)
 				.Where(c => c.User == userId)
-				.ToArray());
+				.ToArray();
 
 		public Task SaveCommand(ICommandModel model) {
 			_commands.Add(model);

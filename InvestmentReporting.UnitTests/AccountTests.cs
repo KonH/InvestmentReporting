@@ -24,7 +24,7 @@ namespace InvestmentReporting.UnitTests {
 
 			await createUseCase.Handle(_date, _userId, _brokerId, _currencyId, accountName);
 
-			var state  = await stateManager.ReadState(_date, _userId);
+			var state  = stateManager.ReadState(_date, _userId);
 			var broker = state.Brokers.First(b => b.Id == _brokerId);
 			broker.Accounts.Should().NotBeEmpty();
 			broker.Accounts.Should().Contain(a => (a.Currency == _currencyId) && (a.DisplayName == accountName));

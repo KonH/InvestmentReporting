@@ -21,7 +21,7 @@ namespace InvestmentReporting.Domain.UseCase {
 			if ( string.IsNullOrWhiteSpace(displayName) ) {
 				throw new InvalidAccountException();
 			}
-			var state = await _stateManager.ReadState(date, user);
+			var state = _stateManager.ReadState(date, user);
 			if ( state.Currencies.All(c => c.Id != currency) ) {
 				throw new CurrencyNotFoundException();
 			}

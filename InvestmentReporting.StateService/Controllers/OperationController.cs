@@ -33,11 +33,11 @@ namespace InvestmentReporting.StateService.Controllers {
 		[HttpGet("ForAccount")]
 		[Produces("application/json")]
 		[ProducesResponseType(typeof(OperationDto[]), StatusCodes.Status200OK)]
-		public async Task<IActionResult> GetForAccount(
+		public IActionResult GetForAccount(
 			[Required] DateTimeOffset startDate, [Required] DateTimeOffset endDate, [Required] string broker, [Required] string account) {
 			var userId = new UserId(User.Identity?.Name ?? string.Empty);
 			_logger.LogInformation($"Retrieve operations for user '{userId}', broker '{broker}', account '{account}', at {startDate}-{endDate}");
-			var operations = await _readAccountUseCase.Handle(startDate, endDate, userId, new(broker), new(account));
+			var operations = _readAccountUseCase.Handle(startDate, endDate, userId, new(broker), new(account));
 			var dto        = operations
 				.Select(op => {
 					var asset = (op.Asset != null) ? op.Asset.ToString() : null;
@@ -49,11 +49,11 @@ namespace InvestmentReporting.StateService.Controllers {
 		[HttpGet("ForAsset")]
 		[Produces("application/json")]
 		[ProducesResponseType(typeof(OperationDto[]), StatusCodes.Status200OK)]
-		public async Task<IActionResult> GetForAsset(
+		public IActionResult GetForAsset(
 			[Required] DateTimeOffset startDate, [Required] DateTimeOffset endDate, [Required] string broker, [Required] string asset) {
 			var userId = new UserId(User.Identity?.Name ?? string.Empty);
 			_logger.LogInformation($"Retrieve operations for user '{userId}', broker '{broker}', asset '{asset}', at {startDate}-{endDate}");
-			var operations = await _readAssetUseCase.Handle(startDate, endDate, userId, new(broker), new(asset));
+			var operations = _readAssetUseCase.Handle(startDate, endDate, userId, new(broker), new(asset));
 			var dto = operations
 				.Select(op => new OperationDto(op.Date, op.Kind.ToString(), op.Currency, op.Amount, op.Category, null));
 			return new JsonResult(dto);

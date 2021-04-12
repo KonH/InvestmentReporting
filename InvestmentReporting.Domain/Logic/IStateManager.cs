@@ -7,11 +7,13 @@ using InvestmentReporting.Domain.Entity;
 
 namespace InvestmentReporting.Domain.Logic {
 	public interface IStateManager {
-		public Task<IReadOnlyDictionary<UserId, ReadOnlyState>> ReadStates(DateTimeOffset date);
+		public IReadOnlyDictionary<UserId, ReadOnlyState> ReadStates(DateTimeOffset date);
 
-		public Task<ReadOnlyState> ReadState(DateTimeOffset date, UserId id);
+		public ReadOnlyState ReadState(DateTimeOffset date, UserId id);
 
-		public Task<IReadOnlyCollection<ICommandModel>> ReadCommands(
+		public IReadOnlyCollection<ICommandModel> ReadCommands(DateTimeOffset startDate, DateTimeOffset endDate);
+
+		public IReadOnlyCollection<ICommandModel> ReadCommands(
 			DateTimeOffset startDate, DateTimeOffset endDate, UserId id);
 
 		public Task AddCommand(ICommand command);

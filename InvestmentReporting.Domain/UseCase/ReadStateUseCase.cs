@@ -1,5 +1,4 @@
 using System;
-using System.Threading.Tasks;
 using InvestmentReporting.Domain.Entity;
 using InvestmentReporting.Domain.Logic;
 using InvestmentReporting.Domain.UseCase.Exceptions;
@@ -12,11 +11,11 @@ namespace InvestmentReporting.Domain.UseCase {
 			_stateManager = stateManager;
 		}
 
-		public async Task<ReadOnlyState> Handle(DateTimeOffset date, UserId user) {
+		public ReadOnlyState Handle(DateTimeOffset date, UserId user) {
 			if ( string.IsNullOrWhiteSpace(user.Value) ) {
 				throw new InvalidUserException();
 			}
-			return await _stateManager.ReadState(date, user);
+			return _stateManager.ReadState(date, user);
 		}
 	}
 }

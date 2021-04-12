@@ -14,6 +14,7 @@
       <ProjectReference Include="..\InvestmentReporting.Data.Core\InvestmentReporting.Data.Core.csproj" />
       <ProjectReference Include="..\InvestmentReporting.Data.Mongo\InvestmentReporting.Data.Mongo.csproj" />
       <ProjectReference Include="..\InvestmentReporting.Domain\InvestmentReporting.Domain.csproj" />
+      <ProjectReference Include="..\InvestmentReporting.Market\InvestmentReporting.Market.csproj" />
       <ProjectReference Include="..\InvestmentReporting.Shared\InvestmentReporting.Shared.csproj" />
     </ItemGroup>
 
