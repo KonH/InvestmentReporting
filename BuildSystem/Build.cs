@@ -121,9 +121,12 @@ namespace InvestmentReporting.BuildSystem {
 						if ( string.IsNullOrEmpty(envLine) ) {
 							continue;
 						}
-						var parts = envLine.Split('=');
-						Logger.Info($"Define '{parts[0]}'");
-						Environment.SetEnvironmentVariable(parts[0], parts[1]);
+						var parts     = envLine.Split('=');
+						var envName   = parts[0];
+						var envValue  = parts[1];
+						var showValue = Configuration == "Development";
+						Logger.Info($"Define '{envName}': '{(showValue ? envValue : "hidden")}'");
+						Environment.SetEnvironmentVariable(envName, envValue);
 					}
 				} else {
 					command = $"--env-file {envFile} " + command;

@@ -7,6 +7,7 @@ ADD publish /publish
 
 ENV ASPNETCORE_URLS=http://+:8085
 ENV ASPNETCORE_ENVIRONMENT=Development
+ENV TINKOFF_API_SANDBOX_KEY=none
 
 WORKDIR /publish
 ENTRYPOINT ["./InvestmentReporting.MarketService"]
