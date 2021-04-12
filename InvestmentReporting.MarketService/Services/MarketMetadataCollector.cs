@@ -37,10 +37,11 @@ namespace InvestmentReporting.MarketService.Services {
 			var instruments = stocks.Instruments
 				.Concat(bonds.Instruments)
 				.Concat(etfs.Instruments)
-				.ToDictionary(instrument => instrument.Isin, instrument => instrument);
-			_logger.LogTrace($"Found {instruments.Count} instruments");
+				.ToArray();
+			_logger.LogTrace($"Found {instruments.Length} instruments");
+			var instrumentMap = instruments.ToDictionary(instrument => instrument.Isin, instrument => instrument);
 			foreach ( var isin in assetIsins ) {
-				if ( instruments.TryGetValue(isin, out var instrument) ) {
+				if ( instrumentMap.TryGetValue(isin, out var instrument) ) {
 					_logger.LogTrace($"Found instrument for ISIN '{isin}': {instrument}");
 				} else {
 					_logger.LogWarning($"Instrument not found for ISIN: '{isin}'");
