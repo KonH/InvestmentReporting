@@ -138,7 +138,7 @@ namespace InvestmentReporting.BuildSystem {
 			{
 				Run("Stopping containers",
 					RootDirectory,
-					"docker-compose", "down");
+					"docker-compose", "stop");
 			});
 
 		string GetDotNetBuildArchitecture(Architecture architecture) =>
