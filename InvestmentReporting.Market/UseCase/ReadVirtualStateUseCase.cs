@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using InvestmentReporting.Domain.Entity;
 using InvestmentReporting.Domain.Logic;
@@ -27,14 +28,21 @@ namespace InvestmentReporting.Market.UseCase {
 						var metadata     = _metadataManager.GetMetadata(asset.Isin);
 						var name         = metadata?.Name;
 						var type         = metadata?.Type;
-						var currency     = _priceManager.GetCurrency(asset.Id, user, broker.Id);
-						var realPrice    = _priceManager.GetRealPriceSum(asset.Id, date);
+						var currency     = _priceManager.GetCurrency(user, broker.Id, asset.Id);
+						var realPrice    = _priceManager.GetRealPriceSum(date, user, asset.Id);
 						var virtualPrice = _priceManager.GetVirtualPricePerOne(asset.Isin, date) * asset.Count ?? realPrice;
 						return new VirtualAsset(
 							asset.Id, broker.Id, asset.Isin, name, type, asset.Count, realPrice, virtualPrice, currency);
 					}))
 				.ToArray();
-			return new VirtualState(inventory);
+			var balances = CalculateBalances(state, inventory, date, user);
+			return new VirtualState(balances, inventory);
 		}
+
+		IReadOnlyCollection<VirtualBalance> CalculateBalances(
+			ReadOnlyState state, IReadOnlyCollection<VirtualAsset> inventory, DateTimeOffset date, UserId user) =>
+			state.Currencies
+				.Select(currency => _priceManager.GetVirtualBalance(date, user, currency.Id, inventory))
+				.ToArray();
 	}
 }

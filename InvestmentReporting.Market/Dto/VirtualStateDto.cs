@@ -1,3 +1,3 @@
 namespace InvestmentReporting.Market.Dto {
-	public record VirtualStateDto(VirtualAssetDto[] Inventory);
+	public record VirtualStateDto(VirtualBalanceDto[] Balances, VirtualAssetDto[] Inventory);
 }

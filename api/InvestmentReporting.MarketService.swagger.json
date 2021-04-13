@@ -38,6 +38,24 @@
   },
   "components": {
     "schemas": {
+      "VirtualBalanceDto": {
+        "type": "object",
+        "properties": {
+          "realPrice": {
+            "type": "number",
+            "format": "double"
+          },
+          "virtualPrice": {
+            "type": "number",
+            "format": "double"
+          },
+          "currency": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "VirtualAssetDto": {
         "type": "object",
         "properties": {
@@ -83,6 +101,13 @@
       "VirtualStateDto": {
         "type": "object",
         "properties": {
+          "balances": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VirtualBalanceDto"
+            },
+            "nullable": true
+          },
           "inventory": {
             "type": "array",
             "items": {

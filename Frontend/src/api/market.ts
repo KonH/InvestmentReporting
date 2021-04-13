@@ -9,6 +9,15 @@
  * ---------------------------------------------------------------
  */
 
+export interface VirtualBalanceDto {
+  /** @format double */
+  realPrice?: number;
+
+  /** @format double */
+  virtualPrice?: number;
+  currency?: string | null;
+}
+
 export interface VirtualAssetDto {
   id?: string | null;
   broker?: string | null;
@@ -28,6 +37,7 @@ export interface VirtualAssetDto {
 }
 
 export interface VirtualStateDto {
+  balances?: VirtualBalanceDto[] | null;
   inventory?: VirtualAssetDto[] | null;
 }
 

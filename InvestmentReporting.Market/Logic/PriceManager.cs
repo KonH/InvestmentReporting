@@ -33,14 +33,37 @@ namespace InvestmentReporting.Market.Logic {
 				.Select(c => c!)
 				.ToArray();
 
+		IReadOnlyCollection<T> Filter<T>(DateTimeOffset date, UserId user) where T : class, ICommandModel =>
+			_stateManager.ReadCommands(DateTimeOffset.MinValue, date, user)
+				.Select(c => c as T)
+				.Where(c => c != null)
+				.Select(c => c!)
+				.ToArray();
+
+		public VirtualBalance GetVirtualBalance(
+			DateTimeOffset date, UserId user, CurrencyId currency, IReadOnlyCollection<VirtualAsset> inventory) {
+			var state = _stateManager.ReadState(date, user);
+			var accounts = state.Brokers
+				.SelectMany(b => b.Accounts)
+				.Where(a => a.Currency == currency)
+				.ToArray();
+			var accountSum = (accounts.Length > 0) ? accounts.Sum(a => a.Balance) : 0;
+			var assets = inventory
+				.Where(a => a.Currency == currency)
+				.ToArray();
+			var assetRealSum = (assets.Length > 0) ? assets.Sum(a => a.RealPrice) : 0;
+			var assetVirtualSum = (assets.Length > 0) ? assets.Sum(a => a.VirtualPrice) : 0;
+			return new VirtualBalance(accountSum + assetRealSum, assetVirtualSum, currency);
+		}
+
 		public IReadOnlyCollection<AddAssetModel> GetAddAssetCommands(AssetISIN isin, DateTimeOffset date) {
 			return Filter<AddAssetModel>(date)
 				.Where(c => c.Isin == isin)
 				.ToArray();
 		}
 
-		public CurrencyId GetCurrency(AssetId asset, UserId user, BrokerId broker) {
-			var assetBuy = Filter<AddExpenseModel>(DateTimeOffset.MaxValue)
+		public CurrencyId GetCurrency(UserId user, BrokerId broker, AssetId asset) {
+			var assetBuy = Filter<AddExpenseModel>(DateTimeOffset.MaxValue, user)
 				.First(a => (a.Category == "Asset Buy") && (a.Asset == asset));
 			var accountId = assetBuy.Account;
 			var state = _stateManager.ReadState(DateTimeOffset.MaxValue, user);
@@ -49,10 +72,10 @@ namespace InvestmentReporting.Market.Logic {
 				.Currency;
 		}
 
-		public decimal GetRealPriceSum(AssetId asset, DateTimeOffset date) {
-			var assetIncomes = Filter<AddIncomeModel>(date)
+		public decimal GetRealPriceSum(DateTimeOffset date, UserId user, AssetId asset) {
+			var assetIncomes = Filter<AddIncomeModel>(date, user)
 				.Where(a => (a.Category == "Asset Sell") && (a.Asset == asset));
-			var assetExpenses = Filter<AddExpenseModel>(date)
+			var assetExpenses = Filter<AddExpenseModel>(date, user)
 				.Where(a => (a.Category == "Asset Buy") && (a.Asset == asset));
 			return assetExpenses.Sum(c => c.Amount) - assetIncomes.Sum(c => c.Amount);
 		}

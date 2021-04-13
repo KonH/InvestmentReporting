@@ -24,7 +24,7 @@ export default class Money extends Vue {
 		const currency = this.activeState.currencies?.find((c) => c.id == this.currencyId) as CurrencyDto;
 		const format = currency.format;
 		const sign = this.value < 0 ? '-' : '';
-		const value = Math.abs(this.value).toString();
+		const value = Math.abs(this.value).toLocaleString();
 		return format?.replace('{sign}', sign)?.replace('{value}', value);
 	}
 }
