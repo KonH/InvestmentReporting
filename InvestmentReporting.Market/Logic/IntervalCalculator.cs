@@ -43,7 +43,7 @@ namespace InvestmentReporting.Market.Logic {
 				.FirstOrDefault();
 			if ( addCommand != null ) {
 				var date = addCommand.Date.Date;
-				_logger.LogError($"Add commands found for ISIN '{isin}': {date}");
+				_logger.LogTrace($"Add commands found for ISIN '{isin}': {date}");
 				return date;
 			}
 			_logger.LogError($"No add commands found for ISIN '{isin}', use yesterday date");
