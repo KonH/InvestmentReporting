@@ -2,6 +2,7 @@ import { Api as Auth } from '@/api/auth';
 import { Api as Invite } from '@/api/invite';
 import { Api as State } from '@/api/state';
 import { Api as Import } from '@/api/import';
+import { Api as Market } from '@/api/market';
 
 export default class Backend {
 	static auth() {
@@ -18,6 +19,10 @@ export default class Backend {
 
 	static import() {
 		return new Import({ baseUrl: '/api/import/v1' });
+	}
+
+	static market() {
+		return new Market({ baseUrl: '/api/market/v1' });
 	}
 
 	static async tryFetch<T>(promise: Promise<T>) {

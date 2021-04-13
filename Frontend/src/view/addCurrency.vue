@@ -32,8 +32,8 @@ export default class AddCurrency extends Vue {
 	@Ref('format')
 	formatInput!: HTMLInputElement;
 
-	@Action('fetchActiveState')
-	fetchActiveState!: () => void;
+	@Action('fetchState')
+	fetchState!: () => void;
 
 	async onclick() {
 		const result = await Backend.tryFetch(
@@ -43,7 +43,7 @@ export default class AddCurrency extends Vue {
 			})
 		);
 		if (result?.ok) {
-			this.fetchActiveState();
+			this.fetchState();
 			await router.push('/');
 		} else {
 			alert(`Failed: ${result?.error}`);

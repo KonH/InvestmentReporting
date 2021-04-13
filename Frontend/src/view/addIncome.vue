@@ -57,8 +57,8 @@ export default class AddIncome extends Vue {
 	@Ref('asset')
 	assetSelect!: HTMLSelectElement;
 
-	@Action('fetchActiveState')
-	fetchActiveState!: () => void;
+	@Action('fetchState')
+	fetchState!: () => void;
 
 	get brokerId() {
 		return this.$route.params.broker as string;
@@ -103,7 +103,7 @@ export default class AddIncome extends Vue {
 			})
 		);
 		if (result?.ok) {
-			this.fetchActiveState();
+			this.fetchState();
 			await router.push('/');
 		} else {
 			alert(`Failed: ${result?.error}`);

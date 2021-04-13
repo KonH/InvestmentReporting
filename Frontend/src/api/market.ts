@@ -9,6 +9,27 @@
  * ---------------------------------------------------------------
  */
 
+export interface VirtualAssetDto {
+  id?: string | null;
+  broker?: string | null;
+  isin?: string | null;
+  name?: string | null;
+  type?: string | null;
+
+  /** @format int32 */
+  count?: number;
+
+  /** @format double */
+  realPrice?: number;
+
+  /** @format double */
+  virtualPrice?: number;
+}
+
+export interface VirtualStateDto {
+  inventory?: VirtualAssetDto[] | null;
+}
+
 export type QueryParamsType = Record<string | number, any>;
 export type ResponseFormat = keyof Omit<Body, "body" | "bodyUsed">;
 
@@ -204,4 +225,22 @@ export class HttpClient<SecurityDataType = unknown> {
  * @title InvestmentReporting.MarketService
  * @version v1
  */
-export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {}
+export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
+  virtualState = {
+    /**
+     * No description
+     *
+     * @tags VirtualState
+     * @name VirtualStateList
+     * @request GET:/VirtualState
+     */
+    virtualStateList: (query: { date: string }, params: RequestParams = {}) =>
+      this.request<VirtualStateDto, any>({
+        path: `/VirtualState`,
+        method: "GET",
+        query: query,
+        format: "json",
+        ...params,
+      }),
+  };
+}

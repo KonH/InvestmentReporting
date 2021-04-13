@@ -11,11 +11,11 @@ import { Action } from 'vuex-class';
 	name: 'App',
 })
 export default class App extends Vue {
-	@Action('fetchActiveState')
-	fetchActiveState!: () => void;
+	@Action('fetchState')
+	fetchState!: () => void;
 
 	created() {
-		this.fetchActiveState();
+		this.fetchState();
 	}
 }
 </script>

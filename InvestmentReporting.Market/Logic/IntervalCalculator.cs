@@ -1,20 +1,16 @@
 using System;
 using System.Linq;
-using InvestmentReporting.Data.Core.Model;
 using InvestmentReporting.Domain.Entity;
-using InvestmentReporting.Domain.Logic;
 using Microsoft.Extensions.Logging;
 
 namespace InvestmentReporting.Market.Logic {
 	public sealed class IntervalCalculator {
 		readonly ILogger       _logger;
-		readonly IStateManager _stateManager;
 		readonly PriceManager  _priceManager;
 
 		public IntervalCalculator(
-			ILogger<IntervalCalculator> logger, IStateManager stateManager, PriceManager priceManager) {
+			ILogger<IntervalCalculator> logger, PriceManager priceManager) {
 			_logger       = logger;
-			_stateManager = stateManager;
 			_priceManager = priceManager;
 		}
 
@@ -43,13 +39,7 @@ namespace InvestmentReporting.Market.Logic {
 		}
 
 		DateTime GetFirstAddDate(AssetISIN isin) {
-			var commands = _stateManager.ReadCommands(DateTimeOffset.MinValue, DateTimeOffset.MaxValue);
-			var addCommand = commands
-				.Select(c => c as AddAssetModel)
-				.Where(c => c != null)
-				.Select(c => c!)
-				.Where(c => c.Isin == isin)
-				.OrderBy(c => c)
+			var addCommand = _priceManager.GetAddAssetCommands(isin, DateTimeOffset.MaxValue)
 				.FirstOrDefault();
 			if ( addCommand != null ) {
 				var date = addCommand.Date.Date;

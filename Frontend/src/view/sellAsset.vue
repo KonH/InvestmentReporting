@@ -88,8 +88,8 @@ export default class SellAsset extends Vue {
 	@Ref('count')
 	countInput!: HTMLInputElement;
 
-	@Action('fetchActiveState')
-	fetchActiveState!: () => void;
+	@Action('fetchState')
+	fetchState!: () => void;
 
 	get brokerId() {
 		return this.$route.params.broker as string;
@@ -133,7 +133,7 @@ export default class SellAsset extends Vue {
 			})
 		);
 		if (result?.ok) {
-			this.fetchActiveState();
+			this.fetchState();
 			await router.push('/');
 		} else {
 			alert(`Failed: ${result?.error}`);

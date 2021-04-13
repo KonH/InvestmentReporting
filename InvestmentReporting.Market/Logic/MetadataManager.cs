@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using InvestmentReporting.Data.Core.Model;
 using InvestmentReporting.Data.Core.Repository;
+using InvestmentReporting.Domain.Entity;
 using InvestmentReporting.Market.Entity;
 using Microsoft.Extensions.Logging;
 using Tinkoff.Trading.OpenApi.Models;
@@ -15,6 +16,14 @@ namespace InvestmentReporting.Market.Logic {
 		public MetadataManager(ILogger<MetadataManager> logger, IAssetMetadataRepository repository) {
 			_logger     = logger;
 			_repository = repository;
+		}
+
+		public AssetMetadata? GetMetadata(AssetISIN isin) {
+			var models = _repository.GetAll();
+			var model  = models.FirstOrDefault(m => m.Isin == isin);
+			return (model != null)
+				? new AssetMetadata(new(model.Isin), new(model.Figi), model.Name, new(model.Type))
+				: null;
 		}
 
 		public async Task TryAdd(MarketInstrument instrument) {
