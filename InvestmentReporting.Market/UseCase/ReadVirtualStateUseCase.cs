@@ -28,7 +28,7 @@ namespace InvestmentReporting.Market.UseCase {
 						var name         = metadata?.Name;
 						var type         = metadata?.Type;
 						var realPrice    = _priceManager.GetRealPriceSum(asset.Id, date);
-						var virtualPrice = _priceManager.GetVirtualPricePerOne(asset.Isin, date) * asset.Count;
+						var virtualPrice = _priceManager.GetVirtualPricePerOne(asset.Isin, date) * asset.Count ?? realPrice;
 						return new VirtualAsset(asset.Id, broker.Id, asset.Isin, name, type, asset.Count, realPrice, virtualPrice);
 					}))
 				.ToArray();

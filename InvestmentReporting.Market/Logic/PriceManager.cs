@@ -47,14 +47,14 @@ namespace InvestmentReporting.Market.Logic {
 			return assetExpenses.Sum(c => c.Amount) - assetIncomes.Sum(c => c.Amount);
 		}
 
-		public decimal GetVirtualPricePerOne(AssetISIN isin, DateTimeOffset date) {
+		public decimal? GetVirtualPricePerOne(AssetISIN isin, DateTimeOffset date) {
 			var model = TryGetModel(isin);
 			if ( model == null ) {
-				return 0;
+				return null;
 			}
 			var lastCandleBeforeDate = model.Candles
 				.LastOrDefault(c => c.Date < date);
-			return lastCandleBeforeDate?.Close ?? 0;
+			return lastCandleBeforeDate?.Close;
 		}
 
 		public AssetPrice? TryGet(AssetISIN isin) {

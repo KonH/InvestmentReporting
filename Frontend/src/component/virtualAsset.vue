@@ -1,5 +1,8 @@
 <template>
-	<b>{{ asset.isin }} {{ asset.type }} {{ asset.name }} x{{ asset.count }} ({{ asset.realPrice }} => {{ asset.virtualPrice }})</b>
+	<b
+		>{{ asset.isin }} {{ asset.type }} {{ asset.name }} x{{ asset.count }} ({{ asset.realPrice }} =>
+		{{ asset.virtualPrice }})</b
+	>
 	<router-link :to="`/broker/${asset.broker}/asset/${asset.id}/operations`" class="btn btn-secondary ml-2"
 		>Operations</router-link
 	>
