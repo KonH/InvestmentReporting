@@ -33,7 +33,7 @@ namespace InvestmentReporting.MarketService.Controllers {
 				.Select(a => new VirtualAssetDto(
 					a.Id, a.Broker, a.Isin,
 					a.Name ?? string.Empty, a.Type ?? string.Empty,
-					a.Count, a.RealPrice, a.VirtualPrice))
+					a.Count, a.RealPrice, a.VirtualPrice, a.Currency))
 				.ToArray());
 			return new JsonResult(dto);
 		}

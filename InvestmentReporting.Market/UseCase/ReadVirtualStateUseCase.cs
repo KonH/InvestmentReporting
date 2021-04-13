@@ -27,9 +27,11 @@ namespace InvestmentReporting.Market.UseCase {
 						var metadata     = _metadataManager.GetMetadata(asset.Isin);
 						var name         = metadata?.Name;
 						var type         = metadata?.Type;
+						var currency     = _priceManager.GetCurrency(asset.Id, user, broker.Id);
 						var realPrice    = _priceManager.GetRealPriceSum(asset.Id, date);
 						var virtualPrice = _priceManager.GetVirtualPricePerOne(asset.Isin, date) * asset.Count ?? realPrice;
-						return new VirtualAsset(asset.Id, broker.Id, asset.Isin, name, type, asset.Count, realPrice, virtualPrice);
+						return new VirtualAsset(
+							asset.Id, broker.Id, asset.Isin, name, type, asset.Count, realPrice, virtualPrice, currency);
 					}))
 				.ToArray();
 			return new VirtualState(inventory);

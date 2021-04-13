@@ -72,6 +72,10 @@
           "virtualPrice": {
             "type": "number",
             "format": "double"
+          },
+          "currency": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false

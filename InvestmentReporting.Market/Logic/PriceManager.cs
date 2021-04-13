@@ -39,6 +39,16 @@ namespace InvestmentReporting.Market.Logic {
 				.ToArray();
 		}
 
+		public CurrencyId GetCurrency(AssetId asset, UserId user, BrokerId broker) {
+			var assetBuy = Filter<AddExpenseModel>(DateTimeOffset.MaxValue)
+				.First(a => (a.Category == "Asset Buy") && (a.Asset == asset));
+			var accountId = assetBuy.Account;
+			var state = _stateManager.ReadState(DateTimeOffset.MaxValue, user);
+			return state.Brokers.First(b => b.Id == broker)
+				.Accounts.First(a => a.Id == accountId)
+				.Currency;
+		}
+
 		public decimal GetRealPriceSum(AssetId asset, DateTimeOffset date) {
 			var assetIncomes = Filter<AddIncomeModel>(date)
 				.Where(a => (a.Category == "Asset Sell") && (a.Asset == asset));

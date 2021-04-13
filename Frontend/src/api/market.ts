@@ -24,6 +24,7 @@ export interface VirtualAssetDto {
 
   /** @format double */
   virtualPrice?: number;
+  currency?: string | null;
 }
 
 export interface VirtualStateDto {
