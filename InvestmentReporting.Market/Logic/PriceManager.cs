@@ -53,7 +53,7 @@ namespace InvestmentReporting.Market.Logic {
 				.ToArray();
 			var assetRealSum = (assets.Length > 0) ? assets.Sum(a => a.RealPrice) : 0;
 			var assetVirtualSum = (assets.Length > 0) ? assets.Sum(a => a.VirtualPrice) : 0;
-			return new VirtualBalance(accountSum + assetRealSum, assetVirtualSum, currency);
+			return new VirtualBalance(accountSum + assetRealSum, accountSum + assetVirtualSum, currency);
 		}
 
 		public IReadOnlyCollection<AddAssetModel> GetAddAssetCommands(AssetISIN isin, DateTimeOffset date) {
