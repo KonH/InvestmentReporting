@@ -64,7 +64,7 @@ namespace InvestmentReporting.Import.TinkoffBrokerReport {
 					var sum    = row.Cell(sumLetter).GetDecimal();
 					// We expect that it's Moscow time, but no timezone provided
 					// and for backward-compatibility we should use fixed value
-					var dateDt   = rawDateCell.GetDateTimeExact("dd.MM.yyyy");
+					var dateDt   = rawDateCell.GetDateTimeExact("dd.MM.yyyy", "MM/dd/yyyy hh:mm:ss");
 					var date     = new DateTimeOffset(dateDt, TimeSpan.FromHours(3));
 					var timeDt   = rawTimeCell.GetDateTime();
 					var time     = new DateTimeOffset(timeDt, TimeSpan.FromHours(3));

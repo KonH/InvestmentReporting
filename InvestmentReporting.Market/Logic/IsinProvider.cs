@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using InvestmentReporting.Domain.Entity;
@@ -16,7 +15,7 @@ namespace InvestmentReporting.Market.Logic {
 		}
 
 		public IReadOnlyCollection<AssetISIN> CollectRequiredIsins() {
-			var states = _stateManager.ReadStates(DateTimeOffset.MaxValue);
+			var states = _stateManager.ReadStates();
 			var assetIsins = states
 				.SelectMany(s => s.Value.Brokers.SelectMany(b => b.Inventory))
 				.Select(a => a.Isin)

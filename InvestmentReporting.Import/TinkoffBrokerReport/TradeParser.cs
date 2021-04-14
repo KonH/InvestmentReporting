@@ -18,7 +18,7 @@ namespace InvestmentReporting.Import.TinkoffBrokerReport {
 			foreach ( var row in rows ) {
 				// We expect that it's Moscow time, but no timezone provided
 				// and for backward-compatibility we should use fixed value
-				var dateDt   = row.Cell("H").GetDateTimeExact("dd.MM.yyyy");
+				var dateDt   = row.Cell("H").GetDateTimeExact("dd.MM.yyyy", "MM/dd/yyyy hh:mm:ss");
 				var date     = new DateTimeOffset(dateDt, TimeSpan.FromHours(3));
 				var timeDt   = row.Cell("L").GetDateTime();
 				var time     = new DateTimeOffset(timeDt, TimeSpan.FromHours(3));

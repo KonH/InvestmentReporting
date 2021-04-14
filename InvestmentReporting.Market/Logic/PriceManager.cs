@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using InvestmentReporting.Data.Core.Model;
 using InvestmentReporting.Data.Core.Repository;
+using InvestmentReporting.Domain.Command;
 using InvestmentReporting.Domain.Entity;
 using InvestmentReporting.Domain.Logic;
 using InvestmentReporting.Market.Entity;
@@ -26,20 +27,6 @@ namespace InvestmentReporting.Market.Logic {
 			_repository.GetAll()
 				.FirstOrDefault(m => m.Isin == isin);
 
-		IReadOnlyCollection<T> Filter<T>(DateTimeOffset date) where T : class, ICommandModel =>
-			_stateManager.ReadCommands(DateTimeOffset.MinValue, date)
-				.Select(c => c as T)
-				.Where(c => c != null)
-				.Select(c => c!)
-				.ToArray();
-
-		IReadOnlyCollection<T> Filter<T>(DateTimeOffset date, UserId user) where T : class, ICommandModel =>
-			_stateManager.ReadCommands(DateTimeOffset.MinValue, date, user)
-				.Select(c => c as T)
-				.Where(c => c != null)
-				.Select(c => c!)
-				.ToArray();
-
 		public VirtualBalance GetVirtualBalance(
 			DateTimeOffset date, UserId user, CurrencyId currency, IReadOnlyCollection<VirtualAsset> inventory) {
 			var state = _stateManager.ReadState(date, user);
@@ -56,27 +43,25 @@ namespace InvestmentReporting.Market.Logic {
 			return new VirtualBalance(accountSum + assetRealSum, accountSum + assetVirtualSum, currency);
 		}
 
-		public IReadOnlyCollection<AddAssetModel> GetAddAssetCommands(AssetISIN isin, DateTimeOffset date) {
-			return Filter<AddAssetModel>(date)
-				.Where(c => c.Isin == isin)
-				.ToArray();
-		}
+		public IEnumerable<AddAssetCommand> GetAddAssetCommands(AssetISIN isin) =>
+			_stateManager.ReadCommands<AddAssetCommand>()
+				.Where(c => c.Isin == isin);
 
 		public CurrencyId GetCurrency(UserId user, BrokerId broker, AssetId asset) {
-			var assetBuy = Filter<AddExpenseModel>(DateTimeOffset.MaxValue, user)
-				.First(a => (a.Category == "Asset Buy") && (a.Asset == asset));
+			var assetBuy = _stateManager.ReadCommands<AddExpenseCommand>(user)
+				.First(a => (a.Category == ExpenseCategory.BuyAsset) && (a.Asset == asset));
 			var accountId = assetBuy.Account;
-			var state = _stateManager.ReadState(DateTimeOffset.MaxValue, user);
+			var state = _stateManager.ReadState(user);
 			return state.Brokers.First(b => b.Id == broker)
 				.Accounts.First(a => a.Id == accountId)
 				.Currency;
 		}
 
 		public decimal GetRealPriceSum(DateTimeOffset date, UserId user, AssetId asset) {
-			var assetIncomes = Filter<AddIncomeModel>(date, user)
-				.Where(a => (a.Category == "Asset Sell") && (a.Asset == asset));
-			var assetExpenses = Filter<AddExpenseModel>(date, user)
-				.Where(a => (a.Category == "Asset Buy") && (a.Asset == asset));
+			var assetIncomes = _stateManager.ReadCommands<AddIncomeCommand>(date, user, asset)
+				.Where(a => (a.Category == IncomeCategory.SellAsset));
+			var assetExpenses = _stateManager.ReadCommands<AddExpenseCommand>(date, user, asset)
+				.Where(a => (a.Category == ExpenseCategory.BuyAsset));
 			return assetExpenses.Sum(c => c.Amount) - assetIncomes.Sum(c => c.Amount);
 		}
 

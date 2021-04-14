@@ -29,14 +29,6 @@ namespace InvestmentReporting.Data.InMemory.Repository {
 				.Where(c => c.Date <= endDate)
 				.ToArray();
 
-		public IReadOnlyCollection<ICommandModel> ReadCommands(
-			DateTimeOffset startDate, DateTimeOffset endDate, string userId) =>
-			_commands
-				.Where(c => c.Date >= startDate)
-				.Where(c => c.Date <= endDate)
-				.Where(c => c.User == userId)
-				.ToArray();
-
 		public Task SaveCommand(ICommandModel model) {
 			_commands.Add(model);
 			_logger.LogTrace($"Command saved: {model}");

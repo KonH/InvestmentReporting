@@ -5,7 +5,8 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
-using InvestmentReporting.Data.Core.Model;
+using InvestmentReporting.Domain.Logic;
+using InvestmentReporting.Domain.Command;
 using InvestmentReporting.Domain.Entity;
 using InvestmentReporting.Domain.UseCase;
 using InvestmentReporting.Domain.UseCase.Exceptions;
@@ -59,21 +60,20 @@ namespace InvestmentReporting.Import.AlphaDirectMyBroker {
 			var requiredCurrencyCodes = GetRequiredCurrencyCodes(
 				incomeTransfers.Select(t => t.Currency), expenseTransfers.Select(t => t.Currency),
 				trades.Select(t => t.Currency), new [] { "RUB" });
-			var currencyAccounts     = CreateCurrencyAccounts(requiredCurrencyCodes, state.Currencies, broker.Accounts);
-			var allCommands          = _stateManager.ReadCommands(DateTimeOffset.MinValue, DateTimeOffset.MaxValue, user);
-			var allIncomeModels      = Filter<AddIncomeModel>(allCommands);
-			var incomeAccountModels  = CreateIncomeModels(currencyAccounts, allIncomeModels);
-			var allExpenseModels     = Filter<AddExpenseModel>(allCommands);
-			var expenseAccountModels = CreateExpenseModels(currencyAccounts, allExpenseModels);
-			await FillIncomeTransfers(user, brokerId, incomeTransfers, currencyAccounts, incomeAccountModels);
-			await FillExpenseTransfers(user, brokerId, expenseTransfers, currencyAccounts, expenseAccountModels);
-			var addAssetModels    = Filter<AddAssetModel>(allCommands);
-			var reduceAssetModels = Filter<ReduceAssetModel>(allCommands);
-			var assets            = await FillTrades(user, brokerId, trades, currencyAccounts, addAssetModels, reduceAssetModels);
-			var dividendTransfers = _moneyMoveParser.ReadDividendTransfers(report);
-			await FillDividends(user, brokerId, dividendTransfers, currencyAccounts, incomeAccountModels, assets);
+			var currencyAccounts       = CreateCurrencyAccounts(requiredCurrencyCodes, state.Currencies, broker.Accounts);
+			var allIncomeCommands      = _stateManager.ReadCommands<AddIncomeCommand>(user, brokerId);
+			var incomeAccountCommands  = CreateAccountCommands(currencyAccounts, allIncomeCommands);
+			var allExpenseCommands     = _stateManager.ReadCommands<AddExpenseCommand>(user, brokerId);
+			var expenseAccountCommands = CreateAccountCommands(currencyAccounts, allExpenseCommands);
+			await FillIncomeTransfers(user, brokerId, incomeTransfers, currencyAccounts, incomeAccountCommands);
+			await FillExpenseTransfers(user, brokerId, expenseTransfers, currencyAccounts, expenseAccountCommands);
+			var addAssetCommands    = _stateManager.ReadCommands<AddAssetCommand>(user, brokerId).ToArray();
+			var reduceAssetCommands = _stateManager.ReadCommands<ReduceAssetCommand>(user, brokerId).ToArray();
+			var assets              = await FillTrades(user, brokerId, trades, currencyAccounts, addAssetCommands, reduceAssetCommands);
+			var dividendTransfers   = _moneyMoveParser.ReadDividendTransfers(report);
+			await FillDividends(user, brokerId, dividendTransfers, currencyAccounts, incomeAccountCommands, assets);
 			var couponTransfers = _moneyMoveParser.ReadCouponTransfers(report);
-			await FillCoupons(user, brokerId, couponTransfers, currencyAccounts, incomeAccountModels, trades, assets);
+			await FillCoupons(user, brokerId, couponTransfers, currencyAccounts, incomeAccountCommands, trades, assets);
 			await _stateManager.Push();
 		}
 
@@ -86,7 +86,7 @@ namespace InvestmentReporting.Import.AlphaDirectMyBroker {
 		async Task<Dictionary<string, AssetId>> FillTrades(
 			UserId user, BrokerId brokerId, IReadOnlyCollection<Trade> trades,
 			Dictionary<string, AccountId> currencyAccounts,
-			AddAssetModel[] addModels, ReduceAssetModel[] reduceModels) {
+			IReadOnlyCollection<AddAssetCommand> addCommands, IReadOnlyCollection<ReduceAssetCommand> reduceCommands) {
 			var assetIds = new Dictionary<string, AssetId>();
 			foreach ( var trade in trades ) {
 				var date       = trade.Date;
@@ -98,20 +98,20 @@ namespace InvestmentReporting.Import.AlphaDirectMyBroker {
 				var payAccount = currencyAccounts[trade.Currency];
 				var feeAccount = currencyAccounts["RUB"];
 				if ( buy ) {
-					if ( IsAlreadyPresent(date, isin, count, addModels) ) {
+					if ( IsAlreadyPresent(date, isin, count, addCommands) ) {
 						continue;
 					}
 					var assetId = await _buyAssetUseCase.Handle(
 						date, user, brokerId, payAccount, feeAccount, new(isin), price, fee, count);
 					assetIds[isin] = assetId;
 				} else {
-					var allAssetIds = addModels
+					var allAssetIds = addCommands
 						.Where(add => (add.Isin == isin) && (add.Date <= date))
-						.Select(add => add.Id)
+						.Select(add => add.Asset)
 						.Distinct()
 						.ToArray();
 					var reduceCount = -count;
-					if ( allAssetIds.Any(id => IsAlreadyPresent(date, new(id), reduceCount, reduceModels)) ) {
+					if ( allAssetIds.Any(id => IsAlreadyPresent(date, new(id), reduceCount, reduceCommands)) ) {
 						continue;
 					}
 					var assetId = assetIds[isin];
@@ -123,11 +123,11 @@ namespace InvestmentReporting.Import.AlphaDirectMyBroker {
 
 		async Task FillDividends(
 			UserId user, BrokerId brokerId, IReadOnlyCollection<Transfer> dividendTransfers,
-			Dictionary<string, AccountId> currencyAccounts, Dictionary<AccountId, AddIncomeModel[]> incomeAccountModels,
+			Dictionary<string, AccountId> currencyAccounts, Dictionary<AccountId, IReadOnlyCollection<AddIncomeCommand>> incomeAccountCommands,
 			Dictionary<string, AssetId> assets) {
 			foreach ( var dividendTransfer in dividendTransfers ) {
 				var accountId = currencyAccounts[dividendTransfer.Currency];
-				if ( IsAlreadyPresent(dividendTransfer.Date, dividendTransfer.Amount, incomeAccountModels[accountId]) ) {
+				if ( IsAlreadyPresent(dividendTransfer.Date, dividendTransfer.Amount, incomeAccountCommands[accountId]) ) {
 					continue;
 				}
 				var asset = DetectAssetFromDividend(dividendTransfer.Comment, assets);
@@ -151,11 +151,11 @@ namespace InvestmentReporting.Import.AlphaDirectMyBroker {
 
 		async Task FillCoupons(
 			UserId user, BrokerId brokerId, IReadOnlyCollection<Transfer> couponTransfers,
-			Dictionary<string, AccountId> currencyAccounts, Dictionary<AccountId, AddIncomeModel[]> incomeAccountModels,
+			Dictionary<string, AccountId> currencyAccounts, Dictionary<AccountId, IReadOnlyCollection<AddIncomeCommand>> incomeAccountCommands,
 			IReadOnlyCollection<Trade> trades, Dictionary<string, AssetId> assets) {
 			foreach ( var couponTransfer in couponTransfers ) {
 				var accountId = currencyAccounts[couponTransfer.Currency];
-				if ( IsAlreadyPresent(couponTransfer.Date, couponTransfer.Amount, incomeAccountModels[accountId]) ) {
+				if ( IsAlreadyPresent(couponTransfer.Date, couponTransfer.Amount, incomeAccountCommands[accountId]) ) {
 					continue;
 				}
 				var asset = DetectAssetFromCoupon(couponTransfer.Comment, trades, assets);

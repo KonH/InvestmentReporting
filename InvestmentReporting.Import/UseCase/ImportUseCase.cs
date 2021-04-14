@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using InvestmentReporting.Data.Core.Model;
+using InvestmentReporting.Domain.Command;
 using InvestmentReporting.Domain.Entity;
 using InvestmentReporting.Domain.UseCase;
 using InvestmentReporting.Domain.UseCase.Exceptions;
@@ -13,18 +13,10 @@ namespace InvestmentReporting.Import.UseCase {
 		protected readonly AddIncomeUseCase  AddIncomeUseCase;
 		protected readonly AddExpenseUseCase AddExpenseUseCase;
 
-		public ImportUseCase(AddIncomeUseCase addIncomeUseCase, AddExpenseUseCase addExpenseUseCase) {
+		protected ImportUseCase(AddIncomeUseCase addIncomeUseCase, AddExpenseUseCase addExpenseUseCase) {
 			AddIncomeUseCase  = addIncomeUseCase;
 			AddExpenseUseCase = addExpenseUseCase;
 		}
-
-		protected T[] Filter<T>(IReadOnlyCollection<ICommandModel> allCommands)
-			where T : class, ICommandModel =>
-			allCommands
-				.Select(c => c as T)
-				.Where(c => c != null)
-				.Select(c => c!)
-				.ToArray();
 
 		protected string[] GetRequiredCurrencyCodes(params IEnumerable<string>[] codes) =>
 			codes.Aggregate(new List<string>(), (acc, cur) => {
@@ -59,10 +51,10 @@ namespace InvestmentReporting.Import.UseCase {
 		protected async Task FillIncomeTransfers(
 			UserId user, BrokerId brokerId, IReadOnlyCollection<Transfer> incomeTransfers,
 			Dictionary<string, AccountId> currencyAccounts,
-			Dictionary<AccountId, AddIncomeModel[]> incomeAccountModels) {
+			Dictionary<AccountId, IReadOnlyCollection<AddIncomeCommand>> incomeAccountCommands) {
 			foreach ( var incomeTransfer in incomeTransfers ) {
 				var accountId = currencyAccounts[incomeTransfer.Currency];
-				if ( IsAlreadyPresent(incomeTransfer.Date, incomeTransfer.Amount, incomeAccountModels[accountId]) ) {
+				if ( IsAlreadyPresent(incomeTransfer.Date, incomeTransfer.Amount, incomeAccountCommands[accountId]) ) {
 					continue;
 				}
 				await AddIncomeUseCase.Handle(
@@ -74,11 +66,11 @@ namespace InvestmentReporting.Import.UseCase {
 		protected async Task FillExpenseTransfers(
 			UserId user, BrokerId brokerId, IReadOnlyCollection<Transfer> expenseTransfers,
 			Dictionary<string, AccountId> currencyAccounts,
-			Dictionary<AccountId, AddExpenseModel[]> expenseAccountModels) {
+			Dictionary<AccountId, IReadOnlyCollection<AddExpenseCommand>> expenseAccountCommands) {
 			foreach ( var expenseTransfer in expenseTransfers ) {
 				var amount    = -expenseTransfer.Amount;
 				var accountId = currencyAccounts[expenseTransfer.Currency];
-				if ( IsAlreadyPresent(expenseTransfer.Date, amount, expenseAccountModels[accountId]) ) {
+				if ( IsAlreadyPresent(expenseTransfer.Date, amount, expenseAccountCommands[accountId]) ) {
 					continue;
 				}
 				await AddExpenseUseCase.Handle(
@@ -87,35 +79,28 @@ namespace InvestmentReporting.Import.UseCase {
 			}
 		}
 
-		protected bool IsAlreadyPresent(DateTimeOffset date, decimal amount, AddIncomeModel[] models) =>
-			models
+		protected bool IsAlreadyPresent(DateTimeOffset date, decimal amount, IReadOnlyCollection<AddIncomeCommand> commands) =>
+			commands
 				.Any(model => (model.Date == date) && (model.Amount == amount));
 
-		protected bool IsAlreadyPresent(DateTimeOffset date, decimal amount, AddExpenseModel[] models) =>
-			models
+		protected bool IsAlreadyPresent(DateTimeOffset date, decimal amount, IReadOnlyCollection<AddExpenseCommand> commands) =>
+			commands
 				.Any(model => (model.Date == date) && (model.Amount == amount));
 
-		protected bool IsAlreadyPresent(DateTimeOffset date, string isin, int count, AddAssetModel[] models) =>
-			models
+		protected bool IsAlreadyPresent(DateTimeOffset date, string isin, int count, IReadOnlyCollection<AddAssetCommand> commands) =>
+			commands
 				.Any(model => (model.Date == date) && (model.Isin == isin) && (model.Count == count));
 
-		protected bool IsAlreadyPresent(DateTimeOffset date, AssetId id, int count, ReduceAssetModel[] models) =>
-			models
-				.Any(model => (model.Date == date) && (model.Id == id) && (model.Count == count));
+		protected bool IsAlreadyPresent(DateTimeOffset date, AssetId id, int count, IReadOnlyCollection<ReduceAssetCommand> commands) =>
+			commands
+				.Any(model => (model.Date == date) && (model.Asset == id) && (model.Count == count));
 
-		protected Dictionary<AccountId, AddIncomeModel[]> CreateIncomeModels(
-			Dictionary<string, AccountId> currencyAccounts, AddIncomeModel[] allIncomeModels) =>
+		protected Dictionary<AccountId, IReadOnlyCollection<TCommand>> CreateAccountCommands<TCommand>(
+			Dictionary<string, AccountId> currencyAccounts, IEnumerable<TCommand> accountCommands)
+			where TCommand : IAccountCommand =>
 			currencyAccounts.Values.ToDictionary(
 				accountId => accountId,
-				accountId => allIncomeModels
-					.Where(m => m.Account == accountId)
-					.ToArray());
-
-		protected Dictionary<AccountId, AddExpenseModel[]> CreateExpenseModels(
-			Dictionary<string, AccountId> currencyAccounts, AddExpenseModel[] allExpenseModels) =>
-			currencyAccounts.Values.ToDictionary(
-				accountId => accountId,
-				accountId => allExpenseModels
+				accountId => (IReadOnlyCollection<TCommand>)accountCommands
 					.Where(m => m.Account == accountId)
 					.ToArray());
 	}

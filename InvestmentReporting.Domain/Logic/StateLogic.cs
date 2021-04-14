@@ -9,6 +9,7 @@ namespace InvestmentReporting.Domain.Logic {
 		public static void Configure(this StateManager manager) {
 			manager.Bind<CreateBrokerCommand, CreateBrokerModel>(
 				cmd => new(cmd.Date, cmd.User, cmd.Id, cmd.DisplayName),
+				m => new(m.Date, new(m.User), new(m.Id), m.DisplayName),
 				(state, m) => {
 					state.Brokers.Add(new(
 						new(m.Id), m.DisplayName, new List<Account>(), new List<Asset>()));
@@ -16,6 +17,7 @@ namespace InvestmentReporting.Domain.Logic {
 			);
 			manager.Bind<CreateCurrencyCommand, CreateCurrencyModel>(
 				cmd => new(cmd.Date, cmd.User, cmd.Id, cmd.Code, cmd.Format),
+				m => new(m.Date, new(m.User), new(m.Id), new(m.Code), new(m.Format)),
 				(state, m) => {
 					state.Currencies.Add(new(
 						new(m.Id), new(m.Code), new(m.Format)));
@@ -23,6 +25,7 @@ namespace InvestmentReporting.Domain.Logic {
 			);
 			manager.Bind<CreateAccountCommand, CreateAccountModel>(
 				cmd => new (cmd.Date, cmd.User, cmd.Broker, cmd.Id, cmd.Currency, cmd.DisplayName),
+				m => new (m.Date, new(m.User), new(m.Broker), new(m.Id), new(m.Currency), m.DisplayName),
 				(state, m) => {
 					var brokerId = new BrokerId(m.Broker);
 					var broker   = state.Brokers.First(b => b.Id == brokerId);
@@ -32,10 +35,16 @@ namespace InvestmentReporting.Domain.Logic {
 			);
 			manager.Bind<AddIncomeCommand, AddIncomeModel>(
 				cmd => {
-					var asset = (cmd.Asset != null) ? (string)cmd.Asset : null;
+					var asset = (cmd.Asset != null) ? (string) cmd.Asset : null;
 					return new(
 						cmd.Date, cmd.User, cmd.Broker, cmd.Account, cmd.Id,
 						cmd.Amount, cmd.Category, asset);
+				},
+				m => {
+					var asset = (m.Asset != null) ? new AssetId(m.Asset) : null;
+					return new(
+						m.Date, new(m.User), new(m.Broker), new(m.Account), new(m.Id),
+						m.Amount, new(m.Category), asset);
 				},
 				(state, m) => {
 					var brokerId  = new BrokerId(m.Broker);
@@ -51,6 +60,11 @@ namespace InvestmentReporting.Domain.Logic {
 					return new(cmd.Date, cmd.User, cmd.Broker, cmd.Account, cmd.Id,
 						cmd.Amount, cmd.Category, asset);
 				},
+				m => {
+					var asset = (m.Asset != null) ? new AssetId(m.Asset) : null;
+					return new(m.Date, new(m.User), new(m.Broker), new(m.Account), new(m.Id),
+						m.Amount, new(m.Category), asset);
+				},
 				(state, m) => {
 					var brokerId  = new BrokerId(m.Broker);
 					var broker    = state.Brokers.First(b => b.Id == brokerId);
@@ -60,25 +74,28 @@ namespace InvestmentReporting.Domain.Logic {
 				}
 			);
 			manager.Bind<AddAssetCommand, AddAssetModel>(
-				cmd => new(cmd.Date, cmd.User, cmd.Broker, cmd.Id, cmd.Isin, cmd.Count),
+				cmd => new(cmd.Date, cmd.User, cmd.Broker, cmd.Asset, cmd.Isin, cmd.Count),
+				m => new(m.Date, new(m.User), new(m.Broker), new(m.Id), new(m.Isin), m.Count),
 				(state, m) => {
 					var brokerId = new BrokerId(m.Broker);
 					var broker   = state.Brokers.First(b => b.Id == brokerId);
 					broker.Inventory.Add(new(
-						new(m.Id), new(m.Isin), m.Count));
+						new(m.Asset), new(m.Isin), m.Count));
 				}
 			);
 			manager.Bind<ReduceAssetCommand, ReduceAssetModel>(
-				cmd => new(cmd.Date, cmd.User, cmd.Broker, cmd.Id, cmd.Count),
+				cmd => new(cmd.Date, cmd.User, cmd.Broker, cmd.Asset, cmd.Count),
+				m => new(m.Date, new(m.User), new(m.Broker), new(m.Id), m.Count),
 				(state, m) => {
 					var brokerId = new BrokerId(m.Broker);
 					var broker   = state.Brokers.First(b => b.Id == brokerId);
-					var asset    = broker.Inventory.First(a => a.Id == m.Id);
+					var asset    = broker.Inventory.First(a => a.Id == m.Asset);
 					asset.Count -= m.Count;
 				}
 			);
 			manager.Bind<IncreaseAssetCommand, IncreaseAssetModel>(
 				cmd => new(cmd.Date, cmd.User, cmd.Broker, cmd.Id, cmd.Count),
+				m => new(m.Date, new(m.User), new(m.Broker), new(m.Id), m.Count),
 				(state, m) => {
 					var brokerId = new BrokerId(m.Broker);
 					var broker   = state.Brokers.First(b => b.Id == brokerId);

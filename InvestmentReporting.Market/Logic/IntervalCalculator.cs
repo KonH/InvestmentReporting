@@ -39,7 +39,7 @@ namespace InvestmentReporting.Market.Logic {
 		}
 
 		DateTime GetFirstAddDate(AssetISIN isin) {
-			var addCommand = _priceManager.GetAddAssetCommands(isin, DateTimeOffset.MaxValue)
+			var addCommand = _priceManager.GetAddAssetCommands(isin)
 				.FirstOrDefault();
 			if ( addCommand != null ) {
 				var date = addCommand.Date.Date;

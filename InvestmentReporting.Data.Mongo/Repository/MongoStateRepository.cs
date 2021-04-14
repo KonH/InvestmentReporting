@@ -63,21 +63,6 @@ namespace InvestmentReporting.Data.Mongo.Repository {
 			return models;
 		}
 
-		public IReadOnlyCollection<ICommandModel> ReadCommands(
-			DateTimeOffset startDate, DateTimeOffset endDate, string userId) {
-			var dbModels = _collection.AsQueryable()
-				.Select(e => e.Model)
-				.Where(e => (e != null))
-				.Select(e => e!)
-				.ToArray();
-			var models = dbModels
-				.Where(e => e.Date >= startDate)
-				.Where(e => e.Date <= endDate)
-				.Where(e => e.User == userId)
-				.ToArray();
-			return models;
-		}
-
 		public async Task SaveCommand(ICommandModel model) {
 			var dbModel = new StateEventModel {
 				Model = model

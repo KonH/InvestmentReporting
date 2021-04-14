@@ -4,7 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using ClosedXML.Excel;
-using InvestmentReporting.Data.Core.Model;
+using InvestmentReporting.Domain.Logic;
+using InvestmentReporting.Domain.Command;
 using InvestmentReporting.Domain.Entity;
 using InvestmentReporting.Domain.UseCase;
 using InvestmentReporting.Domain.UseCase.Exceptions;
@@ -51,24 +52,23 @@ namespace InvestmentReporting.Import.TinkoffBrokerReport {
 			if ( broker == null ) {
 				throw new BrokerNotFoundException();
 			}
-			var currencyAccounts     = CreateCurrencyAccounts(requiredCurrencyCodes, state.Currencies, broker.Accounts);
-			var allCommands          = _stateManager.ReadCommands(DateTimeOffset.MinValue, DateTimeOffset.MaxValue, user);
-			var allIncomeModels      = Filter<AddIncomeModel>(allCommands);
-			var incomeAccountModels  = CreateIncomeModels(currencyAccounts, allIncomeModels);
-			var allExpenseModels     = Filter<AddExpenseModel>(allCommands);
-			var expenseAccountModels = CreateExpenseModels(currencyAccounts, allExpenseModels);
-			await FillIncomeTransfers(user, brokerId, incomeTransfers, currencyAccounts, incomeAccountModels);
-			await FillExpenseTransfers(user, brokerId, expenseTransfers, currencyAccounts, expenseAccountModels);
-			var addAssetModels    = Filter<AddAssetModel>(allCommands);
-            var reduceAssetModels = Filter<ReduceAssetModel>(allCommands);
-			await FillTrades(user, brokerId, trades, currencyAccounts, addAssetModels, reduceAssetModels);
+			var currencyAccounts       = CreateCurrencyAccounts(requiredCurrencyCodes, state.Currencies, broker.Accounts);
+			var allIncomeCommands      = _stateManager.ReadCommands<AddIncomeCommand>(user, brokerId);
+			var incomeAccountCommands  = CreateAccountCommands(currencyAccounts, allIncomeCommands);
+			var allExpenseCommands     = _stateManager.ReadCommands<AddExpenseCommand>(user, brokerId);
+			var expenseAccountCommands = CreateAccountCommands(currencyAccounts, allExpenseCommands);
+			await FillIncomeTransfers(user, brokerId, incomeTransfers, currencyAccounts, incomeAccountCommands);
+			await FillExpenseTransfers(user, brokerId, expenseTransfers, currencyAccounts, expenseAccountCommands);
+			var addAssetCommands    = _stateManager.ReadCommands<AddAssetCommand>(user, brokerId).ToArray();
+            var reduceAssetCommands = _stateManager.ReadCommands<ReduceAssetCommand>(user, brokerId).ToArray();
+			await FillTrades(user, brokerId, trades, currencyAccounts, addAssetCommands, reduceAssetCommands);
 			await _stateManager.Push();
 		}
 
 		async Task FillTrades(
 			UserId user, BrokerId brokerId, IReadOnlyCollection<Trade> trades,
 			Dictionary<string, AccountId> currencyAccounts,
-			AddAssetModel[] addModels, ReduceAssetModel[] reduceModels) {
+			IReadOnlyCollection<AddAssetCommand> addCommands, IReadOnlyCollection<ReduceAssetCommand> reduceCommands) {
 			var assetIds = new Dictionary<string, AssetId>();
 			foreach ( var trade in trades ) {
 				var date       = trade.Date;
@@ -80,20 +80,20 @@ namespace InvestmentReporting.Import.TinkoffBrokerReport {
 				var payAccount = currencyAccounts[trade.Currency];
 				var feeAccount = currencyAccounts["RUB"];
 				if ( buy ) {
-					if ( IsAlreadyPresent(date, isin, count, addModels) ) {
+					if ( IsAlreadyPresent(date, isin, count, addCommands) ) {
 						continue;
 					}
 					var assetId = await _buyAssetUseCase.Handle(
 						date, user, brokerId, payAccount, feeAccount, new(isin), price, fee, count);
 					assetIds[isin] = assetId;
 				} else {
-					var allAssetIds = addModels
+					var allAssetIds = addCommands
 						.Where(add => (add.Isin == isin) && (add.Date <= date))
-						.Select(add => add.Id)
+						.Select(add => add.Asset)
 						.Distinct()
 						.ToArray();
 					var reduceCount = -count;
-					if ( allAssetIds.Any(id => IsAlreadyPresent(date, new(id), reduceCount, reduceModels)) ) {
+					if ( allAssetIds.Any(id => IsAlreadyPresent(date, new(id), reduceCount, reduceCommands)) ) {
 						continue;
 					}
 					var assetId = assetIds[isin];

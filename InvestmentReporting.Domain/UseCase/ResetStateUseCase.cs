@@ -1,4 +1,3 @@
-using System;
 using System.Threading.Tasks;
 using InvestmentReporting.Domain.Entity;
 using InvestmentReporting.Domain.Logic;
@@ -16,8 +15,7 @@ namespace InvestmentReporting.Domain.UseCase {
 			if ( string.IsNullOrWhiteSpace(user.Value) ) {
 				throw new InvalidUserException();
 			}
-			var commands = _stateManager.ReadCommands(DateTimeOffset.MinValue, DateTimeOffset.MaxValue, user);
-			await _stateManager.DeleteCommands(commands);
+			await _stateManager.ResetCommands(user);
 		}
 	}
 }
