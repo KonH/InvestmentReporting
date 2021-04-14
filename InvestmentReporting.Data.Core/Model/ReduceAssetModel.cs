@@ -2,5 +2,5 @@ using System;
 
 namespace InvestmentReporting.Data.Core.Model {
 	public record ReduceAssetModel(
-		DateTimeOffset Date, string User, string Broker, string Id, int Count) : ICommandModel {}
+		DateTimeOffset Date, string User, string Broker, string Id, int Count) : ICommandModel;
 }

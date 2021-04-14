@@ -1,3 +1,3 @@
 namespace InvestmentReporting.StateService.Dto {
-	public record AssetDto(string Id, string Isin, int Count) {}
+	public record AssetDto(string Id, string Isin, int Count);
 }

@@ -11,7 +11,7 @@ using static Nuke.Common.Tools.DotNet.DotNetTasks;
 namespace InvestmentReporting.BuildSystem {
 	[UnsetVisualStudioEnvironmentVariables]
 	class Build : NukeBuild {
-		static readonly (string, string)[] DotNetProjects = {
+		static readonly (string, string)[] _dotNetProjects = {
 			("InvestmentReporting.AuthService", "auth.ts"),
 			("InvestmentReporting.InviteService", "invite.ts"),
 			("InvestmentReporting.StateService", "state.ts"),
@@ -36,7 +36,7 @@ namespace InvestmentReporting.BuildSystem {
 					RootDirectory,
 					"dotnet", "tool install --global Swashbuckle.AspNetCore.Cli --version 5.4.1",
 					ignoreExitCode: true);
-				foreach ( var (project, _) in DotNetProjects ) {
+				foreach ( var (project, _) in _dotNetProjects ) {
 					DotNetRestore(s => s.SetProjectFile(RootDirectory / project));
 				}
 				Run("Restoring frontend packages",
@@ -52,7 +52,7 @@ namespace InvestmentReporting.BuildSystem {
 				var architecture = RuntimeInformation.ProcessArchitecture;
 
 				var dotNetPlatform = GetDotNetBuildArchitecture(architecture);
-				foreach ( var (project, _) in DotNetProjects ) {
+				foreach ( var (project, _) in _dotNetProjects ) {
 					DotNetBuild(s => s
 						.SetProjectFile(RootDirectory / project)
 						.SetConfiguration(DotNetConfiguration));
@@ -64,7 +64,7 @@ namespace InvestmentReporting.BuildSystem {
 					try {
 						var apiDir = RootDirectory / "api";
 						EnsureExistingDirectory(apiDir);
-						foreach ( var (project, api) in DotNetProjects ) {
+						foreach ( var (project, api) in _dotNetProjects ) {
 							var swaggerPath = apiDir / $"{project}.swagger.json";
 							var dllPath     = RootDirectory / project / "bin" / DotNetConfiguration / "net5.0" / $"{project}.dll";
 							Run("Generate swagger api file",
@@ -79,7 +79,7 @@ namespace InvestmentReporting.BuildSystem {
 					}
 				}
 
-				foreach ( var (project, _) in DotNetProjects ) {
+				foreach ( var (project, _) in _dotNetProjects ) {
 					DotNetPublish(s => s
 						.SetProject(RootDirectory / project)
 						.SetConfiguration(DotNetConfiguration)
@@ -106,7 +106,7 @@ namespace InvestmentReporting.BuildSystem {
 					$"--build-arg MONGO_IMAGE={mongoImage} ");
 			});
 
-		Target Start => _ => _
+		public Target Start => _ => _
 			.DependsOn(Compile)
 			.Executes(() =>
 			{
@@ -136,7 +136,7 @@ namespace InvestmentReporting.BuildSystem {
 					"docker-compose", command);
 			});
 
-		Target Stop => _ => _
+		public Target Stop => _ => _
 			.Executes(() =>
 			{
 				Run("Stopping containers",
