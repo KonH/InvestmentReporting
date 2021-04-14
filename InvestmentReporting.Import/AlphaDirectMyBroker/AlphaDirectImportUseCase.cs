@@ -12,7 +12,6 @@ using InvestmentReporting.Domain.UseCase.Exceptions;
 using InvestmentReporting.Import.Dto;
 using InvestmentReporting.Import.Exceptions;
 using InvestmentReporting.Import.Logic;
-using InvestmentReporting.Import.TinkoffBrokerReport;
 using InvestmentReporting.Import.UseCase;
 
 namespace InvestmentReporting.Import.AlphaDirectMyBroker {
@@ -134,7 +133,7 @@ namespace InvestmentReporting.Import.AlphaDirectMyBroker {
 				var asset = DetectAssetFromDividend(dividendTransfer.Comment, assets);
 				await AddIncomeUseCase.Handle(
 					dividendTransfer.Date, user, brokerId, accountId, dividendTransfer.Amount,
-					DividendCategory, asset);
+					IncomeCategory.Dividend, asset);
 			}
 		}
 
@@ -162,7 +161,7 @@ namespace InvestmentReporting.Import.AlphaDirectMyBroker {
 				var asset = DetectAssetFromCoupon(couponTransfer.Comment, trades, assets);
 				await AddIncomeUseCase.Handle(
 					couponTransfer.Date, user, brokerId, accountId, couponTransfer.Amount,
-					CouponCategory, asset);
+					IncomeCategory.Coupon, asset);
 			}
 		}
 

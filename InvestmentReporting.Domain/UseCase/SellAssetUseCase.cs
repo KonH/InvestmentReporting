@@ -8,9 +8,6 @@ using InvestmentReporting.Domain.UseCase.Exceptions;
 
 namespace InvestmentReporting.Domain.UseCase {
 	public sealed class SellAssetUseCase {
-		readonly IncomeCategory  _sellAssetCategory    = new("Asset Sell");
-		readonly ExpenseCategory _sellAssetFeeCategory = new("Asset Sell Broker Fee");
-
 		readonly IStateManager     _stateManager;
 		readonly AddIncomeUseCase  _addIncome;
 		readonly AddExpenseUseCase _addExpense;
@@ -58,7 +55,7 @@ namespace InvestmentReporting.Domain.UseCase {
 					break;
 				default:
 					await _addIncome.Handle(
-						date, user, brokerId, payAccountId, price, _sellAssetCategory, assetId);
+						date, user, brokerId, payAccountId, price, IncomeCategory.SellAsset, assetId);
 					break;
 			}
 			switch ( fee ) {
@@ -68,7 +65,7 @@ namespace InvestmentReporting.Domain.UseCase {
 					break;
 				default:
 					await _addExpense.Handle(
-						date, user, brokerId, feeAccountId, fee, _sellAssetFeeCategory, assetId);
+						date, user, brokerId, feeAccountId, fee, ExpenseCategory.SellAssetFee, assetId);
 					break;
 			}
 			await _stateManager.AddCommand(new ReduceAssetCommand(date, user, brokerId, assetId, count));

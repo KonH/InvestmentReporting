@@ -9,9 +9,6 @@ using InvestmentReporting.Domain.UseCase.Exceptions;
 
 namespace InvestmentReporting.Domain.UseCase {
 	public sealed class BuyAssetUseCase {
-		readonly ExpenseCategory _buyAssetCategory    = new("Asset Buy");
-		readonly ExpenseCategory _buyAssetFeeCategory = new("Asset Buy Broker Fee");
-
 		readonly IStateManager     _stateManager;
 		readonly IIdGenerator      _idGenerator;
 		readonly AddExpenseUseCase _addExpense;
@@ -60,7 +57,7 @@ namespace InvestmentReporting.Domain.UseCase {
 					break;
 				default:
 					await _addExpense.Handle(
-						date, user, brokerId, payAccountId, price, _buyAssetCategory, id);
+						date, user, brokerId, payAccountId, price, ExpenseCategory.BuyAsset, id);
 					break;
 			}
 			switch ( fee ) {
@@ -70,7 +67,7 @@ namespace InvestmentReporting.Domain.UseCase {
 					break;
 				default:
 					await _addExpense.Handle(
-						date, user, brokerId, feeAccountId, fee, _buyAssetFeeCategory, id);
+						date, user, brokerId, feeAccountId, fee, ExpenseCategory.BuyAssetFee, id);
 					break;
 			}
 			return id;

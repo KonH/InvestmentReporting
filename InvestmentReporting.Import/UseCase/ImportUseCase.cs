@@ -8,13 +8,8 @@ using InvestmentReporting.Domain.UseCase;
 using InvestmentReporting.Domain.UseCase.Exceptions;
 using InvestmentReporting.Import.Dto;
 
-namespace InvestmentReporting.Import.TinkoffBrokerReport {
+namespace InvestmentReporting.Import.UseCase {
 	public abstract class ImportUseCase {
-		protected readonly IncomeCategory  IncomeTransferCategory  = new("Income Transfer");
-		protected readonly IncomeCategory  DividendCategory        = new("Share Dividend");
-		protected readonly IncomeCategory  CouponCategory          = new("Bond Coupon");
-		protected readonly ExpenseCategory ExpenseTransferCategory = new("Expense Transfer");
-
 		protected readonly AddIncomeUseCase  AddIncomeUseCase;
 		protected readonly AddExpenseUseCase AddExpenseUseCase;
 
@@ -72,7 +67,7 @@ namespace InvestmentReporting.Import.TinkoffBrokerReport {
 				}
 				await AddIncomeUseCase.Handle(
 					incomeTransfer.Date, user, brokerId, accountId, incomeTransfer.Amount,
-					IncomeTransferCategory, asset: null);
+					IncomeCategory.Transfer, asset: null);
 			}
 		}
 
@@ -88,7 +83,7 @@ namespace InvestmentReporting.Import.TinkoffBrokerReport {
 				}
 				await AddExpenseUseCase.Handle(
 					expenseTransfer.Date, user, brokerId, accountId, amount,
-					ExpenseTransferCategory, asset: null);
+					ExpenseCategory.Transfer, asset: null);
 			}
 		}
 
