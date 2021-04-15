@@ -75,6 +75,7 @@ export default class Import extends Vue {
 			)
 		);
 		if (result?.ok) {
+			await Backend.tryFetch(Backend.market().sync.syncCreate());
 			this.fetchState();
 			await router.push('/');
 		} else {

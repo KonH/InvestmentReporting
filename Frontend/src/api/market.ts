@@ -249,6 +249,21 @@ export class HttpClient<SecurityDataType = unknown> {
  * @version v1
  */
 export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
+  sync = {
+    /**
+     * No description
+     *
+     * @tags Sync
+     * @name SyncCreate
+     * @request POST:/Sync
+     */
+    syncCreate: (params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/Sync`,
+        method: "POST",
+        ...params,
+      }),
+  };
   virtualState = {
     /**
      * No description

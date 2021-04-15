@@ -5,6 +5,18 @@
     "version": "v1"
   },
   "paths": {
+    "/Sync": {
+      "post": {
+        "tags": [
+          "Sync"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
     "/VirtualState": {
       "get": {
         "tags": [

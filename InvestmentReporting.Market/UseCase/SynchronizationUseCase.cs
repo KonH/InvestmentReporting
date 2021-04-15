@@ -18,7 +18,7 @@ namespace InvestmentReporting.Market.UseCase {
 			_candleCollector   = candleCollector;
 		}
 
-		public async Task Sync(CancellationToken ct) {
+		public async Task Handle(CancellationToken ct) {
 			_logger.LogInformation("Synchronization started");
 			try {
 				await _metadataCollector.Collect(ct);

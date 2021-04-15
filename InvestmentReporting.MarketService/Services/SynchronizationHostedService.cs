@@ -14,7 +14,7 @@ namespace InvestmentReporting.MarketService.Services {
 
 		public SynchronizationHostedService(SynchronizationUseCase useCase) {
 			var ct = _cancellationTokenSource.Token;
-			_timer = new Timer(_ => Task.Run(() => useCase.Sync(ct)), null, _interval, _interval);
+			_timer = new Timer(_ => Task.Run(() => useCase.Handle(ct)), null, _interval, _interval);
 		}
 
 		public Task StartAsync(CancellationToken ct) {
