@@ -1,20 +1,21 @@
 <template>
-	<button :onclick="sync" class="btn btn-primary">Sync</button>
+	<brokers-view />
+	<currencies-view class="mt-2" />
+	<service-view class="mt-2" />
 </template>
 <script lang="ts">
-import { Vue } from 'vue-class-component';
-import Backend from '@/service/backend';
-import router from '@/router';
-import { Action } from 'vuex-class';
+import { Options, Vue } from 'vue-class-component';
+import BrokersView from '@/view/brokersView.vue';
+import CurrenciesView from '@/view/currenciesView.vue';
+import ServiceView from '@/view/serviceView.vue';
 
-export default class ConfigView extends Vue {
-	@Action('fetchState')
-	fetchState!: () => void;
-
-	async sync() {
-		await Backend.tryFetch(Backend.market().sync.syncCreate());
-		this.fetchState();
-		await router.push('/');
-	}
-}
+@Options({
+	name: 'ConfigView',
+	components: {
+		BrokersView,
+		CurrenciesView,
+		ServiceView,
+	},
+})
+export default class ConfigView extends Vue {}
 </script>

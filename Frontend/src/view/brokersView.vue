@@ -1,22 +1,26 @@
 <template>
 	<div>
 		<h2>Brokers</h2>
-		<div v-for="broker in brokers" :key="broker.id">
-			<broker :broker="broker" />
+		<div class="row pl-3">
+			<div v-for="broker in brokers" :key="broker.id">
+				<broker-card :broker="broker" class="mr-2" />
+			</div>
+			<add-broker-card />
 		</div>
-		<router-link to="/broker/new" class="btn btn-primary">Add Broker</router-link>
 	</div>
 </template>
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import Broker from '@/component/broker.vue';
+import BrokerCard from '@/component/brokerCard.vue';
+import AddBrokerCard from '@/component/addBrokerCard.vue';
 import { StateDto } from '@/api/state';
 import { State } from 'vuex-class';
 
 @Options({
-	name: 'BrokerView',
+	name: 'BrokersView',
 	components: {
-		Broker,
+		BrokerCard,
+		AddBrokerCard,
 	},
 })
 export default class BrokerView extends Vue {

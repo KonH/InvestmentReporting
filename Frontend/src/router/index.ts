@@ -1,10 +1,9 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
-import Home from '@/view/home.vue';
 import Login from '@/view/login.vue';
 import Register from '@/view/register.vue';
 import Backend from '@/service/backend';
-import AddBroker from '@/view/addBroker.vue';
-import AddCurrency from '@/view/addCurrency.vue';
+import AddBrokerView from '@/view/addBrokerView.vue';
+import AddCurrencyView from '@/view/addCurrencyView.vue';
 import AddAccount from '@/view/addAccount.vue';
 import AddIncome from '@/view/addIncome.vue';
 import AddExpense from '@/view/addExpense.vue';
@@ -17,11 +16,6 @@ import PortfolioView from '@/view/portfolioView.vue';
 import ConfigView from '@/view/configView.vue';
 
 const routes: Array<RouteRecordRaw> = [
-	{
-		path: '/',
-		name: 'Home',
-		component: Home,
-	},
 	{
 		path: '/login',
 		name: 'Login',
@@ -37,16 +31,6 @@ const routes: Array<RouteRecordRaw> = [
 		meta: {
 			guest: true,
 		},
-	},
-	{
-		path: '/broker/new',
-		name: 'Add Broker',
-		component: AddBroker,
-	},
-	{
-		path: '/currency/new',
-		name: 'Add Currency',
-		component: AddCurrency,
 	},
 	{
 		path: '/broker/:broker/account/new',
@@ -89,12 +73,23 @@ const routes: Array<RouteRecordRaw> = [
 		component: ConfigView,
 	},
 	{
+		path: '/broker/new',
+		name: 'Add Broker',
+		component: AddBrokerView,
+	},
+	{
+		path: '/currency/new',
+		name: 'Add Currency',
+		component: AddCurrencyView,
+	},
+	{
 		path: '/import',
 		name: 'Import',
 		component: ImportView,
 	},
 	{
 		path: '/portfolio',
+		alias: '/',
 		name: 'Portfolio',
 		component: PortfolioView,
 	},
