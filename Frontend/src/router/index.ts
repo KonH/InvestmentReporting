@@ -13,6 +13,8 @@ import OperationList from '@/view/operationList.vue';
 import BuyAsset from '@/view/buyAsset.vue';
 import SellAsset from '@/view/sellAsset.vue';
 import AssetOperationList from '@/view/assetOperationList.vue';
+import PortfolioView from '@/view/portfolioView.vue';
+import ConfigView from '@/view/configView.vue';
 
 const routes: Array<RouteRecordRaw> = [
 	{
@@ -85,6 +87,16 @@ const routes: Array<RouteRecordRaw> = [
 		path: '/broker/:broker/asset/sell',
 		name: 'Sell Asset',
 		component: SellAsset,
+	},
+	{
+		path: '/portfolio',
+		name: 'Portfolio',
+		component: PortfolioView,
+	},
+	{
+		path: '/config',
+		name: 'Config',
+		component: ConfigView,
 	},
 ];
 
