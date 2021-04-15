@@ -1,5 +1,5 @@
 <template>
-	<h1>Sell Asset</h1>
+	<h1>Buy Asset</h1>
 	<div class="form-group">
 		<label>
 			Date:
@@ -8,10 +8,20 @@
 	</div>
 	<div class="form-group">
 		<label>
-			Asset:
-			<select ref="asset" class="form-control">
-				<option v-for="asset in inventory" :key="asset.id" :value="asset.id">{{ asset.isin }} {{ asset.name }} x{{ asset.count }}</option>
-			</select>
+			Name:
+			<input ref="name" type="text" class="form-control" />
+		</label>
+	</div>
+	<div class="form-group">
+		<label>
+			Category:
+			<input ref="category" type="text" class="form-control" />
+		</label>
+	</div>
+	<div class="form-group">
+		<label>
+			ISIN:
+			<input ref="isin" type="text" class="form-control" />
 		</label>
 	</div>
 	<div class="form-group">
@@ -48,8 +58,8 @@
 			<input ref="count" type="number" class="form-control" />
 		</label>
 	</div>
-	<button :onclick="onclick" class="btn btn-primary">Sell</button>
-	<router-link to="/" class="btn btn-secondary ml-2">Back</router-link>
+	<button :onclick="onclick" class="btn btn-primary">Buy</button>
+	<router-link to="/custom" class="btn btn-secondary ml-2">Back</router-link>
 </template>
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
@@ -60,10 +70,11 @@ import { StateDto } from '@/api/state';
 import { Ref } from 'vue-property-decorator';
 
 @Options({
-	name: 'SellAsset',
+	name: 'BuyAssetView',
 })
-export default class SellAsset extends Vue {
-	@State('activeState') activeState!: StateDto;
+export default class BuyAsset extends Vue {
+	@State('activeState')
+	activeState!: StateDto;
 
 	@Ref('date')
 	dateInput!: HTMLInputElement;
@@ -74,8 +85,14 @@ export default class SellAsset extends Vue {
 	@Ref('feeAccount')
 	feeAccountSelect!: HTMLSelectElement;
 
-	@Ref('asset')
-	assetSelect!: HTMLSelectElement;
+	@Ref('name')
+	nameInput!: HTMLInputElement;
+
+	@Ref('category')
+	categoryInput!: HTMLInputElement;
+
+	@Ref('isin')
+	isinInput!: HTMLInputElement;
 
 	@Ref('price')
 	priceInput!: HTMLInputElement;
@@ -91,14 +108,6 @@ export default class SellAsset extends Vue {
 
 	get brokerId() {
 		return this.$route.params.broker as string;
-	}
-
-	get inventory() {
-		const broker = this.activeState.brokers?.find((b) => b.id == this.brokerId);
-		if (!broker) {
-			return [];
-		}
-		return broker.inventory;
 	}
 
 	get accounts() {
@@ -119,12 +128,14 @@ export default class SellAsset extends Vue {
 
 	async onclick() {
 		const result = await Backend.tryFetch(
-			Backend.state().asset.sellAssetCreate({
+			Backend.state().asset.buyAssetCreate({
 				date: new Date(this.dateInput.value).toISOString(),
 				broker: this.brokerId,
 				payAccount: this.payAccountSelect.value,
 				feeAccount: this.feeAccountSelect.value,
-				asset: this.assetSelect.value,
+				name: this.nameInput.value,
+				category: this.categoryInput.value,
+				isin: this.isinInput.value,
 				price: Number.parseFloat(this.priceInput.value),
 				fee: Number.parseFloat(this.feeInput.value),
 				count: Number.parseFloat(this.countInput.value),
@@ -132,7 +143,7 @@ export default class SellAsset extends Vue {
 		);
 		if (result?.ok) {
 			this.fetchState();
-			await router.push('/');
+			await router.push('/custom');
 		} else {
 			alert(`Failed: ${result?.error}`);
 		}

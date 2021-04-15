@@ -5,15 +5,16 @@ import Backend from '@/service/backend';
 import AddBrokerView from '@/view/addBrokerView.vue';
 import AddCurrencyView from '@/view/addCurrencyView.vue';
 import AddAccountView from '@/view/addAccountView.vue';
-import AddIncome from '@/view/addIncome.vue';
-import AddExpense from '@/view/addExpense.vue';
+import AddIncomeView from '@/view/addIncomeView.vue';
+import AddExpenseView from '@/view/addExpenseView.vue';
 import ImportView from '@/view/importView.vue';
 import OperationList from '@/view/operationList.vue';
-import BuyAsset from '@/view/buyAsset.vue';
-import SellAsset from '@/view/sellAsset.vue';
+import BuyAssetView from '@/view/buyAssetView.vue';
+import SellAssetView from '@/view/sellAssetView.vue';
 import AssetOperationList from '@/view/assetOperationList.vue';
-import PortfolioView from '@/view/portfolioView.vue';
 import ConfigView from '@/view/configView.vue';
+import PortfolioView from '@/view/portfolioView.vue';
+import CustomView from '@/view/customView.vue';
 
 const routes: Array<RouteRecordRaw> = [
 	{
@@ -33,16 +34,6 @@ const routes: Array<RouteRecordRaw> = [
 		},
 	},
 	{
-		path: '/broker/:broker/account/:account/income',
-		name: 'Add Income',
-		component: AddIncome,
-	},
-	{
-		path: '/broker/:broker/account/:account/expense',
-		name: 'Add Expense',
-		component: AddExpense,
-	},
-	{
 		path: '/broker/:broker/account/:account/operations',
 		name: 'Operations',
 		component: OperationList,
@@ -51,16 +42,6 @@ const routes: Array<RouteRecordRaw> = [
 		path: '/broker/:broker/asset/:asset/operations',
 		name: 'Asset Operations',
 		component: AssetOperationList,
-	},
-	{
-		path: '/broker/:broker/asset/buy',
-		name: 'Buy Asset',
-		component: BuyAsset,
-	},
-	{
-		path: '/broker/:broker/asset/sell',
-		name: 'Sell Asset',
-		component: SellAsset,
 	},
 	{
 		path: '/config',
@@ -92,6 +73,31 @@ const routes: Array<RouteRecordRaw> = [
 		alias: '/',
 		name: 'Portfolio',
 		component: PortfolioView,
+	},
+	{
+		path: '/custom',
+		name: 'Custom',
+		component: CustomView,
+	},
+	{
+		path: '/custom/broker/:broker/account/:account/income',
+		name: 'Add Income',
+		component: AddIncomeView,
+	},
+	{
+		path: '/custom/broker/:broker/account/:account/expense',
+		name: 'Add Expense',
+		component: AddExpenseView,
+	},
+	{
+		path: '/custom/broker/:broker/asset/buy',
+		name: 'Buy Asset',
+		component: BuyAssetView,
+	},
+	{
+		path: '/custom/broker/:broker/asset/sell',
+		name: 'Sell Asset',
+		component: SellAssetView,
 	},
 ];
 

@@ -1,5 +1,5 @@
 <template>
-	<h1>Add Income</h1>
+	<h1>Add Expense</h1>
 	<div class="form-group">
 		<label>
 			Date:
@@ -29,7 +29,7 @@
 		</label>
 	</div>
 	<button :onclick="onclick" class="btn btn-primary">Add</button>
-	<router-link to="/" class="btn btn-secondary ml-2">Back</router-link>
+	<router-link to="/custom" class="btn btn-secondary ml-2">Back</router-link>
 </template>
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
@@ -40,10 +40,11 @@ import { AssetDto, StateDto } from '@/api/state';
 import { Ref } from 'vue-property-decorator';
 
 @Options({
-	name: 'AddIncome',
+	name: 'AddExpenseView',
 })
-export default class AddIncome extends Vue {
-	@State('activeState') activeState!: StateDto;
+export default class AddExpense extends Vue {
+	@State('activeState')
+	activeState!: StateDto;
 
 	@Ref('date')
 	dateInput!: HTMLInputElement;
@@ -93,7 +94,7 @@ export default class AddIncome extends Vue {
 	async onclick() {
 		const asset = this.assetSelect.value ? this.assetSelect.value : null;
 		const result = await Backend.tryFetch(
-			Backend.state().income.incomeCreate({
+			Backend.state().expense.expenseCreate({
 				date: new Date(this.dateInput.value).toISOString(),
 				broker: this.brokerId,
 				account: this.accountId,
@@ -104,7 +105,7 @@ export default class AddIncome extends Vue {
 		);
 		if (result?.ok) {
 			this.fetchState();
-			await router.push('/');
+			await router.push('/custom');
 		} else {
 			alert(`Failed: ${result?.error}`);
 		}

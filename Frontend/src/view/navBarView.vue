@@ -4,6 +4,7 @@
 			<router-link to="/config" :class="navClass('/config')">Config</router-link>
 			<router-link to="/import" :class="navClass('/import')">Import</router-link>
 			<router-link to="/portfolio" :class="navClass(['/portfolio', '/'])">Portfolio</router-link>
+			<router-link to="/custom" :class="navClass('/portfolio')">Custom</router-link>
 		</div>
 	</nav>
 </template>
