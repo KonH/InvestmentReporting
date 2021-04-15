@@ -51,7 +51,7 @@ namespace InvestmentReporting.Domain.Logic {
 		public static IEnumerable<TCommand> ReadCommands<TCommand>(
 			this IStateManager stateManager, UserId user)
 			where TCommand : class, ICommand =>
-			stateManager.ReadCommands<TCommand>(_maxDate, _maxDate, user);
+			stateManager.ReadCommands<TCommand>(_minDate, _maxDate, user);
 
 		public static IEnumerable<TCommand> ReadCommands<TCommand>(
 			this IStateManager stateManager, DateTimeOffset startDate, DateTimeOffset endDate, UserId user, BrokerId broker)
