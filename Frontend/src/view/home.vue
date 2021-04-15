@@ -1,6 +1,5 @@
 <template>
 	<h1>Home</h1>
-	<virtualStateView />
 	<currencyView />
 	<brokerView />
 	<button :onclick="resetOps" class="btn btn-danger mt-2">Reset (ops)</button>
@@ -15,14 +14,12 @@ import CurrencyView from '@/view/currencyView.vue';
 import BrokerView from '@/view/brokerView.vue';
 import { StateDto } from '@/api/state';
 import { State } from 'vuex-class';
-import VirtualStateView from '@/view/virtualStateView.vue';
 
 @Options({
 	name: 'Home',
 	components: {
 		CurrencyView,
 		BrokerView,
-		VirtualStateView,
 	},
 })
 export default class Home extends Vue {

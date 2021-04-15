@@ -29,14 +29,17 @@ namespace InvestmentReporting.Market.UseCase {
 						var name         = metadata?.Name;
 						var type         = metadata?.Type;
 						var currency     = _priceManager.GetCurrency(user, broker.Id, asset.Id);
-						var realPrice    = _priceManager.GetRealPriceSum(date, user, asset.Id);
-						var virtualPrice = _priceManager.GetVirtualPricePerOne(asset.Isin, date) * asset.Count ?? realPrice;
+						var realSum      = _priceManager.GetRealPriceSum(date, user, asset.Id);
+						var realPrice    = realSum / asset.Count;
+						var virtualPrice = _priceManager.GetVirtualPricePerOne(asset.Isin, date) ?? realPrice;
+						var virtualSum   =  virtualPrice * asset.Count;
 						return new VirtualAsset(
-							asset.Id, broker.Id, asset.Isin, name, type, asset.Count, realPrice, virtualPrice, currency);
+							asset.Id, broker.Id, asset.Isin, name, type, asset.Count,
+							realPrice, virtualPrice, realSum, virtualSum, currency);
 					}))
 				.ToArray();
 			var balances = CalculateBalances(state, inventory, date, user);
-			return new VirtualState(balances, inventory);
+			return new VirtualState(balances);
 		}
 
 		IReadOnlyCollection<VirtualBalance> CalculateBalances(

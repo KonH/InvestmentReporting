@@ -6,6 +6,6 @@ export default class AppState {
 		brokers: [],
 	};
 	virtualState: VirtualStateDto = {
-		inventory: [],
+		balances: [],
 	};
 }

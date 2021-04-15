@@ -38,24 +38,6 @@
   },
   "components": {
     "schemas": {
-      "VirtualBalanceDto": {
-        "type": "object",
-        "properties": {
-          "realPrice": {
-            "type": "number",
-            "format": "double"
-          },
-          "virtualPrice": {
-            "type": "number",
-            "format": "double"
-          },
-          "currency": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
       "VirtualAssetDto": {
         "type": "object",
         "properties": {
@@ -91,6 +73,39 @@
             "type": "number",
             "format": "double"
           },
+          "realSum": {
+            "type": "number",
+            "format": "double"
+          },
+          "virtualSum": {
+            "type": "number",
+            "format": "double"
+          },
+          "currency": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "VirtualBalanceDto": {
+        "type": "object",
+        "properties": {
+          "realSum": {
+            "type": "number",
+            "format": "double"
+          },
+          "virtualSum": {
+            "type": "number",
+            "format": "double"
+          },
+          "inventory": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VirtualAssetDto"
+            },
+            "nullable": true
+          },
           "currency": {
             "type": "string",
             "nullable": true
@@ -105,13 +120,6 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/VirtualBalanceDto"
-            },
-            "nullable": true
-          },
-          "inventory": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/VirtualAssetDto"
             },
             "nullable": true
           }

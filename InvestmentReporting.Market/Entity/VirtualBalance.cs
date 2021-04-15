@@ -1,5 +1,7 @@
+using System.Collections.Generic;
 using InvestmentReporting.Domain.Entity;
 
 namespace InvestmentReporting.Market.Entity {
-	public record VirtualBalance(decimal RealPrice, decimal VirtualPrice, CurrencyId Currency);
+	public record VirtualBalance(
+		decimal RealSum, decimal VirtualSum, IReadOnlyCollection<VirtualAsset> Inventory, CurrencyId Currency);
 }

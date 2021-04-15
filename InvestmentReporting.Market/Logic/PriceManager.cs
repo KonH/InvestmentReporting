@@ -40,7 +40,14 @@ namespace InvestmentReporting.Market.Logic {
 				.ToArray();
 			var assetRealSum = (assets.Length > 0) ? assets.Sum(a => a.RealPrice) : 0;
 			var assetVirtualSum = (assets.Length > 0) ? assets.Sum(a => a.VirtualPrice) : 0;
-			return new VirtualBalance(accountSum + assetRealSum, accountSum + assetVirtualSum, currency);
+			var inventoryForCurrency = inventory
+				.Where(a => a.Currency == currency)
+				.ToArray();
+			return new VirtualBalance(
+				RealSum: accountSum + assetRealSum,
+				VirtualSum: accountSum + assetVirtualSum,
+				inventoryForCurrency,
+				currency);
 		}
 
 		public IEnumerable<AddAssetCommand> GetAddAssetCommands(AssetISIN isin) =>

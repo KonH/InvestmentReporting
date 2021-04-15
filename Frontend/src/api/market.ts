@@ -9,15 +9,6 @@
  * ---------------------------------------------------------------
  */
 
-export interface VirtualBalanceDto {
-  /** @format double */
-  realPrice?: number;
-
-  /** @format double */
-  virtualPrice?: number;
-  currency?: string | null;
-}
-
 export interface VirtualAssetDto {
   id?: string | null;
   broker?: string | null;
@@ -33,12 +24,27 @@ export interface VirtualAssetDto {
 
   /** @format double */
   virtualPrice?: number;
+
+  /** @format double */
+  realSum?: number;
+
+  /** @format double */
+  virtualSum?: number;
+  currency?: string | null;
+}
+
+export interface VirtualBalanceDto {
+  /** @format double */
+  realSum?: number;
+
+  /** @format double */
+  virtualSum?: number;
+  inventory?: VirtualAssetDto[] | null;
   currency?: string | null;
 }
 
 export interface VirtualStateDto {
   balances?: VirtualBalanceDto[] | null;
-  inventory?: VirtualAssetDto[] | null;
 }
 
 export type QueryParamsType = Record<string | number, any>;

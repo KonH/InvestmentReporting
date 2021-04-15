@@ -30,15 +30,17 @@ namespace InvestmentReporting.MarketService.Controllers {
 			_logger.LogInformation($"Retrieve virtual state for user '{userId}' at {date}");
 			var state = _useCase.Handle(date, userId);
 			var balancesDto = state.Balances
-				.Select(b => new VirtualBalanceDto(b.RealPrice, b.VirtualPrice, b.Currency))
+				.Select(b => {
+					var inventoryDto = b.Inventory
+						.Select(a => new VirtualAssetDto(
+							a.Id, a.Broker, a.Isin,
+							a.Name ?? string.Empty, a.Type ?? string.Empty,
+							a.Count, a.RealPrice, a.VirtualPrice, a.RealSum, a.VirtualSum, a.Currency))
+						.ToArray();
+					return new VirtualBalanceDto(b.RealSum, b.VirtualSum, inventoryDto, b.Currency);
+				})
 				.ToArray();
-			var inventoryDto = state.Inventory
-				.Select(a => new VirtualAssetDto(
-					a.Id, a.Broker, a.Isin,
-					a.Name ?? string.Empty, a.Type ?? string.Empty,
-					a.Count, a.RealPrice, a.VirtualPrice, a.Currency))
-				.ToArray();
-			var dto   = new VirtualStateDto(balancesDto, inventoryDto);
+			var dto = new VirtualStateDto(balancesDto);
 			return new JsonResult(dto);
 		}
 	}
