@@ -11,10 +11,10 @@ import { BrokerDto } from '@/api/state';
 import { Prop } from 'vue-property-decorator';
 
 @Options({
-	name: 'Broker',
+	name: 'BrokerCard',
 	components: {},
 })
-export default class Broker extends Vue {
+export default class BrokerCard extends Vue {
 	@Prop()
 	broker!: BrokerDto;
 }

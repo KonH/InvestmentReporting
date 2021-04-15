@@ -23,7 +23,7 @@ import { State } from 'vuex-class';
 		AddBrokerCard,
 	},
 })
-export default class BrokerView extends Vue {
+export default class BrokersView extends Vue {
 	@State('activeState')
 	activeState!: StateDto;
 
