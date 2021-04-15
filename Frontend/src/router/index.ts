@@ -8,7 +8,7 @@ import AddCurrency from '@/view/addCurrency.vue';
 import AddAccount from '@/view/addAccount.vue';
 import AddIncome from '@/view/addIncome.vue';
 import AddExpense from '@/view/addExpense.vue';
-import Import from '@/view/import.vue';
+import ImportView from '@/view/importView.vue';
 import OperationList from '@/view/operationList.vue';
 import BuyAsset from '@/view/buyAsset.vue';
 import SellAsset from '@/view/sellAsset.vue';
@@ -64,11 +64,6 @@ const routes: Array<RouteRecordRaw> = [
 		component: AddExpense,
 	},
 	{
-		path: '/broker/:broker/import',
-		name: 'Import',
-		component: Import,
-	},
-	{
 		path: '/broker/:broker/account/:account/operations',
 		name: 'Operations',
 		component: OperationList,
@@ -89,14 +84,19 @@ const routes: Array<RouteRecordRaw> = [
 		component: SellAsset,
 	},
 	{
-		path: '/portfolio',
-		name: 'Portfolio',
-		component: PortfolioView,
-	},
-	{
 		path: '/config',
 		name: 'Config',
 		component: ConfigView,
+	},
+	{
+		path: '/import',
+		name: 'Import',
+		component: ImportView,
+	},
+	{
+		path: '/portfolio',
+		name: 'Portfolio',
+		component: PortfolioView,
 	},
 ];
 

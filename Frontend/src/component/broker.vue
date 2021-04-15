@@ -3,7 +3,6 @@
 	<p>
 		Accounts:
 		<accountList :broker-id="broker.id" :accounts="broker.accounts" />
-		<router-link :to="`/broker/${broker.id}/import`" class="btn btn-primary mb-2">Import</router-link>
 	</p>
 	<p>
 		Assets:

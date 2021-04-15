@@ -2,6 +2,7 @@
 	<nav class="navbar navbar-expand-lg navbar-light bg-light">
 		<div class="navbar-nav mr-auto">
 			<router-link to="/config" :class="navClass('/config')">Config</router-link>
+			<router-link to="/import" :class="navClass('/import')">Import</router-link>
 			<router-link to="/portfolio" :class="navClass('/portfolio')">Portfolio</router-link>
 		</div>
 	</nav>

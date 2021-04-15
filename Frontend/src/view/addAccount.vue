@@ -29,7 +29,8 @@ import { Ref } from 'vue-property-decorator';
 	name: 'AddAccount',
 })
 export default class AddAccount extends Vue {
-	@State('activeState') activeState!: StateDto;
+	@State('activeState')
+	activeState!: StateDto;
 
 	@Ref('displayName')
 	displayNameInput!: HTMLInputElement;
