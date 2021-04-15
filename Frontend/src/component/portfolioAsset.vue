@@ -26,9 +26,13 @@
 		<money-value-diff :old="asset.realSum" :new="asset.virtualSum" :currency-id="asset.currency" />
 	</td>
 	<!-- Div/year Sum -->
-	<td>N/A</td>
+	<td>
+		<money :value="asset.yearDividend" :currency-id="asset.currency" />
+	</td>
 	<!-- Div/total Sum -->
-	<td>N/A</td>
+	<td>
+		<money :value="asset.dividendSum" :currency-id="asset.currency" />
+	</td>
 </template>
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';

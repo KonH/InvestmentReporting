@@ -81,6 +81,14 @@
             "type": "number",
             "format": "double"
           },
+          "yearDividend": {
+            "type": "number",
+            "format": "double"
+          },
+          "dividendSum": {
+            "type": "number",
+            "format": "double"
+          },
           "currency": {
             "type": "string",
             "nullable": true

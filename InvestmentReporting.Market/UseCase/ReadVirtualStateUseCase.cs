@@ -33,9 +33,12 @@ namespace InvestmentReporting.Market.UseCase {
 						var realPrice    = realSum / asset.Count;
 						var virtualPrice = _priceManager.GetVirtualPricePerOne(asset.Isin, date) ?? realPrice;
 						var virtualSum   =  virtualPrice * asset.Count;
+						var yearDividend = _priceManager.GetYearDividend(date, user, asset.Id);
+						var dividendSum  = _priceManager.GetDividendSum(date, user, asset.Id);
 						return new VirtualAsset(
 							asset.Id, broker.Id, asset.Isin, name, type, asset.Count,
-							realPrice, virtualPrice, realSum, virtualSum, currency);
+							realPrice, virtualPrice, realSum, virtualSum,
+							yearDividend, dividendSum, currency);
 					}))
 				.ToArray();
 			var balances = CalculateBalances(state, inventory, date, user);

@@ -35,7 +35,8 @@ namespace InvestmentReporting.MarketService.Controllers {
 						.Select(a => new VirtualAssetDto(
 							a.Id, a.Broker, a.Isin,
 							a.Name ?? string.Empty, a.Type ?? string.Empty,
-							a.Count, a.RealPrice, a.VirtualPrice, a.RealSum, a.VirtualSum, a.Currency))
+							a.Count, a.RealPrice, a.VirtualPrice, a.RealSum, a.VirtualSum,
+							a.YearDividend, a.DividendSum, a.Currency))
 						.ToArray();
 					return new VirtualBalanceDto(b.RealSum, b.VirtualSum, inventoryDto, b.Currency);
 				})

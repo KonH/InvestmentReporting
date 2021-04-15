@@ -82,6 +82,18 @@ namespace InvestmentReporting.Market.Logic {
 			return lastCandleBeforeDate?.Close;
 		}
 
+		public decimal GetYearDividend(DateTimeOffset date, UserId user, AssetId asset) =>
+			GetDividends(date.AddYears(-1), date, user, asset);
+
+		public decimal GetDividendSum(DateTimeOffset date, UserId user, AssetId asset) =>
+			GetDividends(DateTimeOffset.MinValue, date, user, asset);
+
+		decimal GetDividends(DateTimeOffset startDate, DateTimeOffset endDate, UserId user, AssetId asset) {
+			var dividendIncomes = _stateManager.ReadCommands<AddIncomeCommand>(startDate, endDate, user, asset)
+				.Where(a => (a.Category == IncomeCategory.Dividend));
+			return dividendIncomes.Aggregate(0m, (sum, a) => sum + a.Amount);
+		}
+
 		public AssetPrice? TryGet(AssetISIN isin) {
 			var model = TryGetModel(isin);
 			if ( model == null ) {

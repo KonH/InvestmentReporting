@@ -30,6 +30,12 @@ export interface VirtualAssetDto {
 
   /** @format double */
   virtualSum?: number;
+
+  /** @format double */
+  yearDividend?: number;
+
+  /** @format double */
+  dividendSum?: number;
   currency?: string | null;
 }
 
