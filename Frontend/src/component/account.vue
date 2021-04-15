@@ -1,14 +1,8 @@
 <template>
 	<b>{{ account.displayName }} (<money :currency-id="account.currency" :value="account.balance" />)</b>
-	<router-link :to="`/broker/${brokerId}/account/${account.id}/income`" class="btn btn-primary ml-2"
-		>Add Income</router-link
-	>
-	<router-link :to="`/broker/${brokerId}/account/${account.id}/expense`" class="btn btn-primary ml-2"
-		>Add Expense</router-link
-	>
-	<router-link :to="`/broker/${brokerId}/account/${account.id}/operations`" class="btn btn-secondary ml-2"
-		>Operations</router-link
-	>
+	<router-link :to="`/broker/${brokerId}/account/${account.id}/income`" class="btn btn-primary ml-2">Add Income</router-link>
+	<router-link :to="`/broker/${brokerId}/account/${account.id}/expense`" class="btn btn-primary ml-2">Add Expense</router-link>
+	<router-link :to="`/broker/${brokerId}/account/${account.id}/operations`" class="btn btn-secondary ml-2">Operations</router-link>
 </template>
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';

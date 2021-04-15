@@ -1,31 +1,11 @@
 <template>
 	<h4><money :value="virtualSum" :currency-id="currencyId" /></h4>
 	<h5><money-diff :old="realSum" :new="virtualSum" :currency-id="currencyId" /></h5>
-	<table class="table table-sm table-striped">
-		<thead>
-			<tr>
-				<th scope="col">ISIN</th>
-				<th scope="col">Name</th>
-				<th scope="col">Price</th>
-				<th scope="col">Price Change</th>
-				<th scope="col">% Price Change</th>
-				<th scope="col">Count</th>
-				<th scope="col">Sum</th>
-				<th scope="col">Sum Change</th>
-				<th scope="col">Div/year Sum</th>
-				<th scope="col">Div/total Sum</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr v-for="asset in inventory" :key="asset.id">
-				<portfolio-asset :asset="asset" />
-			</tr>
-		</tbody>
-	</table>
+	<portfolio-table :currency-id="currencyId" />
 </template>
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import PortfolioAsset from '@/component/portfolioAsset.vue';
+import PortfolioTable from '@/view/portfolioTable.vue';
 import { State } from 'vuex-class';
 import { VirtualStateDto } from '@/api/market';
 import { Prop } from 'vue-property-decorator';
@@ -37,7 +17,7 @@ import MoneyDiff from '@/component/moneyDiff.vue';
 	components: {
 		Money,
 		MoneyDiff,
-		PortfolioAsset,
+		PortfolioTable,
 	},
 })
 export default class PortfolioView extends Vue {
@@ -64,14 +44,6 @@ export default class PortfolioView extends Vue {
 
 	get virtualSum() {
 		return this.balance?.virtualSum;
-	}
-
-	get inventory() {
-		const balance = this.balance;
-		if (balance) {
-			return balance.inventory;
-		}
-		return [];
 	}
 }
 </script>

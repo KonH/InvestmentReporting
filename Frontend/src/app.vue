@@ -1,6 +1,6 @@
 <template>
 	<nav-bar-view />
-	<div class="container container-lg">
+	<div class="container">
 		<router-view />
 	</div>
 </template>
@@ -28,3 +28,10 @@ export default class App extends Vue {
 	}
 }
 </script>
+<style>
+@media (max-width: 1920px) {
+	.container {
+		min-width: 1600px;
+	}
+}
+</style>
