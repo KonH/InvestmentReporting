@@ -4,7 +4,7 @@ import Register from '@/view/register.vue';
 import Backend from '@/service/backend';
 import AddBrokerView from '@/view/addBrokerView.vue';
 import AddCurrencyView from '@/view/addCurrencyView.vue';
-import AddAccount from '@/view/addAccount.vue';
+import AddAccountView from '@/view/addAccountView.vue';
 import AddIncome from '@/view/addIncome.vue';
 import AddExpense from '@/view/addExpense.vue';
 import ImportView from '@/view/importView.vue';
@@ -31,11 +31,6 @@ const routes: Array<RouteRecordRaw> = [
 		meta: {
 			guest: true,
 		},
-	},
-	{
-		path: '/broker/:broker/account/new',
-		name: 'Add Account',
-		component: AddAccount,
 	},
 	{
 		path: '/broker/:broker/account/:account/income',
@@ -71,6 +66,11 @@ const routes: Array<RouteRecordRaw> = [
 		path: '/config',
 		name: 'Config',
 		component: ConfigView,
+	},
+	{
+		path: '/broker/:broker/account/new',
+		name: 'Add Account',
+		component: AddAccountView,
 	},
 	{
 		path: '/broker/new',

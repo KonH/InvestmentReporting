@@ -15,7 +15,7 @@
 		</label>
 	</div>
 	<button :onclick="onclick" class="btn btn-primary">Add</button>
-	<router-link to="/" class="btn btn-secondary ml-2">Back</router-link>
+	<router-link to="/config" class="btn btn-secondary ml-2">Back</router-link>
 </template>
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
@@ -26,7 +26,7 @@ import { StateDto } from '@/api/state';
 import { Ref } from 'vue-property-decorator';
 
 @Options({
-	name: 'AddAccount',
+	name: 'AddAccountView',
 })
 export default class AddAccount extends Vue {
 	@State('activeState')
@@ -57,7 +57,7 @@ export default class AddAccount extends Vue {
 		);
 		if (result?.ok) {
 			this.fetchState();
-			await router.push('/');
+			await router.push('/config');
 		} else {
 			alert(`Failed: ${result?.error}`);
 		}
