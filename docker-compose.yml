@@ -11,12 +11,14 @@ services:
       - state-service
       - import-service
       - market-service
+      - meta-service
     links:
       - auth-service
       - invite-service
       - state-service
       - import-service
       - market-service
+      - meta-service
     restart: unless-stopped
   mongo:
     build:
@@ -105,6 +107,21 @@ services:
       TINKOFF_API_SANDBOX_KEY: ${TINKOFF_API_SANDBOX_KEY}
     ports:
       - 8087:8087
+    volumes:
+      - key_ring_storage:/publish/key_ring_storage
+    restart: unless-stopped
+  meta-service:
+    build:
+      context: ./InvestmentReporting.MetaService
+      args:
+        - DOTNET_IMAGE_SUFFIX
+    container_name: meta-service
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+    ports:
+      - 8088:8088
     volumes:
       - key_ring_storage:/publish/key_ring_storage
     restart: unless-stopped

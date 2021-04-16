@@ -28,6 +28,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InvestmentReporting.MarketS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InvestmentReporting.Market", "InvestmentReporting.Market\InvestmentReporting.Market.csproj", "{8480C2A9-AFE5-4021-BEFA-632B7D9792FB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InvestmentReporting.Meta", "InvestmentReporting.Meta\InvestmentReporting.Meta.csproj", "{58789AB2-6BAB-4959-B8C1-0D8012464763}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InvestmentReporting.MetaService", "InvestmentReporting.MetaService\InvestmentReporting.MetaService.csproj", "{B851C41E-49F3-417A-9519-4128AED0A570}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -90,5 +94,13 @@ Global
 		{8480C2A9-AFE5-4021-BEFA-632B7D9792FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8480C2A9-AFE5-4021-BEFA-632B7D9792FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8480C2A9-AFE5-4021-BEFA-632B7D9792FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58789AB2-6BAB-4959-B8C1-0D8012464763}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58789AB2-6BAB-4959-B8C1-0D8012464763}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58789AB2-6BAB-4959-B8C1-0D8012464763}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58789AB2-6BAB-4959-B8C1-0D8012464763}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B851C41E-49F3-417A-9519-4128AED0A570}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B851C41E-49F3-417A-9519-4128AED0A570}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B851C41E-49F3-417A-9519-4128AED0A570}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B851C41E-49F3-417A-9519-4128AED0A570}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
