@@ -1,0 +1,61 @@
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+using InvestmentReporting.Data.Core.Model;
+using InvestmentReporting.Data.Core.Repository;
+using InvestmentReporting.Domain.Logic;
+using InvestmentReporting.Market.Entity;
+using Microsoft.Extensions.Logging;
+using Tinkoff.Trading.OpenApi.Models;
+
+namespace InvestmentReporting.Market.Logic {
+	public sealed class CurrencyPriceManager {
+		readonly ILogger                  _logger;
+		readonly IStateManager            _stateManager;
+		readonly ICurrencyPriceRepository _repository;
+
+		public CurrencyPriceManager(
+			ILogger<CurrencyPriceManager> logger, IStateManager stateManager, ICurrencyPriceRepository repository) {
+			_logger       = logger;
+			_stateManager = stateManager;
+			_repository   = repository;
+		}
+
+		CurrencyPriceModel? TryGetModel(AssetFIGI figi) =>
+			_repository.GetAll()
+				.FirstOrDefault(m => m.Figi == figi);
+
+		public CurrencyPrice? TryGet(AssetFIGI figi) {
+			var model = TryGetModel(figi);
+			if ( model == null ) {
+				return null;
+			}
+			return new CurrencyPrice(
+				model.Code, model.Figi,
+				model.Candles.Select(c => new Candle(c.Date, c.Open, c.Close, c.Low, c.High)).ToList());
+		}
+
+		public DateTime GetStartDate() {
+			var firstCommand = _stateManager
+				.ReadCommands(DateTimeOffset.MinValue, DateTimeOffset.MaxValue)
+				.FirstOrDefault(c => c.Date > DateTimeOffset.MinValue);
+			return firstCommand?.Date.Date ?? DateTime.Today.AddDays(-1);
+		}
+
+		public async Task AddOrAppendCandles(AssetFIGI figi, CandleList candles) {
+			var model = TryGetModel(figi);
+			var candleModels = candles.Candles
+				.Select(c => new CandleModel(new DateTimeOffset(c.Time), c.Open, c.Close, c.Low, c.High))
+				.ToList();
+			if ( model != null ) {
+				_logger.LogTrace($"Add {candleModels.Count} candles to existing model with FIGI '{figi}'");
+				model.Candles.AddRange(candleModels);
+				await _repository.Update(model);
+			} else {
+				_logger.LogTrace($"Creating new model with FIGI '{figi}'");
+				var newModel = new CurrencyPriceModel(figi, candles.Figi, candleModels);
+				await _repository.Add(newModel);
+			}
+		}
+	}
+}

@@ -4,12 +4,12 @@ using InvestmentReporting.Domain.Entity;
 using Microsoft.Extensions.Logging;
 
 namespace InvestmentReporting.Market.Logic {
-	public sealed class IntervalCalculator {
+	public sealed class AssetIntervalCalculator {
 		readonly ILogger           _logger;
 		readonly AssetPriceManager _priceManager;
 
-		public IntervalCalculator(
-			ILogger<IntervalCalculator> logger, AssetPriceManager priceManager) {
+		public AssetIntervalCalculator(
+			ILogger<AssetIntervalCalculator> logger, AssetPriceManager priceManager) {
 			_logger       = logger;
 			_priceManager = priceManager;
 		}

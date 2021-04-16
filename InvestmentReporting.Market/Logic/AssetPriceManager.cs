@@ -102,13 +102,13 @@ namespace InvestmentReporting.Market.Logic {
 			}
 			return new AssetPrice(
 				model.Isin, model.Figi,
-				model.Candles.Select(c => new AssetCandle(c.Date, c.Open, c.Close, c.Low, c.High)).ToList());
+				model.Candles.Select(c => new Candle(c.Date, c.Open, c.Close, c.Low, c.High)).ToList());
 		}
 
 		public async Task AddOrAppendCandles(AssetISIN isin, CandleList candles) {
 			var model = TryGetModel(isin);
 			var candleModels = candles.Candles
-				.Select(c => new AssetCandleModel(new DateTimeOffset(c.Time), c.Open, c.Close, c.Low, c.High))
+				.Select(c => new CandleModel(new DateTimeOffset(c.Time), c.Open, c.Close, c.Low, c.High))
 				.ToList();
 			if ( model != null ) {
 				_logger.LogTrace($"Add {candleModels.Count} candles to existing model with ISIN '{isin}'");
