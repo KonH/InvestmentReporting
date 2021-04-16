@@ -5,6 +5,7 @@
 			<router-link to="/import" :class="navClass('/import')">Import</router-link>
 			<router-link to="/operations" :class="navClass('/operations')">Operations</router-link>
 			<router-link to="/portfolio" :class="navClass(['/portfolio', '/'])">Portfolio</router-link>
+			<router-link to="/tags" :class="navClass('/tags')">Tags</router-link>
 			<router-link to="/custom" :class="navClass('/custom')">Custom</router-link>
 		</div>
 	</nav>

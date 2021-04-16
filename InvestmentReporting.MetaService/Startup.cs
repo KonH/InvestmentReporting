@@ -1,6 +1,7 @@
 using InvestmentReporting.Data.Core.Repository;
 using InvestmentReporting.Data.Mongo.Repository;
 using InvestmentReporting.Domain.Logic;
+using InvestmentReporting.Market.Logic;
 using InvestmentReporting.Meta.Logic;
 using InvestmentReporting.Meta.UseCase;
 using InvestmentReporting.Shared.Extensions;
@@ -39,6 +40,8 @@ namespace InvestmentReporting.MetaService {
 			services.AddSingleton<IStateRepository, MongoStateRepository>();
 			services.AddSingleton<IStateManager, StateManager>();
 			services.AddSingleton<IAssetTagRepository, MongoAssetTagRepository>();
+			services.AddSingleton<IAssetMetadataRepository, MongoAssetMetadataRepository>();
+			services.AddSingleton<MetadataManager>();
 			services.AddSingleton<AssetTagManager>();
 			services.AddSingleton<ReadAssetTagsUseCase>();
 			services.AddSingleton<AddAssetTagUseCase>();

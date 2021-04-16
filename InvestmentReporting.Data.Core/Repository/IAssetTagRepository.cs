@@ -3,10 +3,10 @@ using InvestmentReporting.Data.Core.Model;
 
 namespace InvestmentReporting.Data.Core.Repository {
 	public interface IAssetTagRepository {
-		UserAssetTagsModel? Get(string user);
+		Task<UserAssetTagsModel?> Get(string user);
 
-		Task Add(string user, string asset, string tag);
+		Task Add(UserAssetTagsModel model);
 
-		Task Remove(string user, string asset, string tag);
+		Task Update(UserAssetTagsModel model);
 	}
 }

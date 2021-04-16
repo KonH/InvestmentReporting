@@ -5,18 +5,22 @@ using MongoDB.Driver;
 
 namespace InvestmentReporting.Data.Mongo.Repository {
 	public sealed class MongoAssetTagRepository : IAssetTagRepository {
-		public MongoAssetTagRepository(IMongoDatabase database) {}
+		readonly IMongoCollection<UserAssetTagsModel> _collection;
 
-		public UserAssetTagsModel? Get(string user) {
-			throw new System.NotImplementedException();
+		public MongoAssetTagRepository(IMongoDatabase database) {
+			_collection = database.GetCollection<UserAssetTagsModel>("assetTags");
 		}
 
-		public Task Add(string user, string asset, string tag) {
-			throw new System.NotImplementedException();
+		public async Task<UserAssetTagsModel?> Get(string user) {
+			return (await _collection.FindAsync(m => m.User == user)).FirstOrDefault();
 		}
 
-		public Task Remove(string user, string asset, string tag) {
-			throw new System.NotImplementedException();
+		public async Task Add(UserAssetTagsModel model) {
+			await _collection.InsertOneAsync(model);
+		}
+
+		public async Task Update(UserAssetTagsModel model) {
+			await _collection.FindOneAndReplaceAsync(m => m.User == model.User, model);
 		}
 	}
 }
