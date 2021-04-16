@@ -7,7 +7,6 @@
 
     <ItemGroup>
         <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
-        <PackageReference Include="Tinkoff.Trading.OpenApi" Version="1.7.3" />
     </ItemGroup>
 
     <ItemGroup>
