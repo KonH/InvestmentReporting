@@ -4,7 +4,7 @@
     "InvestmentReporting.MarketService": {
       "commandName": "Project",
       "dotnetRunMessages": "true",
-      "applicationUrl": "http://localhost:8085",
+      "applicationUrl": "http://localhost:8087",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "TINKOFF_API_SANDBOX_KEY": "none"
