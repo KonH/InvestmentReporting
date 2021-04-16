@@ -18,6 +18,8 @@ export interface OperationDto {
   /** @format double */
   amount?: number;
   category?: string | null;
+  broker?: string | null;
+  account?: string | null;
   asset?: string | null;
 }
 
@@ -400,34 +402,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags Operation
-     * @name ForAccountList
-     * @request GET:/Operation/ForAccount
+     * @name OperationList
+     * @request GET:/Operation
      */
-    forAccountList: (
-      query: { startDate: string; endDate: string; broker: string; account: string },
-      params: RequestParams = {},
-    ) =>
+    operationList: (query: { startDate: string; endDate: string }, params: RequestParams = {}) =>
       this.request<OperationDto[], any>({
-        path: `/Operation/ForAccount`,
-        method: "GET",
-        query: query,
-        format: "json",
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags Operation
-     * @name ForAssetList
-     * @request GET:/Operation/ForAsset
-     */
-    forAssetList: (
-      query: { startDate: string; endDate: string; broker: string; asset: string },
-      params: RequestParams = {},
-    ) =>
-      this.request<OperationDto[], any>({
-        path: `/Operation/ForAsset`,
+        path: `/Operation`,
         method: "GET",
         query: query,
         format: "json",

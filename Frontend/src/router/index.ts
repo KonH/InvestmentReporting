@@ -8,11 +8,10 @@ import AddAccountView from '@/view/addAccountView.vue';
 import AddIncomeView from '@/view/addIncomeView.vue';
 import AddExpenseView from '@/view/addExpenseView.vue';
 import ImportView from '@/view/importView.vue';
-import OperationList from '@/view/operationList.vue';
 import BuyAssetView from '@/view/buyAssetView.vue';
 import SellAssetView from '@/view/sellAssetView.vue';
-import AssetOperationList from '@/view/assetOperationList.vue';
 import ConfigView from '@/view/configView.vue';
+import OperationsView from '@/view/operationsView.vue';
 import PortfolioView from '@/view/portfolioView.vue';
 import CustomView from '@/view/customView.vue';
 
@@ -32,16 +31,6 @@ const routes: Array<RouteRecordRaw> = [
 		meta: {
 			guest: true,
 		},
-	},
-	{
-		path: '/broker/:broker/account/:account/operations',
-		name: 'Operations',
-		component: OperationList,
-	},
-	{
-		path: '/broker/:broker/asset/:asset/operations',
-		name: 'Asset Operations',
-		component: AssetOperationList,
 	},
 	{
 		path: '/config',
@@ -67,6 +56,12 @@ const routes: Array<RouteRecordRaw> = [
 		path: '/import',
 		name: 'Import',
 		component: ImportView,
+	},
+	{
+		path: '/operations',
+		alias: '/',
+		name: 'operations',
+		component: OperationsView,
 	},
 	{
 		path: '/portfolio',

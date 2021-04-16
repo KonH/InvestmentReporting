@@ -40,8 +40,7 @@ namespace InvestmentReporting.StateService {
 			services.AddSingleton<IStateManager>(sp => sp.GetRequiredService<StateManager>());
 			services.AddSingleton<ReadStateUseCase>();
 			services.AddSingleton<ResetStateUseCase>();
-			services.AddSingleton<ReadAccountOperationsUseCase>();
-			services.AddSingleton<ReadAssetOperationsUseCase>();
+			services.AddSingleton<ReadOperationsUseCase>();
 			services.AddSingleton<ResetOperationsUseCase>();
 			services.AddSingleton<CreateBrokerUseCase>();
 			services.AddSingleton<CreateCurrencyUseCase>();

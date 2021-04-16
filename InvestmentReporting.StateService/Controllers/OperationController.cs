@@ -15,47 +15,32 @@ namespace InvestmentReporting.StateService.Controllers {
 	[ApiController]
 	[Route("[controller]")]
 	public class OperationController : ControllerBase {
-		readonly ILogger                      _logger;
-		readonly ReadAccountOperationsUseCase _readAccountUseCase;
-		readonly ReadAssetOperationsUseCase   _readAssetUseCase;
-		readonly ResetOperationsUseCase       _resetUseCase;
+		readonly ILogger                _logger;
+		readonly ReadOperationsUseCase  _readUseCase;
+		readonly ResetOperationsUseCase _resetUseCase;
 
 		public OperationController(
 			ILogger<OperationController> logger,
-			ReadAccountOperationsUseCase readAccountUseCase, ReadAssetOperationsUseCase readAssetUseCase,
-			ResetOperationsUseCase resetUseCase) {
-			_logger             = logger;
-			_readAccountUseCase = readAccountUseCase;
-			_readAssetUseCase   = readAssetUseCase;
-			_resetUseCase       = resetUseCase;
+			ReadOperationsUseCase readUseCase, ResetOperationsUseCase resetUseCase) {
+			_logger       = logger;
+			_readUseCase  = readUseCase;
+			_resetUseCase = resetUseCase;
 		}
 
-		[HttpGet("ForAccount")]
+		[HttpGet]
 		[Produces("application/json")]
 		[ProducesResponseType(typeof(OperationDto[]), StatusCodes.Status200OK)]
-		public IActionResult GetForAccount(
-			[Required] DateTimeOffset startDate, [Required] DateTimeOffset endDate, [Required] string broker, [Required] string account) {
+		public IActionResult Get(
+			[Required] DateTimeOffset startDate, [Required] DateTimeOffset endDate) {
 			var userId = new UserId(User.Identity?.Name ?? string.Empty);
-			_logger.LogInformation($"Retrieve operations for user '{userId}', broker '{broker}', account '{account}', at {startDate}-{endDate}");
-			var operations = _readAccountUseCase.Handle(startDate, endDate, userId, new(broker), new(account));
+			_logger.LogInformation($"Retrieve operations for user '{userId}', at {startDate}-{endDate}");
+			var operations = _readUseCase.Handle(startDate, endDate, userId);
 			var dto        = operations
 				.Select(op => {
 					var asset = (op.Asset != null) ? op.Asset.ToString() : null;
-					return new OperationDto(op.Date, op.Kind.ToString(), op.Currency, op.Amount, op.Category, asset);
+					return new OperationDto(
+						op.Date, op.Kind.ToString(), op.Currency, op.Amount, op.Category, op.Broker, op.Account, asset);
 				});
-			return new JsonResult(dto);
-		}
-
-		[HttpGet("ForAsset")]
-		[Produces("application/json")]
-		[ProducesResponseType(typeof(OperationDto[]), StatusCodes.Status200OK)]
-		public IActionResult GetForAsset(
-			[Required] DateTimeOffset startDate, [Required] DateTimeOffset endDate, [Required] string broker, [Required] string asset) {
-			var userId = new UserId(User.Identity?.Name ?? string.Empty);
-			_logger.LogInformation($"Retrieve operations for user '{userId}', broker '{broker}', asset '{asset}', at {startDate}-{endDate}");
-			var operations = _readAssetUseCase.Handle(startDate, endDate, userId, new(broker), new(asset));
-			var dto = operations
-				.Select(op => new OperationDto(op.Date, op.Kind.ToString(), op.Currency, op.Amount, op.Category, null));
 			return new JsonResult(dto);
 		}
 

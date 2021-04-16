@@ -424,123 +424,47 @@
         }
       }
     },
-    "/Operation/ForAccount": {
-      "get": {
-        "tags": [
-          "Operation"
-        ],
-        "parameters": [
-          {
-            "name": "startDate",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
-          },
-          {
-            "name": "endDate",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
-          },
-          {
-            "name": "broker",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "account",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OperationDto"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/Operation/ForAsset": {
-      "get": {
-        "tags": [
-          "Operation"
-        ],
-        "parameters": [
-          {
-            "name": "startDate",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
-          },
-          {
-            "name": "endDate",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
-          },
-          {
-            "name": "broker",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "asset",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OperationDto"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/Operation": {
+      "get": {
+        "tags": [
+          "Operation"
+        ],
+        "parameters": [
+          {
+            "name": "startDate",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OperationDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
       "delete": {
         "tags": [
           "Operation"
@@ -615,6 +539,14 @@
             "format": "double"
           },
           "category": {
+            "type": "string",
+            "nullable": true
+          },
+          "broker": {
+            "type": "string",
+            "nullable": true
+          },
+          "account": {
             "type": "string",
             "nullable": true
           },

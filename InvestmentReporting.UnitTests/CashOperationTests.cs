@@ -142,9 +142,8 @@ namespace InvestmentReporting.UnitTests {
 			var stateManager = GetStateBuilder()
 				.With(new AddIncomeModel(_date, _userId, _brokerId, _accountId, string.Empty, 100, _incomeCategory, _assetId))
 				.Build();
-			var readUseCase = new ReadAccountOperationsUseCase(stateManager);
 
-			var operations = readUseCase.Handle(_date, _date, _userId, _brokerId, _accountId);
+			var operations = stateManager.ReadAccountOperations(_date, _userId, _brokerId, _accountId);
 
 			operations.Should().Contain(op =>
 				(op.Date == _date) &&
@@ -159,9 +158,8 @@ namespace InvestmentReporting.UnitTests {
 			var stateManager = GetStateBuilder()
 				.With(new AddExpenseModel(_date, _userId, _brokerId, _accountId, string.Empty, 50, _expenseCategory, _assetId))
 				.Build();
-			var readUseCase = new ReadAccountOperationsUseCase(stateManager);
 
-			var operations = readUseCase.Handle(_date, _date, _userId, _brokerId, _accountId);
+			var operations = stateManager.ReadAccountOperations(_date, _userId, _brokerId, _accountId);
 
 			operations.Should().Contain(op =>
 				(op.Date == _date) &&
