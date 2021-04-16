@@ -44,7 +44,7 @@ namespace InvestmentReporting.MarketService {
 			services.AddSingleton<IApiKeyProvider, EnvironmentApiKeyProvider>();
 			services.AddSingleton<IsinProvider>();
 			services.AddSingleton<MetadataManager>();
-			services.AddSingleton<PriceManager>();
+			services.AddSingleton<AssetPriceManager>();
 			services.AddSingleton<IntervalCalculator>();
 			services.AddSingleton<MarketMetadataCollector>();
 			services.AddSingleton<MarketCandleCollector>();

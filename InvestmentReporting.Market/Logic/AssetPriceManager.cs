@@ -12,12 +12,13 @@ using Microsoft.Extensions.Logging;
 using Tinkoff.Trading.OpenApi.Models;
 
 namespace InvestmentReporting.Market.Logic {
-	public sealed class PriceManager {
+	public sealed class AssetPriceManager {
 		readonly ILogger               _logger;
 		readonly IAssetPriceRepository _repository;
 		readonly IStateManager         _stateManager;
 
-		public PriceManager(ILogger<PriceManager> logger, IAssetPriceRepository repository, IStateManager stateManager) {
+		public AssetPriceManager(
+			ILogger<AssetPriceManager> logger, IAssetPriceRepository repository, IStateManager stateManager) {
 			_logger       = logger;
 			_repository   = repository;
 			_stateManager = stateManager;

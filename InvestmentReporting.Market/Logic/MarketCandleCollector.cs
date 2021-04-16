@@ -12,12 +12,12 @@ namespace InvestmentReporting.Market.Logic {
 		readonly IApiKeyProvider _apiKeyProvider;
 
 		readonly MetadataManager    _metadataManager;
-		readonly PriceManager       _priceManager;
+		readonly AssetPriceManager  _priceManager;
 		readonly IntervalCalculator _intervalCalculator;
 
 		public MarketCandleCollector(
 			ILogger<MarketCandleCollector> logger, IApiKeyProvider apiKeyProvider,
-			MetadataManager metadataManager, PriceManager priceManager, IntervalCalculator intervalCalculator) {
+			MetadataManager metadataManager, AssetPriceManager priceManager, IntervalCalculator intervalCalculator) {
 			_logger             = logger;
 			_apiKeyProvider     = apiKeyProvider;
 			_metadataManager    = metadataManager;

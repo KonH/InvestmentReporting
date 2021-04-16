@@ -5,11 +5,11 @@ using Microsoft.Extensions.Logging;
 
 namespace InvestmentReporting.Market.Logic {
 	public sealed class IntervalCalculator {
-		readonly ILogger       _logger;
-		readonly PriceManager  _priceManager;
+		readonly ILogger           _logger;
+		readonly AssetPriceManager _priceManager;
 
 		public IntervalCalculator(
-			ILogger<IntervalCalculator> logger, PriceManager priceManager) {
+			ILogger<IntervalCalculator> logger, AssetPriceManager priceManager) {
 			_logger       = logger;
 			_priceManager = priceManager;
 		}

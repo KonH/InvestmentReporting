@@ -8,12 +8,12 @@ using InvestmentReporting.Market.Logic;
 
 namespace InvestmentReporting.Market.UseCase {
 	public sealed class ReadVirtualStateUseCase {
-		readonly IStateManager   _stateManager;
-		readonly MetadataManager _metadataManager;
-		readonly PriceManager    _priceManager;
+		readonly IStateManager     _stateManager;
+		readonly MetadataManager   _metadataManager;
+		readonly AssetPriceManager _priceManager;
 
 		public ReadVirtualStateUseCase(
-			IStateManager stateManager, MetadataManager metadataManager, PriceManager priceManager) {
+			IStateManager stateManager, MetadataManager metadataManager, AssetPriceManager priceManager) {
 			_stateManager    = stateManager;
 			_metadataManager = metadataManager;
 			_priceManager    = priceManager;
