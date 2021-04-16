@@ -2,9 +2,9 @@
 	<table class="table table-sm table-striped">
 		<thead>
 			<tr>
-				<th scope="col">ISIN</th>
-				<th scope="col">Name</th>
-				<th scope="col">Tags</th>
+				<th scope="col" style="width: 10%">ISIN</th>
+				<th scope="col" style="width: 25%">Name</th>
+				<th scope="col" style="width: 65%">Tags</th>
 			</tr>
 		</thead>
 		<tbody>

@@ -5,12 +5,10 @@
 	<td>{{ asset.name }}</td>
 	<!-- Tags -->
 	<td>
-		<div class="row pl-3">
-			<div v-for="tag in asset.tags" :key="tag">
-				<tag-card :tag="tag" class="mr-2" />
-			</div>
-			<add-tag-card />
-		</div>
+		<span v-for="tag in asset.tags" :key="tag">
+			<tag-card :asset="asset" :tag="tag" class="mr-2" />
+		</span>
+		<add-tag-card :asset="asset" />
 	</td>
 </template>
 <script lang="ts">
