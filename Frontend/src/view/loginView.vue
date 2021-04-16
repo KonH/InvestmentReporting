@@ -1,11 +1,5 @@
 <template>
-	<h1>Register</h1>
-	<div class="form-group">
-		<label>
-			Token:
-			<input ref="token" type="text" class="form-control" />
-		</label>
-	</div>
+	<h1>Login</h1>
 	<div class="form-group">
 		<label>
 			Username:
@@ -18,8 +12,8 @@
 			<input ref="password" type="password" class="form-control" />
 		</label>
 	</div>
-	<button :onclick="onclick" class="btn btn-primary">Register</button>
-	<router-link to="/login" class="btn btn-secondary ml-2">Login</router-link>
+	<button :onclick="onclick" class="btn btn-primary">Login</button>
+	<router-link to="/register" class="btn btn-secondary ml-2">Register</router-link>
 </template>
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
@@ -28,12 +22,9 @@ import router from '@/router';
 import { Ref } from 'vue-property-decorator';
 
 @Options({
-	name: 'Register',
+	name: 'LoginView',
 })
-export default class Register extends Vue {
-	@Ref('token')
-	tokenInput!: HTMLInputElement;
-
+export default class Login extends Vue {
 	@Ref('login')
 	loginInput!: HTMLInputElement;
 
@@ -41,17 +32,16 @@ export default class Register extends Vue {
 	passwordInput!: HTMLInputElement;
 
 	async onclick() {
-		const inviteResult = await Backend.tryFetch(
-			Backend.invite().register.registerCreate({
-				token: this.tokenInput.value,
+		const loginResult = await Backend.tryFetch(
+			Backend.auth().login.loginCreate({
 				userName: this.loginInput.value,
 				password: this.passwordInput.value,
 			})
 		);
-		if (inviteResult?.ok) {
+		if (loginResult?.ok) {
 			await router.push('/');
 		} else {
-			alert('Register failed');
+			alert('Login failed');
 		}
 	}
 }

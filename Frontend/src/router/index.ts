@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
-import Login from '@/view/login.vue';
-import Register from '@/view/register.vue';
+import LoginView from '@/view/loginView.vue';
+import RegisterView from '@/view/registerView.vue';
 import Backend from '@/service/backend';
 import AddBrokerView from '@/view/addBrokerView.vue';
 import AddCurrencyView from '@/view/addCurrencyView.vue';
@@ -19,7 +19,7 @@ const routes: Array<RouteRecordRaw> = [
 	{
 		path: '/login',
 		name: 'Login',
-		component: Login,
+		component: LoginView,
 		meta: {
 			guest: true,
 		},
@@ -27,7 +27,7 @@ const routes: Array<RouteRecordRaw> = [
 	{
 		path: '/register',
 		name: 'Register',
-		component: Register,
+		component: RegisterView,
 		meta: {
 			guest: true,
 		},
