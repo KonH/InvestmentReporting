@@ -47,7 +47,7 @@ namespace InvestmentReporting.Market.Logic {
 					figi, startDate, endDate, CandleInterval.Day);
 				_logger.LogTrace($"Found currency candles: {string.Join("\n", candles.Candles.Select(c => c.ToString()))}");
 				if ( candles.Candles.Count > 0 ) {
-					await _priceManager.AddOrAppendCandles(new(figi), candles);
+					await _priceManager.AddOrAppendCandles(currency, new(figi), candles);
 				}
 			}
 		}

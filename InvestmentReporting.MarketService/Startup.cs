@@ -50,6 +50,7 @@ namespace InvestmentReporting.MarketService {
 			services.AddSingleton<CurrencyPriceManager>();
 			services.AddSingleton<AssetIntervalCalculator>();
 			services.AddSingleton<CurrencyIntervalCalculator>();
+			services.AddSingleton<ExchangeManager>();
 			services.AddSingleton<MarketMetadataCollector>();
 			services.AddSingleton<MarkerAssetCandleCollector>();
 			services.AddSingleton<MarketCurrencyCandleCollector>();

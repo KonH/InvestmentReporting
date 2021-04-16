@@ -29,6 +29,8 @@ namespace InvestmentReporting.MarketService.Controllers {
 			var userId = new UserId(User.Identity?.Name ?? string.Empty);
 			_logger.LogInformation($"Retrieve virtual state for user '{userId}' at {date}");
 			var state = _useCase.Handle(date, userId);
+			var summary = state.Summary
+				.ToDictionary(s => s.Key.ToString(), s => new CurrencyBalanceDto(s.Value.RealSum, s.Value.VirtualSum));
 			var balancesDto = state.Balances
 				.Select(b => {
 					var inventoryDto = b.Inventory
@@ -41,7 +43,7 @@ namespace InvestmentReporting.MarketService.Controllers {
 					return new VirtualBalanceDto(b.RealSum, b.VirtualSum, inventoryDto, b.Currency);
 				})
 				.ToArray();
-			var dto = new VirtualStateDto(balancesDto);
+			var dto = new VirtualStateDto(summary, balancesDto);
 			return new JsonResult(dto);
 		}
 	}

@@ -50,6 +50,20 @@
   },
   "components": {
     "schemas": {
+      "CurrencyBalanceDto": {
+        "type": "object",
+        "properties": {
+          "realSum": {
+            "type": "number",
+            "format": "double"
+          },
+          "virtualSum": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
       "VirtualAssetDto": {
         "type": "object",
         "properties": {
@@ -136,6 +150,13 @@
       "VirtualStateDto": {
         "type": "object",
         "properties": {
+          "summary": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/CurrencyBalanceDto"
+            },
+            "nullable": true
+          },
           "balances": {
             "type": "array",
             "items": {

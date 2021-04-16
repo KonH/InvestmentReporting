@@ -8,7 +8,7 @@ import { Prop } from 'vue-property-decorator';
 @Options({
 	name: 'PercentDiff',
 })
-export default class MoneyDiff extends Vue {
+export default class PercentDiff extends Vue {
 	@Prop()
 	old!: number;
 

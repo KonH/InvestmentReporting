@@ -11,12 +11,15 @@ namespace InvestmentReporting.Market.UseCase {
 		readonly IStateManager     _stateManager;
 		readonly MetadataManager   _metadataManager;
 		readonly AssetPriceManager _priceManager;
+		readonly ExchangeManager   _exchangeManager;
 
 		public ReadVirtualStateUseCase(
-			IStateManager stateManager, MetadataManager metadataManager, AssetPriceManager priceManager) {
+			IStateManager stateManager, MetadataManager metadataManager, AssetPriceManager priceManager,
+			ExchangeManager exchangeManager) {
 			_stateManager    = stateManager;
 			_metadataManager = metadataManager;
 			_priceManager    = priceManager;
+			_exchangeManager = exchangeManager;
 		}
 
 		public VirtualState Handle(DateTimeOffset date, UserId user) {
@@ -42,7 +45,8 @@ namespace InvestmentReporting.Market.UseCase {
 					}))
 				.ToArray();
 			var balances = CalculateBalances(state, inventory, date, user);
-			return new VirtualState(balances);
+			var summary  = CalculateSummary(balances, date, user);
+			return new VirtualState(summary, balances);
 		}
 
 		IReadOnlyCollection<VirtualBalance> CalculateBalances(
@@ -50,5 +54,28 @@ namespace InvestmentReporting.Market.UseCase {
 			state.Currencies
 				.Select(currency => _priceManager.GetVirtualBalance(date, user, currency.Id, inventory))
 				.ToArray();
+
+		IReadOnlyDictionary<CurrencyId, CurrencyBalance> CalculateSummary(
+			IReadOnlyCollection<VirtualBalance> balances, DateTimeOffset date, UserId user) {
+			return balances
+				.ToDictionary(b => b.Currency, b => {
+					var selfCurrency = b.Currency;
+					var selfReal     = b.RealSum;
+					var selfVirtual  = b.VirtualSum;
+					var otherReal    = 0m;
+					var otherVirtual = 0m;
+					foreach ( var other in balances ) {
+						var otherCurrency = other.Currency;
+						if ( otherCurrency == selfCurrency ) {
+							continue;
+						}
+						otherReal += _exchangeManager.Exchange(
+							otherCurrency, selfCurrency, other.RealSum, date, user);
+						otherVirtual += _exchangeManager.Exchange(
+							otherCurrency, selfCurrency, other.VirtualSum, date, user);
+					}
+					return new CurrencyBalance(selfReal + otherReal, selfVirtual + otherVirtual);
+				});
+		}
 	}
 }

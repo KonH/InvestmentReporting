@@ -1,4 +1,5 @@
 <template>
+	<h3>{{ currencyCode }}</h3>
 	<h4><money :value="virtualSum" :currency-id="currencyId" /></h4>
 	<h5><money-diff :old="realSum" :new="virtualSum" :currency-id="currencyId" /></h5>
 	<portfolio-table :currency-id="currencyId" />
@@ -11,6 +12,7 @@ import { VirtualStateDto } from '@/api/market';
 import { Prop } from 'vue-property-decorator';
 import Money from '@/component/money.vue';
 import MoneyDiff from '@/component/moneyDiff.vue';
+import { StateDto } from '@/api/state';
 
 @Options({
 	name: 'PortfolioCurrencyView',
@@ -21,11 +23,18 @@ import MoneyDiff from '@/component/moneyDiff.vue';
 	},
 })
 export default class PortfolioView extends Vue {
+	@State('activeState')
+	activeState!: StateDto;
+
 	@State('virtualState')
 	virtualState!: VirtualStateDto;
 
 	@Prop()
 	currencyId!: string;
+
+	get currencyCode() {
+		return this.activeState.currencies?.find((c) => c.id == this.currencyId)?.code;
+	}
 
 	get balance() {
 		const balances = this.virtualState.balances;

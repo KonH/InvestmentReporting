@@ -12,7 +12,7 @@ import Money from '@/component/money.vue';
 		Money,
 	},
 })
-export default class MoneyDiff extends Vue {
+export default class MoneyValueDiff extends Vue {
 	@Prop()
 	old!: number;
 

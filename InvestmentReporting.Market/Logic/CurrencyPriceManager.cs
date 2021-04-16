@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using InvestmentReporting.Data.Core.Model;
 using InvestmentReporting.Data.Core.Repository;
+using InvestmentReporting.Domain.Entity;
 using InvestmentReporting.Domain.Logic;
 using InvestmentReporting.Market.Entity;
 using Microsoft.Extensions.Logging;
@@ -25,6 +26,10 @@ namespace InvestmentReporting.Market.Logic {
 			_repository.GetAll()
 				.FirstOrDefault(m => m.Figi == figi);
 
+		CurrencyPriceModel? TryGetModel(CurrencyCode code) =>
+			_repository.GetAll()
+				.FirstOrDefault(m => string.Equals(m.Code, code, StringComparison.InvariantCultureIgnoreCase));
+
 		public CurrencyPrice? TryGet(AssetFIGI figi) {
 			var model = TryGetModel(figi);
 			if ( model == null ) {
@@ -42,20 +47,51 @@ namespace InvestmentReporting.Market.Logic {
 			return firstCommand?.Date.Date ?? DateTime.Today.AddDays(-1);
 		}
 
-		public async Task AddOrAppendCandles(AssetFIGI figi, CandleList candles) {
+		public async Task AddOrAppendCandles(CurrencyCode currency, AssetFIGI figi, CandleList candles) {
 			var model = TryGetModel(figi);
 			var candleModels = candles.Candles
 				.Select(c => new CandleModel(new DateTimeOffset(c.Time), c.Open, c.Close, c.Low, c.High))
 				.ToList();
 			if ( model != null ) {
-				_logger.LogTrace($"Add {candleModels.Count} candles to existing model with FIGI '{figi}'");
+				_logger.LogTrace($"Add {candleModels.Count} candles to existing model '{currency}' with FIGI '{figi}'");
 				model.Candles.AddRange(candleModels);
 				await _repository.Update(model);
 			} else {
-				_logger.LogTrace($"Creating new model with FIGI '{figi}'");
-				var newModel = new CurrencyPriceModel(figi, candles.Figi, candleModels);
+				_logger.LogTrace($"Creating new model '{currency}' with FIGI '{figi}'");
+				var newModel = new CurrencyPriceModel(currency, candles.Figi, candleModels);
 				await _repository.Add(newModel);
 			}
+		}
+
+		public decimal GetPriceAt(CurrencyId from, CurrencyId to, DateTimeOffset date, UserId user) {
+			var state    = _stateManager.ReadState(date, user);
+			var fromCode = state.Currencies.First(c => c.Id == from).Code;
+			var toCode   = state.Currencies.First(c => c.Id == to).Code;
+			_logger.LogTrace($"Get price from '{fromCode}' to '{toCode}'");
+			if ( fromCode != "RUB" ) {
+				var price = GetPriceAt(fromCode, date);
+				_logger.LogTrace($"Direct price from '{fromCode}' to '{toCode}' is {price}");
+				return price;
+			}
+			var priceDiv = GetPriceAt(toCode, date);
+			if ( priceDiv == 0 ) {
+				return 0;
+			}
+			var inversePrice = 1m / priceDiv;
+			_logger.LogTrace($"Inverse price from '{fromCode}' to '{toCode}' is {inversePrice}");
+			return inversePrice;
+		}
+
+		decimal GetPriceAt(CurrencyCode currency, DateTimeOffset date) {
+			var model = TryGetModel(currency);
+			if ( model == null ) {
+				_logger.LogError($"Failed to find model for '{currency}'");
+				return 0;
+			}
+			var lastCandleBeforeDate = model.Candles
+				.LastOrDefault(c => c.Date < date);
+			_logger.LogTrace($"Last candle value for '{currency}' before '{date}' is {lastCandleBeforeDate}");
+			return lastCandleBeforeDate?.Close ?? 0;
 		}
 	}
 }
