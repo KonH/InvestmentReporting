@@ -6,7 +6,6 @@
 </template>
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import { BrokerDto } from '@/api/state';
 import { Prop } from 'vue-property-decorator';
 import { AssetTagSetDto } from '@/api/meta';
 import { Action } from 'vuex-class';
