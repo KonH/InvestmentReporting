@@ -1,4 +1,6 @@
 export default class OperationData {
+	id?: string | null;
+
 	/** @format date-time */
 	date?: string;
 	kind?: string | null;

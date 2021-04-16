@@ -1,4 +1,30 @@
 <template>
+	<div class="form-group">
+		<label>
+			Broker:
+			<select ref="broker" class="form-control" @change="onBrokerChange">
+				<option v-for="broker in brokers" :key="broker.id" :value="broker.id">
+					{{ broker.displayName }}
+				</option>
+			</select>
+		</label>
+		<label class="ml-3">
+			Account:
+			<select ref="account" class="form-control" @change="onAccountChange">
+				<option v-for="account in accounts" :key="account.id" :value="account.id">
+					{{ account.displayName }}
+				</option>
+			</select>
+		</label>
+		<label class="ml-3">
+			Asset:
+			<select ref="asset" class="form-control" @change="onAssetChange">
+				<option v-for="asset in assets" :key="asset" :value="asset">
+					{{ asset }}
+				</option>
+			</select>
+		</label>
+	</div>
 	<table class="table table-sm table-striped">
 		<thead>
 			<tr>
@@ -12,7 +38,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			<tr v-for="operation in operations" :key="operation.date + operation.kind + operation.category">
+			<tr v-for="operation in operations" :key="operation.id">
 				<operation :operation="operation" />
 			</tr>
 		</tbody>
@@ -22,9 +48,10 @@
 import { Options, Vue } from 'vue-class-component';
 import Operation from '@/component/operation.vue';
 import Backend from '@/service/backend';
-import { OperationDto, StateDto } from '@/api/state';
+import { AccountDto, BrokerDto, OperationDto, StateDto } from '@/api/state';
 import OperationData from '@/dto/operationData';
 import { State } from 'vuex-class';
+import { Ref } from 'vue-property-decorator';
 
 @Options({
 	name: 'OperationsView',
@@ -36,7 +63,20 @@ export default class OperationsView extends Vue {
 	@State('activeState')
 	activeState!: StateDto;
 
+	@Ref('broker')
+	brokerInput!: HTMLSelectElement;
+
+	@Ref('account')
+	accountInput!: HTMLSelectElement;
+
+	@Ref('asset')
+	assetInput!: HTMLSelectElement;
+
 	allOperations: OperationDto[] = [];
+
+	targetBroker = '';
+	targetAccount = '';
+	targetAsset = '';
 
 	async created() {
 		const startDate = new Date(1, 1, 1).toISOString();
@@ -49,11 +89,30 @@ export default class OperationsView extends Vue {
 	}
 
 	get operations() {
-		return this.allOperations.map(this.createView);
+		return this.allOperations.filter(this.preFilter).map(this.createView).filter(this.postFilter);
+	}
+
+	preFilter(dto: OperationDto) {
+		if (this.targetBroker) {
+			if (this.targetAccount) {
+				return dto.account == this.targetAccount;
+			}
+			return dto.broker == this.targetBroker;
+		}
+		return true;
+	}
+
+	postFilter(data: OperationData) {
+		if (this.targetAsset) {
+			return data.assetIsin == this.targetAsset;
+		}
+		return true;
 	}
 
 	createView(dto: OperationDto): OperationData {
+		const id = (dto.date ?? '') + (dto.category ?? '') + (dto.broker ?? '') + (dto.account ?? '') + (dto.asset ?? '') + (Math.random() * 1000).toString();
 		return {
+			id: id,
 			date: dto.date,
 			kind: dto.kind,
 			currency: dto.currency,
@@ -79,6 +138,38 @@ export default class OperationsView extends Vue {
 
 	getAssetIsin(dto: OperationDto) {
 		return this.getBroker(dto)?.inventory?.find((a) => a.id == dto.asset)?.isin;
+	}
+
+	get brokers() {
+		const empty: BrokerDto[] = [{ displayName: '' }];
+		const brokers = this.activeState.brokers ?? [];
+		return empty.concat(brokers);
+	}
+
+	get accounts() {
+		const empty: AccountDto[] = [{ displayName: '' }];
+		const broker = this.activeState.brokers?.find((b) => b.id == this.targetBroker);
+		const accounts = broker?.accounts ?? [];
+		return empty.concat(accounts);
+	}
+
+	get assets() {
+		const empty = [''];
+		const assetIsins = this.allOperations.map((dto) => this.createView(dto).assetIsin);
+		return new Set(empty.concat(assetIsins));
+	}
+
+	onBrokerChange() {
+		this.targetBroker = this.brokerInput.value;
+		this.targetAccount = '';
+	}
+
+	onAccountChange() {
+		this.targetAccount = this.accountInput.value;
+	}
+
+	onAssetChange() {
+		this.targetAsset = this.assetInput.value;
 	}
 }
 </script>
