@@ -7,7 +7,7 @@
 				>: <money :value="getTagSum(tag.tag)" :currency-id="currencyId" /> <b>{{ getTagPercentFormat(tag.tag) }}% </b> {{ getTagPercentTargetDiff(tag.tag) }}%
 				<ul>
 					<li v-for="asset in tag.assets" :key="asset.isin">
-						<b>{{ asset.isin }}</b> {{ asset.name }} <money :value="getTagSum(tag.tag)" :currency-id="currencyId" />
+						<b>{{ asset.isin }}</b> {{ asset.name }} <money :value="getAssetSum(asset.sums)" :currency-id="currencyId" />
 					</li>
 				</ul>
 			</li>
@@ -17,7 +17,7 @@
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
 import { Prop } from 'vue-property-decorator';
-import { DashboardConfigDto, DashboardStateDto } from '@/api/meta';
+import { DashboardConfigDto, DashboardStateDto, SumStateDto } from '@/api/meta';
 import Money from '@/component/money.vue';
 
 @Options({
@@ -71,6 +71,11 @@ export default class DashboardLegend extends Vue {
 		const value = percent - target;
 		const str = value.toFixed(2);
 		return value > 0 ? '+' + str : str;
+	}
+
+	getAssetSum(sums: Record<string, SumStateDto>) {
+		const sum = sums ? sums[this.currencyId] : undefined;
+		return sum ? sum.virtualSum : 0;
 	}
 }
 </script>
