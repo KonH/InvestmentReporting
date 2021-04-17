@@ -5,6 +5,84 @@
     "version": "v1"
   },
   "paths": {
+    "/DashboardConfig": {
+      "get": {
+        "tags": [
+          "DashboardConfig"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DashboardConfigStateDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "DashboardConfig"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DashboardConfigDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DashboardConfigDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DashboardConfigDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/DashboardState": {
+      "get": {
+        "tags": [
+          "DashboardState"
+        ],
+        "parameters": [
+          {
+            "name": "dashboard",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DashboardStateDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/Tag": {
       "get": {
         "tags": [
@@ -87,6 +165,129 @@
   },
   "components": {
     "schemas": {
+      "DashboardConfigTagDto": {
+        "type": "object",
+        "properties": {
+          "tag": {
+            "type": "string",
+            "nullable": true
+          },
+          "target": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DashboardConfigDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DashboardConfigTagDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DashboardConfigStateDto": {
+        "type": "object",
+        "properties": {
+          "dashboards": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DashboardConfigDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SumStateDto": {
+        "type": "object",
+        "properties": {
+          "realSum": {
+            "type": "number",
+            "format": "double"
+          },
+          "virtualSum": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DashboardAssetDto": {
+        "type": "object",
+        "properties": {
+          "isin": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "sums": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/SumStateDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DashboardStateTagDto": {
+        "type": "object",
+        "properties": {
+          "assets": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DashboardAssetDto"
+            },
+            "nullable": true
+          },
+          "sums": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/SumStateDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DashboardStateDto": {
+        "type": "object",
+        "properties": {
+          "tags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DashboardStateTagDto"
+            },
+            "nullable": true
+          },
+          "sums": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/SumStateDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "AssetTagSetDto": {
         "type": "object",
         "properties": {

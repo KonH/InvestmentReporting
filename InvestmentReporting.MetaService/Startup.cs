@@ -41,11 +41,16 @@ namespace InvestmentReporting.MetaService {
 			services.AddSingleton<IStateManager, StateManager>();
 			services.AddSingleton<IAssetTagRepository, MongoAssetTagRepository>();
 			services.AddSingleton<IAssetMetadataRepository, MongoAssetMetadataRepository>();
+			services.AddSingleton<IDashboardRepository, MongoDashboardRepository>();
 			services.AddSingleton<MetadataManager>();
 			services.AddSingleton<AssetTagManager>();
+			services.AddSingleton<DashboardManager>();
 			services.AddSingleton<ReadAssetTagsUseCase>();
 			services.AddSingleton<AddAssetTagUseCase>();
 			services.AddSingleton<RemoveAssetTagUseCase>();
+			services.AddSingleton<ReadDashboardConfigsUseCase>();
+			services.AddSingleton<UpdateDashboardConfigUseCase>();
+			services.AddSingleton<ReadDashboardStateUseCase>();
 		}
 
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
