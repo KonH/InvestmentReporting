@@ -9,6 +9,47 @@
  * ---------------------------------------------------------------
  */
 
+export interface DashboardConfigTagDto {
+  tag?: string | null;
+
+  /** @format double */
+  target?: number;
+}
+
+export interface DashboardConfigDto {
+  id?: string | null;
+  name?: string | null;
+  tags?: DashboardConfigTagDto[] | null;
+}
+
+export interface DashboardConfigStateDto {
+  dashboards?: DashboardConfigDto[] | null;
+}
+
+export interface SumStateDto {
+  /** @format double */
+  realSum?: number;
+
+  /** @format double */
+  virtualSum?: number;
+}
+
+export interface DashboardAssetDto {
+  isin?: string | null;
+  name?: string | null;
+  sums?: Record<string, SumStateDto>;
+}
+
+export interface DashboardStateTagDto {
+  assets?: DashboardAssetDto[] | null;
+  sums?: Record<string, SumStateDto>;
+}
+
+export interface DashboardStateDto {
+  tags?: DashboardStateTagDto[] | null;
+  sums?: Record<string, SumStateDto>;
+}
+
 export interface AssetTagSetDto {
   isin?: string | null;
   name?: string | null;
@@ -216,6 +257,55 @@ export class HttpClient<SecurityDataType = unknown> {
  * @version v1
  */
 export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
+  dashboardConfig = {
+    /**
+     * No description
+     *
+     * @tags DashboardConfig
+     * @name DashboardConfigList
+     * @request GET:/DashboardConfig
+     */
+    dashboardConfigList: (params: RequestParams = {}) =>
+      this.request<DashboardConfigStateDto, any>({
+        path: `/DashboardConfig`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags DashboardConfig
+     * @name DashboardConfigCreate
+     * @request POST:/DashboardConfig
+     */
+    dashboardConfigCreate: (data: DashboardConfigDto, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/DashboardConfig`,
+        method: "POST",
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+  };
+  dashboardState = {
+    /**
+     * No description
+     *
+     * @tags DashboardState
+     * @name DashboardStateList
+     * @request GET:/DashboardState
+     */
+    dashboardStateList: (query: { dashboard: string }, params: RequestParams = {}) =>
+      this.request<DashboardStateDto, any>({
+        path: `/DashboardState`,
+        method: "GET",
+        query: query,
+        format: "json",
+        ...params,
+      }),
+  };
   tag = {
     /**
      * No description

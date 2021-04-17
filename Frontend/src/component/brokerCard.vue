@@ -12,7 +12,6 @@ import { Prop } from 'vue-property-decorator';
 
 @Options({
 	name: 'BrokerCard',
-	components: {},
 })
 export default class BrokerCard extends Vue {
 	@Prop()

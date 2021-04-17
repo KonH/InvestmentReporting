@@ -1,6 +1,6 @@
 import { StateDto } from '@/api/state';
 import { VirtualStateDto } from '@/api/market';
-import { AssetTagStateDto } from '@/api/meta';
+import { AssetTagStateDto, DashboardConfigStateDto } from '@/api/meta';
 
 export default class AppState {
 	activeState: StateDto = {
@@ -11,5 +11,8 @@ export default class AppState {
 	};
 	tagState: AssetTagStateDto = {
 		assets: [],
+	};
+	dashboardConfigState: DashboardConfigStateDto = {
+		dashboards: [],
 	};
 }

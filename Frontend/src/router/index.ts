@@ -14,6 +14,7 @@ import ConfigView from '@/view/configView.vue';
 import OperationsView from '@/view/operationsView.vue';
 import PortfolioView from '@/view/portfolioView.vue';
 import TagsView from '@/view/tagsView.vue';
+import DashboardsView from '@/view/dashboardsView.vue';
 import CustomView from '@/view/customView.vue';
 
 const routes: Array<RouteRecordRaw> = [
@@ -71,6 +72,16 @@ const routes: Array<RouteRecordRaw> = [
 		component: PortfolioView,
 	},
 	{
+		path: '/tags',
+		name: 'Tags',
+		component: TagsView,
+	},
+	{
+		path: '/dashboards',
+		name: 'Dashboards',
+		component: DashboardsView,
+	},
+	{
 		path: '/custom',
 		name: 'Custom',
 		component: CustomView,
@@ -94,11 +105,6 @@ const routes: Array<RouteRecordRaw> = [
 		path: '/custom/broker/:broker/asset/sell',
 		name: 'Sell Asset',
 		component: SellAssetView,
-	},
-	{
-		path: '/tags',
-		name: 'Tags',
-		component: TagsView,
 	},
 ];
 

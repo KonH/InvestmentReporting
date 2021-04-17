@@ -48,7 +48,7 @@ namespace InvestmentReporting.MetaService.Controllers {
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		public async Task<IActionResult> Update([Required] DashboardConfigDto dashboard) {
 			var userId = new UserId(User.Identity?.Name ?? string.Empty);
-			_logger.LogInformation($"Update dashboard '{dashboard.Name}' for user '{userId}'");
+			_logger.LogInformation($"Update dashboard for user '{userId}': {dashboard}");
 			var dashboardEntity = new DashboardConfig(
 				new(dashboard.Id), dashboard.Name,
 				dashboard.Tags

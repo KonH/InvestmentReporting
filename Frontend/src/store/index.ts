@@ -3,7 +3,7 @@ import AppState from '@/store/appState';
 import { StateDto } from '@/api/state';
 import Backend from '@/service/backend';
 import { VirtualStateDto } from '@/api/market';
-import { AssetTagStateDto } from '@/api/meta';
+import { AssetTagStateDto, DashboardConfigStateDto } from '@/api/meta';
 
 export default createStore({
 	state() {
@@ -19,12 +19,16 @@ export default createStore({
 		applyTagState(appState: AppState, tagState: AssetTagStateDto) {
 			appState.tagState = tagState;
 		},
+		applyDashboardConfigState(appState: AppState, dashboardConfigState: DashboardConfigStateDto) {
+			appState.dashboardConfigState = dashboardConfigState;
+		},
 	},
 	actions: {
 		async fetchState({ dispatch }) {
 			dispatch('fetchActiveState');
 			dispatch('fetchVirtualState');
 			dispatch('fetchTagState');
+			dispatch('fetchDashboardConfigState');
 		},
 		async fetchActiveState({ commit }) {
 			const date = new Date().toISOString();
@@ -39,6 +43,10 @@ export default createStore({
 		async fetchTagState({ commit }) {
 			const response = await Backend.meta().tag.getTag();
 			commit('applyTagState', response.data);
+		},
+		async fetchDashboardConfigState({ commit }) {
+			const response = await Backend.meta().dashboardConfig.dashboardConfigList();
+			commit('applyDashboardConfigState', response.data);
 		},
 	},
 	modules: {},

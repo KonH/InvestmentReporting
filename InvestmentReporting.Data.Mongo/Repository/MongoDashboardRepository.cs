@@ -18,25 +18,28 @@ namespace InvestmentReporting.Data.Mongo.Repository {
 		public async Task<IReadOnlyCollection<DashboardConfigModel>> GetUserDashboardConfigs(string user) {
 			var result = await _collection.FindAsync(m => m.User == user);
 			return result.ToEnumerable()
-				.Select(m => m.Model)
+				.ToArray()
+				.Select(m => (m.Model! with { Id = m.Id.ToString() }))
 				.Where(m => m != null)
 				.Select(m => m!)
 				.ToArray();
 		}
 
 		public async Task AddOrUpdateDashboard(string user, DashboardConfigModel dashboard) {
-			var id = new ObjectId(dashboard.Id);
-			var model = (await _collection.FindAsync(m => m.Id == id)).FirstOrDefault();
-			if ( model != null ) {
-				model.Model = dashboard;
-				await _collection.ReplaceOneAsync(m => m.Id == id, model);
-			} else {
-				model = new MongoDashboardConfigModel {
-					User  = user,
-					Model = dashboard
-				};
-				await _collection.InsertOneAsync(model);
+			if ( !string.IsNullOrEmpty(dashboard.Id) ) {
+				var id    = new ObjectId(dashboard.Id);
+				var model = (await _collection.FindAsync(m => m.Id == id)).FirstOrDefault();
+				if ( model != null ) {
+					model.Model = dashboard;
+					await _collection.ReplaceOneAsync(m => m.Id == id, model);
+					return;
+				}
 			}
+			var newModel = new MongoDashboardConfigModel {
+				User  = user,
+				Model = dashboard
+			};
+			await _collection.InsertOneAsync(newModel);
 		}
 	}
 }
