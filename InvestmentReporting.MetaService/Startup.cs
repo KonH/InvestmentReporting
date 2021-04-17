@@ -1,7 +1,9 @@
 using InvestmentReporting.Data.Core.Repository;
 using InvestmentReporting.Data.Mongo.Repository;
 using InvestmentReporting.Domain.Logic;
+using InvestmentReporting.Domain.UseCase;
 using InvestmentReporting.Market.Logic;
+using InvestmentReporting.Market.UseCase;
 using InvestmentReporting.Meta.Logic;
 using InvestmentReporting.Meta.UseCase;
 using InvestmentReporting.Shared.Extensions;
@@ -41,10 +43,17 @@ namespace InvestmentReporting.MetaService {
 			services.AddSingleton<IStateManager, StateManager>();
 			services.AddSingleton<IAssetTagRepository, MongoAssetTagRepository>();
 			services.AddSingleton<IAssetMetadataRepository, MongoAssetMetadataRepository>();
+			services.AddSingleton<ICurrencyPriceRepository, MongoCurrencyPriceRepository>();
+			services.AddSingleton<IAssetPriceRepository, MongoAssetPriceRepository>();
 			services.AddSingleton<IDashboardRepository, MongoDashboardRepository>();
 			services.AddSingleton<MetadataManager>();
 			services.AddSingleton<AssetTagManager>();
 			services.AddSingleton<DashboardManager>();
+			services.AddSingleton<AssetPriceManager>();
+			services.AddSingleton<CurrencyPriceManager>();
+			services.AddSingleton<ExchangeManager>();
+			services.AddSingleton<ReadStateUseCase>();
+			services.AddSingleton<ReadVirtualStateUseCase>();
 			services.AddSingleton<ReadAssetTagsUseCase>();
 			services.AddSingleton<AddAssetTagUseCase>();
 			services.AddSingleton<RemoveAssetTagUseCase>();

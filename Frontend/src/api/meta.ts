@@ -298,7 +298,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name DashboardStateList
      * @request GET:/DashboardState
      */
-    dashboardStateList: (query: { dashboard: string }, params: RequestParams = {}) =>
+    dashboardStateList: (query: { date: string; dashboard: string }, params: RequestParams = {}) =>
       this.request<DashboardStateDto, any>({
         path: `/DashboardState`,
         method: "GET",

@@ -61,6 +61,15 @@
         ],
         "parameters": [
           {
+            "name": "date",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
             "name": "dashboard",
             "in": "query",
             "required": true,

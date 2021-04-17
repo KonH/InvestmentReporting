@@ -52,7 +52,9 @@ export default createStore({
 			commit('applyDashboardConfigState', response.data);
 		},
 		async fetchDashboardState({ commit }, dashboardId) {
+			const date = new Date().toISOString();
 			const response = await Backend.meta().dashboardState.dashboardStateList({
+				date: date,
 				dashboard: dashboardId,
 			});
 			commit('applySelectedDashboardState', response.data);

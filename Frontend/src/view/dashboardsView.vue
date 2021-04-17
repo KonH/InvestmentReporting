@@ -5,10 +5,8 @@
 		</div>
 		<add-dashboard-card @click="onNewDashboardClick()" />
 	</div>
-	<div v-if="selectedDashboardState">
-		<dashboard-config :dashboard="selectedDashboard" @save="onConfigSave" />
-		<dashboard-view :dashboard-config="selectedDashboard" />
-	</div>
+	<dashboard-config v-if="selectedDashboard" :dashboard="selectedDashboard" @save="onConfigSave" />
+	<dashboard-view v-if="selectedDashboardState" :dashboard-config="selectedDashboard" />
 </template>
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
