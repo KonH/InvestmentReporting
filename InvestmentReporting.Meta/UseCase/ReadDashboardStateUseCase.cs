@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
-using InvestmentReporting.Domain.Entity;
-using InvestmentReporting.Domain.UseCase;
+using InvestmentReporting.State.Entity;
+using InvestmentReporting.State.UseCase;
 using InvestmentReporting.Market.UseCase;
 using InvestmentReporting.Meta.Entity;
 using InvestmentReporting.Meta.Logic;

@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using InvestmentReporting.Data.Core.Model;
 using InvestmentReporting.Data.Core.Repository;
-using InvestmentReporting.Domain.Entity;
-using InvestmentReporting.Domain.Logic;
+using InvestmentReporting.State.Entity;
+using InvestmentReporting.State.Logic;
 using InvestmentReporting.Market.Logic;
 using InvestmentReporting.Meta.Entity;
 

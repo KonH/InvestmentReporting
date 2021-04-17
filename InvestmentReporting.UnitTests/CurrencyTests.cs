@@ -2,10 +2,10 @@ using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using InvestmentReporting.Data.InMemory.Repository;
-using InvestmentReporting.Domain.Entity;
-using InvestmentReporting.Domain.Logic;
-using InvestmentReporting.Domain.UseCase;
-using InvestmentReporting.Domain.UseCase.Exceptions;
+using InvestmentReporting.State.Entity;
+using InvestmentReporting.State.Logic;
+using InvestmentReporting.State.UseCase;
+using InvestmentReporting.State.UseCase.Exceptions;
 using NUnit.Framework;
 
 namespace InvestmentReporting.UnitTests {

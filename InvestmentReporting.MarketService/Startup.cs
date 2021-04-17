@@ -1,6 +1,6 @@
 using InvestmentReporting.Data.Core.Repository;
 using InvestmentReporting.Data.Mongo.Repository;
-using InvestmentReporting.Domain.Logic;
+using InvestmentReporting.State.Logic;
 using InvestmentReporting.Market.Logic;
 using InvestmentReporting.Market.UseCase;
 using InvestmentReporting.MarketService.Services;

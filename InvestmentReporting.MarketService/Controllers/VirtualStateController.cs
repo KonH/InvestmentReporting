@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using InvestmentReporting.Domain.Entity;
+using InvestmentReporting.State.Entity;
 using InvestmentReporting.Market.Dto;
 using InvestmentReporting.Market.UseCase;
 using Microsoft.AspNetCore.Authorization;

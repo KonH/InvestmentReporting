@@ -1,6 +1,6 @@
 using System.Threading;
 using System.Threading.Tasks;
-using InvestmentReporting.Domain.Entity;
+using InvestmentReporting.State.Entity;
 using InvestmentReporting.Market.UseCase;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;

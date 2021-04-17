@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
-using InvestmentReporting.Domain.Entity;
+using InvestmentReporting.State.Entity;
 using InvestmentReporting.Meta.Dto;
 using InvestmentReporting.Meta.Entity;
 using InvestmentReporting.Meta.UseCase;

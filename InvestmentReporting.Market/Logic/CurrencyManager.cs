@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
-using InvestmentReporting.Domain.Entity;
-using InvestmentReporting.Domain.Logic;
+using InvestmentReporting.State.Entity;
+using InvestmentReporting.State.Logic;
 
 namespace InvestmentReporting.Market.Logic {
 	public sealed class CurrencyManager {

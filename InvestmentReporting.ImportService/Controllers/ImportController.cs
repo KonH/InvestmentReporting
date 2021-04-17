@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
-using InvestmentReporting.Domain.Entity;
+using InvestmentReporting.State.Entity;
 using InvestmentReporting.Import.UseCase;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;

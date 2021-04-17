@@ -1,5 +1,5 @@
 using System.Threading.Tasks;
-using InvestmentReporting.Domain.Entity;
+using InvestmentReporting.State.Entity;
 using InvestmentReporting.Meta.Entity;
 using InvestmentReporting.Meta.Logic;
 using Microsoft.Extensions.Logging;

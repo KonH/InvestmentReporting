@@ -1,8 +1,8 @@
 using System;
 using FluentAssertions;
-using InvestmentReporting.Domain.Entity;
-using InvestmentReporting.Domain.UseCase;
-using InvestmentReporting.Domain.UseCase.Exceptions;
+using InvestmentReporting.State.Entity;
+using InvestmentReporting.State.UseCase;
+using InvestmentReporting.State.UseCase.Exceptions;
 using NUnit.Framework;
 
 namespace InvestmentReporting.UnitTests {

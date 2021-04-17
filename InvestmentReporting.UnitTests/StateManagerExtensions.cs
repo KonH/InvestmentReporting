@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using InvestmentReporting.Domain.Entity;
-using InvestmentReporting.Domain.Logic;
-using InvestmentReporting.Domain.UseCase;
+using InvestmentReporting.State.Entity;
+using InvestmentReporting.State.Logic;
+using InvestmentReporting.State.UseCase;
 
 namespace InvestmentReporting.UnitTests {
 	public static class StateManagerExtensions {

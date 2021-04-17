@@ -1,6 +1,6 @@
 using System;
 using System.Linq;
-using InvestmentReporting.Domain.Entity;
+using InvestmentReporting.State.Entity;
 using Microsoft.Extensions.Logging;
 
 namespace InvestmentReporting.Market.Logic {

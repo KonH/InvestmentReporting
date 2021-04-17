@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using InvestmentReporting.Domain.Entity;
+using InvestmentReporting.State.Entity;
 
 namespace InvestmentReporting.Import.UseCase {
 	public interface IImportUseCase {

@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using InvestmentReporting.Domain.Entity;
+using InvestmentReporting.State.Entity;
 
 namespace InvestmentReporting.Market.Entity {
 	public record VirtualBalance(

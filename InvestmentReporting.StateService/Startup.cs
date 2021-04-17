@@ -1,7 +1,7 @@
 using InvestmentReporting.Data.Core.Repository;
 using InvestmentReporting.Data.Mongo.Repository;
-using InvestmentReporting.Domain.Logic;
-using InvestmentReporting.Domain.UseCase;
+using InvestmentReporting.State.Logic;
+using InvestmentReporting.State.UseCase;
 using InvestmentReporting.Shared.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

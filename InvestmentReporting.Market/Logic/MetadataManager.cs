@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using InvestmentReporting.Data.Core.Model;
 using InvestmentReporting.Data.Core.Repository;
-using InvestmentReporting.Domain.Entity;
+using InvestmentReporting.State.Entity;
 using InvestmentReporting.Market.Entity;
 using Microsoft.Extensions.Logging;
 using Tinkoff.Trading.OpenApi.Models;

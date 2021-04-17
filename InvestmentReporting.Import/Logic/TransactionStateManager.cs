@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using InvestmentReporting.Data.InMemory.Repository;
-using InvestmentReporting.Domain.Command;
-using InvestmentReporting.Domain.Entity;
-using InvestmentReporting.Domain.Logic;
+using InvestmentReporting.State.Command;
+using InvestmentReporting.State.Entity;
+using InvestmentReporting.State.Logic;
 using Microsoft.Extensions.Logging;
 
 namespace InvestmentReporting.Import.Logic {

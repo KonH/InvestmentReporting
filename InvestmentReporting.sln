@@ -8,7 +8,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InvestmentReporting.AuthSer
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InvestmentReporting.InviteService", "InvestmentReporting.InviteService\InvestmentReporting.InviteService.csproj", "{F7E51317-9446-4EB3-915F-005F1579860D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InvestmentReporting.Domain", "InvestmentReporting.Domain\InvestmentReporting.Domain.csproj", "{AEC9F856-A8A8-45FF-AC2E-1B474790807D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InvestmentReporting.State", "InvestmentReporting.State\InvestmentReporting.State.csproj", "{AEC9F856-A8A8-45FF-AC2E-1B474790807D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InvestmentReporting.UnitTests", "InvestmentReporting.UnitTests\InvestmentReporting.UnitTests.csproj", "{C968B29F-DEE4-4004-9750-8387F6C16614}"
 EndProject
