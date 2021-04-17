@@ -10,7 +10,14 @@
 			</select>
 		</label>
 		<div v-if="selectedCurrency">
-			<dashboard-legend :dashboard="selectedDashboardState" :dashboard-config="dashboardConfig" :currency-id="selectedCurrency" />
+			<div class="row">
+				<div class="col">
+					<dashboard-legend :dashboard="selectedDashboardState" :dashboard-config="dashboardConfig" :currency-id="selectedCurrency" />
+				</div>
+				<div class="col">
+					<dashboard-chart :dashboard="selectedDashboardState" :currency-id="selectedCurrency" />
+				</div>
+			</div>
 		</div>
 	</div>
 </template>
@@ -21,11 +28,13 @@ import { Prop } from 'vue-property-decorator';
 import { Action, State } from 'vuex-class';
 import DashboardLegend from '@/view/dashboardLegend.vue';
 import { StateDto } from '@/api/state';
+import DashboardChart from '@/view/dashboardChart.vue';
 
 @Options({
 	name: 'DashboardView',
 	components: {
 		DashboardLegend,
+		DashboardChart,
 	},
 })
 export default class DashboardView extends Vue {
