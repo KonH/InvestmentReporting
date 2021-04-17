@@ -3,7 +3,7 @@ import AppState from '@/store/appState';
 import { StateDto } from '@/api/state';
 import Backend from '@/service/backend';
 import { VirtualStateDto } from '@/api/market';
-import { AssetTagStateDto, DashboardConfigStateDto } from '@/api/meta';
+import { AssetTagStateDto, DashboardConfigStateDto, DashboardStateDto } from '@/api/meta';
 
 export default createStore({
 	state() {
@@ -22,8 +22,8 @@ export default createStore({
 		applyDashboardConfigState(appState: AppState, dashboardConfigState: DashboardConfigStateDto) {
 			appState.dashboardConfigState = dashboardConfigState;
 		},
-		applyDashboardState(appState: AppState, { dashboard, state }) {
-			appState.dashboardStates.set(dashboard, state);
+		applySelectedDashboardState(appState: AppState, state: DashboardStateDto) {
+			appState.selectedDashboardState = state;
 		},
 	},
 	actions: {
@@ -55,7 +55,7 @@ export default createStore({
 			const response = await Backend.meta().dashboardState.dashboardStateList({
 				dashboard: dashboardId,
 			});
-			commit('applyDashboardState', { dashboard: dashboardId, state: response.data });
+			commit('applySelectedDashboardState', response.data);
 		},
 	},
 	modules: {},

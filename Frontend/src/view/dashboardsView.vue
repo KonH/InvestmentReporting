@@ -5,14 +5,14 @@
 		</div>
 		<add-dashboard-card @click="onNewDashboardClick()" />
 	</div>
-	<div v-if="selectedDashboard">
+	<div v-if="selectedDashboardState">
 		<dashboard-config :dashboard="selectedDashboard" @save="onConfigSave" />
 		<dashboard-view :dashboard-config="selectedDashboard" />
 	</div>
 </template>
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import { DashboardConfigDto, DashboardConfigStateDto } from '@/api/meta';
+import { DashboardConfigDto, DashboardConfigStateDto, DashboardStateDto } from '@/api/meta';
 import DashboardCard from '@/component/dashboardCard.vue';
 import AddDashboardCard from '@/component/addDashboardCard.vue';
 import DashboardConfig from '@/view/dashboardConfig.vue';
@@ -32,8 +32,14 @@ export default class DashboardsView extends Vue {
 	@State('dashboardConfigState')
 	dashboardConfigState!: DashboardConfigStateDto;
 
+	@State('selectedDashboardState')
+	selectedDashboardState!: DashboardStateDto | undefined;
+
 	@Action('fetchDashboardConfigState')
 	fetchDashboardConfigState!: () => void;
+
+	@Action('fetchDashboardState')
+	fetchDashboardState!: (dashboardId: string) => void;
 
 	selectedDashboardId = '';
 	hasNewDashboard = false;
@@ -64,6 +70,9 @@ export default class DashboardsView extends Vue {
 
 	onDashboardClick(dashboardId: string) {
 		this.selectedDashboardId = dashboardId;
+		if (dashboardId) {
+			this.fetchDashboardState(this.selectedDashboardId);
+		}
 	}
 
 	onNewDashboardClick() {
@@ -74,6 +83,7 @@ export default class DashboardsView extends Vue {
 	onConfigSave() {
 		this.hasNewDashboard = false;
 		this.fetchDashboardConfigState();
+		this.fetchDashboardState(this.selectedDashboardId);
 	}
 }
 </script>

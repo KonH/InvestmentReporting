@@ -10,7 +10,7 @@
 			</select>
 		</label>
 		<div v-if="selectedCurrency">
-			<dashboard-legend :dashboard="dashboardState" :currency-id="selectedCurrency" />
+			<dashboard-legend :dashboard="selectedDashboardState" :currency-id="selectedCurrency" />
 		</div>
 	</div>
 </template>
@@ -32,8 +32,8 @@ export default class DashboardView extends Vue {
 	@Action('fetchDashboardState')
 	fetchDashboardState!: (id: string) => void;
 
-	@State('dashboardStates')
-	dashboardStates!: Map<string, DashboardStateDto>;
+	@State('selectedDashboardState')
+	selectedDashboardState!: DashboardStateDto;
 
 	@State('activeState')
 	activeState!: StateDto;
@@ -43,27 +43,8 @@ export default class DashboardView extends Vue {
 
 	selectedCurrency = '';
 
-	get dashboardState() {
-		return this.dashboardStates.get(this.dashboardConfig.id ?? '');
-	}
-
 	get currencies() {
 		return this.activeState.currencies;
-	}
-
-	created() {
-		this.tryFetch();
-	}
-
-	updated() {
-		this.tryFetch();
-	}
-
-	tryFetch() {
-		if (this.dashboardStates.has(this.dashboardConfig.id ?? '')) {
-			return;
-		}
-		this.fetchDashboardState(this.dashboardConfig.id ?? '');
 	}
 }
 </script>

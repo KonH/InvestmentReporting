@@ -15,5 +15,5 @@ export default class AppState {
 	dashboardConfigState: DashboardConfigStateDto = {
 		dashboards: [],
 	};
-	dashboardStates: Map<string, DashboardStateDto> = new Map<string, DashboardStateDto>();
+	selectedDashboardState: DashboardStateDto | undefined;
 }
