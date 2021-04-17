@@ -251,6 +251,10 @@
       "DashboardStateTagDto": {
         "type": "object",
         "properties": {
+          "tag": {
+            "type": "string",
+            "nullable": true
+          },
           "assets": {
             "type": "array",
             "items": {

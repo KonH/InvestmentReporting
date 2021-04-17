@@ -49,7 +49,7 @@ namespace InvestmentReporting.Meta.Logic {
 					var assets = new[] {
 						new DashboardAsset(new("isin"), new($"{dashboardId} asset"), assetSums)
 					};
-					return new DashboardStateTag(assets, assetSums);
+					return new DashboardStateTag(tag.Tag, assets, assetSums);
 				})
 				.ToArray();
 			return new(tags, assetSums);

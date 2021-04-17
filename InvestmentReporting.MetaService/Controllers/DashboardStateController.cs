@@ -35,6 +35,7 @@ namespace InvestmentReporting.MetaService.Controllers {
 			var dto   = new DashboardStateDto(
 				state.Tags
 					.Select(t => new DashboardStateTagDto(
+						t.Tag,
 						t.Assets
 							.Select(a => new DashboardAssetDto(a.Isin, a.Name, ConvertSums(a.Sums)))
 							.ToArray(),

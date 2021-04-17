@@ -41,6 +41,7 @@ export interface DashboardAssetDto {
 }
 
 export interface DashboardStateTagDto {
+  tag?: string | null;
   assets?: DashboardAssetDto[] | null;
   sums?: Record<string, SumStateDto>;
 }
