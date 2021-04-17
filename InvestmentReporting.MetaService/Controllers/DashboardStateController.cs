@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Threading.Tasks;
 using InvestmentReporting.Domain.Entity;
 using InvestmentReporting.Meta.Dto;
 using InvestmentReporting.Meta.Entity;
@@ -27,10 +28,10 @@ namespace InvestmentReporting.MetaService.Controllers {
 		[HttpGet]
 		[Produces("application/json")]
 		[ProducesResponseType(typeof(DashboardStateDto), StatusCodes.Status200OK)]
-		public IActionResult Get([Required] string dashboard) {
+		public async Task<IActionResult> Get([Required] string dashboard) {
 			var userId = new UserId(User.Identity?.Name ?? string.Empty);
 			_logger.LogInformation($"Retrieve dashboard state for user '{userId}'");
-			var state = _readUseCase.Handle(userId, new(dashboard));
+			var state = await _readUseCase.Handle(userId, new(dashboard));
 			var dto   = new DashboardStateDto(
 				state.Tags
 					.Select(t => new DashboardStateTagDto(

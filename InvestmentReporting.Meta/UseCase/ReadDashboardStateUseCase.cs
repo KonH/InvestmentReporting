@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using InvestmentReporting.Domain.Entity;
 using InvestmentReporting.Meta.Entity;
 using InvestmentReporting.Meta.Logic;
@@ -10,7 +11,7 @@ namespace InvestmentReporting.Meta.UseCase {
 			_manager = manager;
 		}
 
-		public DashboardState Handle(UserId user, DashboardId dashboard) =>
-			_manager.GetState(user, dashboard);
+		public async Task<DashboardState> Handle(UserId user, DashboardId dashboard) =>
+			await _manager.GetState(user, dashboard);
 	}
 }

@@ -1,4 +1,4 @@
-using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using InvestmentReporting.Data.Core;
@@ -37,8 +37,22 @@ namespace InvestmentReporting.Meta.Logic {
 			await _repository.AddOrUpdateDashboard(user, dashboardModel);
 		}
 
-		public DashboardState GetState(UserId user, DashboardId dashboard) {
-			throw new NotImplementedException();
+		public async Task<DashboardState> GetState(UserId user, DashboardId dashboardId) {
+			// TODO: implement completely
+			var configs   = await _repository.GetUserDashboardConfigs(user);
+			var dashboard = configs.First(c => c.Id == dashboardId);
+			var assetSums = new Dictionary<CurrencyId, SumState> {
+				[new("6073ef351b228eb052c2feae")] = new (10, 11)
+			};
+			var tags = dashboard.Tags
+				.Select(tag => {
+					var assets = new[] {
+						new DashboardAsset(new("isin"), new($"{dashboardId} asset"), assetSums)
+					};
+					return new DashboardStateTag(assets, assetSums);
+				})
+				.ToArray();
+			return new(tags, assetSums);
 		}
 	}
 }

@@ -49,7 +49,7 @@ export default class DashboardConfig extends Vue {
 	}
 
 	async onRemove(tag: string) {
-		this.dashboard.tags = this.dashboard.tags!.filter((t) => t.tag != tag);
+		this.dashboard.tags = this.dashboard.tags?.filter((t) => t.tag != tag) ?? [];
 		await this.save();
 	}
 

@@ -22,6 +22,9 @@ export default createStore({
 		applyDashboardConfigState(appState: AppState, dashboardConfigState: DashboardConfigStateDto) {
 			appState.dashboardConfigState = dashboardConfigState;
 		},
+		applyDashboardState(appState: AppState, { dashboard, state }) {
+			appState.dashboardStates.set(dashboard, state);
+		},
 	},
 	actions: {
 		async fetchState({ dispatch }) {
@@ -47,6 +50,12 @@ export default createStore({
 		async fetchDashboardConfigState({ commit }) {
 			const response = await Backend.meta().dashboardConfig.dashboardConfigList();
 			commit('applyDashboardConfigState', response.data);
+		},
+		async fetchDashboardState({ commit }, dashboardId) {
+			const response = await Backend.meta().dashboardState.dashboardStateList({
+				dashboard: dashboardId,
+			});
+			commit('applyDashboardState', { dashboard: dashboardId, state: response.data });
 		},
 	},
 	modules: {},

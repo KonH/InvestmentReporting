@@ -7,7 +7,7 @@
 	</div>
 	<div v-if="selectedDashboard">
 		<dashboard-config :dashboard="selectedDashboard" @save="onConfigSave" />
-		<dashboard-view />
+		<dashboard-view :dashboard-config="selectedDashboard" />
 	</div>
 </template>
 <script lang="ts">
