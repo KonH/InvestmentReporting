@@ -12,7 +12,7 @@ import { DashboardStateDto, DashboardStateTagDto } from '@/api/meta';
 })
 export default class DashboardChart extends Vue {
 	@Ref('chart')
-	chart!: HTMLCanvasElement;
+	canvas!: HTMLCanvasElement;
 
 	@Prop()
 	dashboard!: DashboardStateDto;
@@ -20,9 +20,21 @@ export default class DashboardChart extends Vue {
 	@Prop()
 	currencyId!: string;
 
+	chart: Chart | undefined;
+
 	mounted() {
+		this.chart = new Chart(this.canvas, this.getConfig());
+	}
+
+	updated() {
+		if (this.chart) {
+			this.chart.config = this.getConfig();
+		}
+	}
+
+	getConfig() {
 		const tags = this.dashboard.tags ?? [];
-		const options = {
+		return {
 			type: 'doughnut',
 			data: {
 				datasets: [
@@ -34,7 +46,6 @@ export default class DashboardChart extends Vue {
 				labels: this.getLabels(tags),
 			},
 		};
-		new Chart(this.chart, options);
 	}
 
 	getData(tags: DashboardStateTagDto[]) {
