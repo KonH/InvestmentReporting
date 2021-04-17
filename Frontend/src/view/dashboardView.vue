@@ -10,7 +10,7 @@
 			</select>
 		</label>
 		<div v-if="selectedCurrency">
-			<dashboard-legend :dashboard="selectedDashboardState" :currency-id="selectedCurrency" />
+			<dashboard-legend :dashboard="selectedDashboardState" :dashboard-config="dashboardConfig" :currency-id="selectedCurrency" />
 		</div>
 	</div>
 </template>

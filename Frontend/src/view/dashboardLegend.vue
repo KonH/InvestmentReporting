@@ -4,7 +4,7 @@
 		<ul>
 			<li v-for="tag in dashboard.tags" :key="tag.tag">
 				<b>{{ tag.tag }}</b
-				>: <money :value="getTagSum(tag.tag)" :currency-id="currencyId" /> <b>{{ getTagPercent(tag.tag) }}%</b>
+				>: <money :value="getTagSum(tag.tag)" :currency-id="currencyId" /> <b>{{ getTagPercentFormat(tag.tag) }}% </b> {{ getTagPercentTargetDiff(tag.tag) }}%
 				<ul>
 					<li v-for="asset in tag.assets" :key="asset.isin">
 						<b>{{ asset.isin }}</b> {{ asset.name }} <money :value="getTagSum(tag.tag)" :currency-id="currencyId" />
@@ -17,7 +17,7 @@
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
 import { Prop } from 'vue-property-decorator';
-import { DashboardStateDto } from '@/api/meta';
+import { DashboardConfigDto, DashboardStateDto } from '@/api/meta';
 import Money from '@/component/money.vue';
 
 @Options({
@@ -27,6 +27,9 @@ import Money from '@/component/money.vue';
 	},
 })
 export default class DashboardLegend extends Vue {
+	@Prop()
+	dashboardConfig!: DashboardConfigDto;
+
 	@Prop()
 	dashboard!: DashboardStateDto;
 
@@ -47,10 +50,27 @@ export default class DashboardLegend extends Vue {
 		return sums ? sums[this.currencyId].virtualSum : 0;
 	}
 
-	getTagPercent(tag: string) {
+	getTagPercentValue(tag: string) {
 		const tagSum = this.getTagSum(tag) ?? 0;
 		const sum = this.sum ?? 0;
-		return ((tagSum / sum) * 100).toFixed(2);
+		return (tagSum / sum) * 100;
+	}
+
+	getTagPercentFormat(tag: string) {
+		return this.getTagPercentValue(tag).toFixed(2);
+	}
+
+	getTagTarget(tag: string) {
+		const tagConfig = this.dashboardConfig.tags?.find((t) => t.tag == tag);
+		return tagConfig?.target ?? 0;
+	}
+
+	getTagPercentTargetDiff(tag: string) {
+		const percent = this.getTagPercentValue(tag);
+		const target = this.getTagTarget(tag);
+		const value = percent - target;
+		const str = value.toFixed(2);
+		return value > 0 ? '+' + str : str;
 	}
 }
 </script>
