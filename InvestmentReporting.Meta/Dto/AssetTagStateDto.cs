@@ -1,3 +1,3 @@
 namespace InvestmentReporting.Meta.Dto {
-	public record AssetTagStateDto(AssetTagSetDto[] Assets);
+	public record AssetTagStateDto(string[] Tags, AssetTagSetDto[] Assets);
 }

@@ -34,9 +34,13 @@ namespace InvestmentReporting.MetaService.Controllers {
 			var userId = new UserId(User.Identity?.Name ?? string.Empty);
 			_logger.LogInformation($"Retrieve asset tags for user '{userId}'");
 			var state = await _readTagsUseCase.Handle(userId);
-			var dto   = new AssetTagStateDto(state.Assets
-				.Select(a => new AssetTagSetDto(a.Isin, a.Name, a.Tags.Select(t => t.ToString()).ToArray()))
-				.ToArray());
+			var dto   = new AssetTagStateDto(
+				state.Tags
+					.Select(t => t.ToString())
+					.ToArray(),
+				state.Assets
+					.Select(a => new AssetTagSetDto(a.Isin, a.Name, a.Tags.Select(t => t.ToString()).ToArray()))
+					.ToArray());
 			return new JsonResult(dto);
 		}
 

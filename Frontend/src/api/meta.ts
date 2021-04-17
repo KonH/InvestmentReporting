@@ -16,6 +16,7 @@ export interface AssetTagSetDto {
 }
 
 export interface AssetTagStateDto {
+  tags?: string[] | null;
   assets?: AssetTagSetDto[] | null;
 }
 

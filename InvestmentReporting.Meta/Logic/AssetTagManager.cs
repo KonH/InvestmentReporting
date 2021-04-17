@@ -29,14 +29,19 @@ namespace InvestmentReporting.Meta.Logic {
 				.SelectMany(b => b.Inventory)
 				.Select(a => a.Isin)
 				.Distinct();
-			return new(assetIsins
+			var assetTags = assetIsins
 				.Select(isin => {
 					var name      = _metadataManager.GetMetadata(isin)?.Name ?? string.Empty;
 					var modelTags = model.Tags.TryGetValue(isin, out var value) ? value : new List<string>();
 					var tags      = modelTags.Select(t => new AssetTag(t)).ToHashSet();
 					return new AssetTagSet(isin, name, tags);
 				})
-				.ToArray());
+				.ToArray();
+			var commonTags = assetTags
+				.SelectMany(a => a.Tags)
+				.Distinct()
+				.ToHashSet();
+			return new(commonTags, assetTags);
 		}
 
 		public async Task AddTag(UserId user, AssetISIN asset, AssetTag tag) {
