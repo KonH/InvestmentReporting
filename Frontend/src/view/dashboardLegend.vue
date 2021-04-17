@@ -5,6 +5,11 @@
 			<li v-for="tag in dashboard.tags" :key="tag.tag">
 				<b>{{ tag.tag }}</b
 				>: <money :value="getTagSum(tag.tag)" :currency-id="currencyId" /> <b>{{ getTagPercent(tag.tag) }}%</b>
+				<ul>
+					<li v-for="asset in tag.assets" :key="asset.isin">
+						<b>{{ asset.isin }}</b> {{ asset.name }} <money :value="getTagSum(tag.tag)" :currency-id="currencyId" />
+					</li>
+				</ul>
 			</li>
 		</ul>
 	</div>
