@@ -1,8 +1,8 @@
 <template>
 	<h3>{{ currencyCode }}</h3>
-	<h4><money :value="virtualSum" :currency-id="currencyId" /></h4>
-	<h5><money-diff :old="realSum" :new="virtualSum" :currency-id="currencyId" /></h5>
-	<portfolio-table :currency-id="currencyId" />
+	<h4><money :value="virtualSum" :currency-code="currencyCode" /></h4>
+	<h5><money-diff :old="realSum" :new="virtualSum" :currency-code="currencyCode" /></h5>
+	<portfolio-table :currency-code="currencyCode" />
 </template>
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
@@ -12,7 +12,6 @@ import { VirtualStateDto } from '@/api/market';
 import { Prop } from 'vue-property-decorator';
 import Money from '@/component/money.vue';
 import MoneyDiff from '@/component/moneyDiff.vue';
-import { StateDto } from '@/api/state';
 
 @Options({
 	name: 'PortfolioCurrencyView',
@@ -23,23 +22,16 @@ import { StateDto } from '@/api/state';
 	},
 })
 export default class PortfolioView extends Vue {
-	@State('activeState')
-	activeState!: StateDto;
-
 	@State('virtualState')
 	virtualState!: VirtualStateDto;
 
 	@Prop()
-	currencyId!: string;
-
-	get currencyCode() {
-		return this.activeState.currencies?.find((c) => c.id == this.currencyId)?.code;
-	}
+	currencyCode!: string;
 
 	get balance() {
 		const balances = this.virtualState.balances;
 		if (balances) {
-			const balance = balances.find((b) => b.currency == this.currencyId);
+			const balance = balances.find((b) => b.currency == this.currencyCode);
 			if (balance) {
 				return balance;
 			}

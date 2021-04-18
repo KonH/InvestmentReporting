@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using InvestmentReporting.State.Entity;
+using InvestmentReporting.State.Logic;
 using Microsoft.Extensions.Logging;
 using Tinkoff.Trading.OpenApi.Models;
 using Tinkoff.Trading.OpenApi.Network;
@@ -11,16 +12,16 @@ namespace InvestmentReporting.Market.Logic {
 	public sealed class MarketCurrencyCandleCollector {
 		readonly ILogger _logger;
 
-		readonly CurrencyManager            _currencyManager;
+		readonly CurrencyConfiguration      _currencyConfig;
 		readonly CurrencyPriceManager       _priceManager;
 		readonly CurrencyIntervalCalculator _intervalCalculator;
 
 		public MarketCurrencyCandleCollector(
 			ILogger<MarketCurrencyCandleCollector> logger,
-			CurrencyManager currencyManager, CurrencyPriceManager priceManager,
+			CurrencyConfiguration currencyConfig, CurrencyPriceManager priceManager,
 			CurrencyIntervalCalculator intervalCalculator) {
 			_logger             = logger;
-			_currencyManager    = currencyManager;
+			_currencyConfig     = currencyConfig;
 			_priceManager       = priceManager;
 			_intervalCalculator = intervalCalculator;
 		}
@@ -30,7 +31,7 @@ namespace InvestmentReporting.Market.Logic {
 				[new("USD")] = "BBG0013HGFT4",
 				[new("EUR")] = "BBG0013HJJ31"
 			};
-			foreach ( var currency in _currencyManager.GetAll() ) {
+			foreach ( var currency in _currencyConfig.GetAll() ) {
 				if ( currency == "RUB" ) {
 					continue;
 				}

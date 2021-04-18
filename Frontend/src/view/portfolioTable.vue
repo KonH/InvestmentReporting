@@ -43,7 +43,7 @@ export default class PortfolioView extends Vue {
 	virtualState!: VirtualStateDto;
 
 	@Prop()
-	currencyId!: string;
+	currencyCode!: string;
 
 	orderTarget = '';
 	orderDescending = false;
@@ -51,7 +51,7 @@ export default class PortfolioView extends Vue {
 	get balance() {
 		const balances = this.virtualState.balances;
 		if (balances) {
-			const balance = balances.find((b) => b.currency == this.currencyId);
+			const balance = balances.find((b) => b.currency == this.currencyCode);
 			if (balance) {
 				return balance;
 			}

@@ -1,5 +1,5 @@
 <template>
-	<span :style="style">{{ sign }}<money :value="priceValueRound" :currency-id="currencyId" /> ({{ percent }}%)</span>
+	<span :style="style">{{ sign }}<money :value="priceValueRound" :currency-code="currencyCode" /> ({{ percent }}%)</span>
 </template>
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
@@ -20,7 +20,7 @@ export default class MoneyDiff extends Vue {
 	new!: number;
 
 	@Prop()
-	currencyId!: string;
+	currencyCode!: string;
 
 	get priceValue() {
 		return this.new - this.old;

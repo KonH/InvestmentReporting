@@ -26,34 +26,25 @@ namespace InvestmentReporting.Import.UseCase {
 				.Distinct()
 				.ToArray();
 
-		protected Dictionary<string, AccountId> CreateCurrencyAccounts(
-			string[] requiredCurrencyCodes, IReadOnlyCollection<ReadOnlyCurrency> currencies,
-			IReadOnlyCollection<ReadOnlyAccount> accounts) =>
+		protected Dictionary<CurrencyCode, AccountId> CreateCurrencyAccounts(
+			CurrencyCode[] requiredCurrencyCodes, IReadOnlyCollection<ReadOnlyAccount> accounts) =>
 			requiredCurrencyCodes
 				.ToDictionary(
 					currencyCode => currencyCode,
 					currencyCode => {
-						var accountId = GetAccountIdForCurrencyCode(currencyCode, currencies, accounts);
-						if ( accountId == null ) {
+						var account = accounts.FirstOrDefault(a => a.Currency == currencyCode);
+						if ( account == null ) {
 							throw new AccountNotFoundException();
 						}
-						return accountId;
+						return account.Id;
 					});
-
-		AccountId? GetAccountIdForCurrencyCode(
-			string code,
-			IReadOnlyCollection<ReadOnlyCurrency> currencies,
-			IReadOnlyCollection<ReadOnlyAccount> accounts) {
-			var currency = currencies.FirstOrDefault(c => c.Code == code);
-			return (currency != null) ? accounts.FirstOrDefault(a => a.Currency == currency.Id)?.Id : null;
-		}
 
 		protected async Task FillIncomeTransfers(
 			UserId user, BrokerId brokerId, IReadOnlyCollection<Transfer> incomeTransfers,
-			Dictionary<string, AccountId> currencyAccounts,
+			Dictionary<CurrencyCode, AccountId> currencyAccounts,
 			Dictionary<AccountId, IReadOnlyCollection<AddIncomeCommand>> incomeAccountCommands) {
 			foreach ( var incomeTransfer in incomeTransfers ) {
-				var accountId = currencyAccounts[incomeTransfer.Currency];
+				var accountId = currencyAccounts[new(incomeTransfer.Currency)];
 				if ( IsAlreadyPresent(incomeTransfer.Date, incomeTransfer.Amount, incomeAccountCommands[accountId]) ) {
 					continue;
 				}
@@ -65,11 +56,11 @@ namespace InvestmentReporting.Import.UseCase {
 
 		protected async Task FillExpenseTransfers(
 			UserId user, BrokerId brokerId, IReadOnlyCollection<Transfer> expenseTransfers,
-			Dictionary<string, AccountId> currencyAccounts,
+			Dictionary<CurrencyCode, AccountId> currencyAccounts,
 			Dictionary<AccountId, IReadOnlyCollection<AddExpenseCommand>> expenseAccountCommands) {
 			foreach ( var expenseTransfer in expenseTransfers ) {
 				var amount    = -expenseTransfer.Amount;
-				var accountId = currencyAccounts[expenseTransfer.Currency];
+				var accountId = currencyAccounts[new(expenseTransfer.Currency)];
 				if ( IsAlreadyPresent(expenseTransfer.Date, amount, expenseAccountCommands[accountId]) ) {
 					continue;
 				}
@@ -96,7 +87,7 @@ namespace InvestmentReporting.Import.UseCase {
 				.Any(model => (model.Date == date) && (model.Asset == id) && (model.Count == count));
 
 		protected Dictionary<AccountId, IReadOnlyCollection<TCommand>> CreateAccountCommands<TCommand>(
-			Dictionary<string, AccountId> currencyAccounts, IEnumerable<TCommand> accountCommands)
+			Dictionary<CurrencyCode, AccountId> currencyAccounts, IEnumerable<TCommand> accountCommands)
 			where TCommand : IAccountCommand =>
 			currencyAccounts.Values.ToDictionary(
 				accountId => accountId,

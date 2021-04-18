@@ -43,16 +43,18 @@ namespace InvestmentReporting.Import.TinkoffBrokerReport {
 			var assets           = _assetParser.ReadAssets(report);
 			var trades           = _tradeParser.ReadTrades(report, assets);
 			var requiredCurrencyCodes = GetRequiredCurrencyCodes(
-				incomeTransfers.Select(t => t.Currency),
-				expenseTransfers.Select(t => t.Currency),
-				trades.Select(t => t.Currency),
-				new [] { "RUB" });
+					incomeTransfers.Select(t => t.Currency),
+					expenseTransfers.Select(t => t.Currency),
+					trades.Select(t => t.Currency),
+					new[] { "RUB" })
+				.Select(s => new CurrencyCode(s))
+				.ToArray();
 			var state  = _stateManager.ReadState(date, user);
 			var broker = state.Brokers.FirstOrDefault(b => b.Id == brokerId);
 			if ( broker == null ) {
 				throw new BrokerNotFoundException();
 			}
-			var currencyAccounts       = CreateCurrencyAccounts(requiredCurrencyCodes, state.Currencies, broker.Accounts);
+			var currencyAccounts       = CreateCurrencyAccounts(requiredCurrencyCodes, broker.Accounts);
 			var allIncomeCommands      = _stateManager.ReadCommands<AddIncomeCommand>(user, brokerId);
 			var incomeAccountCommands  = CreateAccountCommands(currencyAccounts, allIncomeCommands);
 			var allExpenseCommands     = _stateManager.ReadCommands<AddExpenseCommand>(user, brokerId);
@@ -67,7 +69,7 @@ namespace InvestmentReporting.Import.TinkoffBrokerReport {
 
 		async Task FillTrades(
 			UserId user, BrokerId brokerId, IReadOnlyCollection<Trade> trades,
-			Dictionary<string, AccountId> currencyAccounts,
+			Dictionary<CurrencyCode, AccountId> currencyAccounts,
 			IReadOnlyCollection<AddAssetCommand> addCommands, IReadOnlyCollection<ReduceAssetCommand> reduceCommands) {
 			var assetIds = new Dictionary<string, AssetId>();
 			foreach ( var trade in trades ) {
@@ -77,8 +79,8 @@ namespace InvestmentReporting.Import.TinkoffBrokerReport {
 				var price      = trade.Sum;
 				var fee        = trade.Fee;
 				var buy        = trade.Count > 0;
-				var payAccount = currencyAccounts[trade.Currency];
-				var feeAccount = currencyAccounts["RUB"];
+				var payAccount = currencyAccounts[new(trade.Currency)];
+				var feeAccount = currencyAccounts[new("RUB")];
 				if ( buy ) {
 					if ( IsAlreadyPresent(date, isin, count, addCommands) ) {
 						continue;

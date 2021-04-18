@@ -4,7 +4,7 @@
 		<label>
 			Currency:
 			<select ref="currency" v-model="selectedCurrency" class="form-control">
-				<option v-for="currency in currencies" :key="currency.id" :value="currency.id">
+				<option v-for="currency in currencies" :key="currency.code" :value="currency.code">
 					{{ currency.code }}
 				</option>
 			</select>
@@ -12,10 +12,10 @@
 		<div v-if="selectedCurrency">
 			<div class="row">
 				<div class="col">
-					<dashboard-legend :dashboard="selectedDashboardState" :dashboard-config="dashboardConfig" :currency-id="selectedCurrency" />
+					<dashboard-legend :dashboard="selectedDashboardState" :dashboard-config="dashboardConfig" :currency-code="selectedCurrency" />
 				</div>
 				<div class="col">
-					<dashboard-chart :dashboard="selectedDashboardState" :currency-id="selectedCurrency" />
+					<dashboard-chart :dashboard="selectedDashboardState" :currency-code="selectedCurrency" />
 				</div>
 			</div>
 		</div>

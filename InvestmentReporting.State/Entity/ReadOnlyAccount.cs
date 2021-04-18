@@ -1,9 +1,9 @@
 namespace InvestmentReporting.State.Entity {
 	public sealed class ReadOnlyAccount {
-		public readonly AccountId  Id;
-		public readonly CurrencyId Currency;
-		public readonly string     DisplayName;
-		public readonly decimal    Balance;
+		public readonly AccountId    Id;
+		public readonly CurrencyCode Currency;
+		public readonly string       DisplayName;
+		public readonly decimal      Balance;
 
 		public ReadOnlyAccount(Account account) {
 			Id          = account.Id;

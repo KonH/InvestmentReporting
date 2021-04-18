@@ -44,6 +44,7 @@ namespace InvestmentReporting.ImportService {
 			});
 			services.AddSingleton<IIdGenerator, ObjectIdGenerator>();
 			services.AddSingleton<IStateRepository, MongoStateRepository>();
+			services.AddSingleton<CurrencyConfiguration>();
 			services.AddSingleton<StateManager>();
 			services.AddScoped<TransactionStateManager>();
 			services.AddScoped<IStateManager>(sp => sp.GetRequiredService<TransactionStateManager>());

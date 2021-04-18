@@ -14,7 +14,7 @@ namespace InvestmentReporting.UnitTests {
 		readonly DateTimeOffset _date         = DateTimeOffset.MinValue;
 		readonly UserId         _userId       = new("user");
 		readonly BrokerId       _brokerId     = new("broker");
-		readonly CurrencyId     _currencyId   = new("currency");
+		readonly CurrencyCode   _currencyCode = new("USD");
 		readonly AccountId      _payAccountId = new("payAccount");
 		readonly AccountId      _feeAccountId = new("feeAccount");
 		readonly AssetISIN      _isin         = new("TCKR");
@@ -377,7 +377,7 @@ namespace InvestmentReporting.UnitTests {
 		}
 
 		StateManagerBuilder GetStateBuilder() =>
-			new StateManagerBuilder().With(_userId).With(_brokerId).With(_currencyId)
+			new StateManagerBuilder().With(_userId).With(_brokerId).With(_currencyCode)
 				.With(_payAccountId).With(_feeAccountId);
 
 		StateManager GetStateManager() => GetStateBuilder().Build();

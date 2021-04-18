@@ -36,6 +36,7 @@ namespace InvestmentReporting.StateService {
 			});
 			services.AddSingleton<IIdGenerator, ObjectIdGenerator>();
 			services.AddSingleton<IStateRepository, MongoStateRepository>();
+			services.AddSingleton<CurrencyConfiguration>();
 			services.AddSingleton<StateManager>();
 			services.AddSingleton<IStateManager>(sp => sp.GetRequiredService<StateManager>());
 			services.AddSingleton<ReadStateUseCase>();
@@ -43,7 +44,6 @@ namespace InvestmentReporting.StateService {
 			services.AddSingleton<ReadOperationsUseCase>();
 			services.AddSingleton<ResetOperationsUseCase>();
 			services.AddSingleton<CreateBrokerUseCase>();
-			services.AddSingleton<CreateCurrencyUseCase>();
 			services.AddSingleton<CreateAccountUseCase>();
 			services.AddSingleton<AddIncomeUseCase>();
 			services.AddSingleton<AddExpenseUseCase>();

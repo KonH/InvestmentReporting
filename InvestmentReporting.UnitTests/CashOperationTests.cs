@@ -15,7 +15,7 @@ namespace InvestmentReporting.UnitTests {
 		readonly DateTimeOffset  _date            = DateTimeOffset.MinValue;
 		readonly UserId          _userId          = new("user");
 		readonly BrokerId        _brokerId        = new("broker");
-		readonly CurrencyId      _currencyId      = new("currency");
+		readonly CurrencyCode    _currencyCode    = new("USD");
 		readonly AccountId       _accountId       = new("account");
 		readonly IncomeCategory  _incomeCategory  = new("income_category");
 		readonly ExpenseCategory _expenseCategory = new("expense_category");
@@ -171,7 +171,7 @@ namespace InvestmentReporting.UnitTests {
 
 		StateManagerBuilder GetStateBuilder() =>
 			new StateManagerBuilder()
-				.With(_userId).With(_brokerId).With(_currencyId).With(_accountId).With(_assetId, new(string.Empty), 1);
+				.With(_userId).With(_brokerId).With(_currencyCode).With(_accountId).With(_assetId, new(string.Empty), 1);
 
 		StateManager GetStateManager() => GetStateBuilder().Build();
 	}

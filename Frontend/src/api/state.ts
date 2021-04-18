@@ -48,7 +48,6 @@ export interface BrokerDto {
 }
 
 export interface CurrencyDto {
-  id?: string | null;
   code?: string | null;
   format?: string | null;
 }
@@ -338,22 +337,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     brokerCreate: (query: { displayName: string }, params: RequestParams = {}) =>
       this.request<void, void>({
         path: `/Broker`,
-        method: "POST",
-        query: query,
-        ...params,
-      }),
-  };
-  currency = {
-    /**
-     * No description
-     *
-     * @tags Currency
-     * @name CurrencyCreate
-     * @request POST:/Currency
-     */
-    currencyCreate: (query: { code: string; format: string }, params: RequestParams = {}) =>
-      this.request<void, void>({
-        path: `/Currency`,
         method: "POST",
         query: query,
         ...params,

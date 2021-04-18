@@ -11,5 +11,5 @@ import { Options, Vue } from 'vue-class-component';
 @Options({
 	name: 'AddBrokerCard',
 })
-export default class AddCurrencyCard extends Vue {}
+export default class AddBrokerCard extends Vue {}
 </script>

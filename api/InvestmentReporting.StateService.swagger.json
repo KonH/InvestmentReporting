@@ -257,39 +257,6 @@
         }
       }
     },
-    "/Currency": {
-      "post": {
-        "tags": [
-          "Currency"
-        ],
-        "parameters": [
-          {
-            "name": "code",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "format",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Success"
-          },
-          "400": {
-            "description": "Bad Request"
-          }
-        }
-      }
-    },
     "/Expense": {
       "post": {
         "tags": [
@@ -628,10 +595,6 @@
       "CurrencyDto": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "string",
-            "nullable": true
-          },
           "code": {
             "type": "string",
             "nullable": true

@@ -44,8 +44,8 @@ namespace InvestmentReporting.MarketService {
 			services.AddSingleton<ICurrencyPriceRepository, MongoCurrencyPriceRepository>();
 			services.AddSingleton<IApiKeyProvider, EnvironmentApiKeyProvider>();
 			services.AddSingleton<IsinProvider>();
+			services.AddSingleton<CurrencyConfiguration>();
 			services.AddSingleton<MetadataManager>();
-			services.AddSingleton<CurrencyManager>();
 			services.AddSingleton<AssetPriceManager>();
 			services.AddSingleton<CurrencyPriceManager>();
 			services.AddSingleton<AssetIntervalCalculator>();

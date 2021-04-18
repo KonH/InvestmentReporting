@@ -18,7 +18,7 @@ export default class DashboardChart extends Vue {
 	dashboard!: DashboardStateDto;
 
 	@Prop()
-	currencyId!: string;
+	currencyCode!: string;
 
 	chart: Chart | undefined;
 
@@ -50,10 +50,10 @@ export default class DashboardChart extends Vue {
 
 	getData(tags: DashboardStateTagDto[]) {
 		const totalSums = this.dashboard.sums;
-		const totalSum = totalSums ? totalSums[this.currencyId].virtualSum ?? 1 : 1;
+		const totalSum = totalSums ? totalSums[this.currencyCode].virtualSum ?? 1 : 1;
 		return tags.map((t) => {
 			const sums = t.sums;
-			const sum = sums ? sums[this.currencyId].virtualSum ?? 0 : 0;
+			const sum = sums ? sums[this.currencyCode].virtualSum ?? 0 : 0;
 			const percent = (sum / totalSum) * 100;
 			const pow = Math.pow(10, 2);
 			return Math.round(percent * pow) / pow;

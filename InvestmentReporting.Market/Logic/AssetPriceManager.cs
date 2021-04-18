@@ -29,7 +29,7 @@ namespace InvestmentReporting.Market.Logic {
 				.FirstOrDefault(m => m.Isin == isin);
 
 		public VirtualBalance GetVirtualBalance(
-			DateTimeOffset date, UserId user, CurrencyId currency, IReadOnlyCollection<VirtualAsset> inventory) {
+			DateTimeOffset date, UserId user, CurrencyCode currency, IReadOnlyCollection<VirtualAsset> inventory) {
 			var state = _stateManager.ReadState(date, user);
 			var accounts = state.Brokers
 				.SelectMany(b => b.Accounts)
@@ -54,16 +54,6 @@ namespace InvestmentReporting.Market.Logic {
 		public IEnumerable<AddAssetCommand> GetAddAssetCommands(AssetISIN isin) =>
 			_stateManager.ReadCommands<AddAssetCommand>()
 				.Where(c => c.Isin == isin);
-
-		public CurrencyId GetCurrency(UserId user, BrokerId broker, AssetId asset) {
-			var assetBuy = _stateManager.ReadCommands<AddExpenseCommand>(user)
-				.First(a => (a.Category == ExpenseCategory.BuyAsset) && (a.Asset == asset));
-			var accountId = assetBuy.Account;
-			var state = _stateManager.ReadState(user);
-			return state.Brokers.First(b => b.Id == broker)
-				.Accounts.First(a => a.Id == accountId)
-				.Currency;
-		}
 
 		public decimal GetRealPriceSum(DateTimeOffset date, UserId user, AssetId asset) {
 			var assetIncomes = _stateManager.ReadCommands<AddIncomeCommand>(date, user, asset)

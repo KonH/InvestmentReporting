@@ -8,16 +8,18 @@ using InvestmentReporting.Market.Logic;
 
 namespace InvestmentReporting.Market.UseCase {
 	public sealed class ReadVirtualStateUseCase {
-		readonly IStateManager     _stateManager;
-		readonly MetadataManager   _metadataManager;
-		readonly AssetPriceManager _priceManager;
-		readonly ExchangeManager   _exchangeManager;
+		readonly IStateManager         _stateManager;
+		readonly MetadataManager       _metadataManager;
+		readonly CurrencyConfiguration _currencyConfig;
+		readonly AssetPriceManager     _priceManager;
+		readonly ExchangeManager       _exchangeManager;
 
 		public ReadVirtualStateUseCase(
-			IStateManager stateManager, MetadataManager metadataManager, AssetPriceManager priceManager,
-			ExchangeManager exchangeManager) {
+			IStateManager stateManager, MetadataManager metadataManager, CurrencyConfiguration currencyConfig,
+			AssetPriceManager priceManager, ExchangeManager exchangeManager) {
 			_stateManager    = stateManager;
 			_metadataManager = metadataManager;
+			_currencyConfig  = currencyConfig;
 			_priceManager    = priceManager;
 			_exchangeManager = exchangeManager;
 		}
@@ -31,7 +33,7 @@ namespace InvestmentReporting.Market.UseCase {
 						var metadata     = _metadataManager.GetMetadata(asset.Isin);
 						var name         = metadata?.Name;
 						var type         = metadata?.Type;
-						var currency     = _priceManager.GetCurrency(user, broker.Id, asset.Id);
+						var currency     = asset.Currency;
 						var realSum      = _priceManager.GetRealPriceSum(date, user, asset.Id);
 						var realPrice    = realSum / asset.Count;
 						var virtualPrice = _priceManager.GetVirtualPricePerOne(asset.Isin, date) ?? realPrice;
@@ -44,19 +46,19 @@ namespace InvestmentReporting.Market.UseCase {
 							yearDividend, dividendSum, currency);
 					}))
 				.ToArray();
-			var balances = CalculateBalances(state, inventory, date, user);
-			var summary  = CalculateSummary(balances, date, user);
+			var balances = CalculateBalances(inventory, date, user);
+			var summary  = CalculateSummary(balances, date);
 			return new VirtualState(summary, balances);
 		}
 
 		IReadOnlyCollection<VirtualBalance> CalculateBalances(
-			ReadOnlyState state, IReadOnlyCollection<VirtualAsset> inventory, DateTimeOffset date, UserId user) =>
-			state.Currencies
-				.Select(currency => _priceManager.GetVirtualBalance(date, user, currency.Id, inventory))
+			IReadOnlyCollection<VirtualAsset> inventory, DateTimeOffset date, UserId user) =>
+			_currencyConfig.GetAll()
+				.Select(currency => _priceManager.GetVirtualBalance(date, user, currency, inventory))
 				.ToArray();
 
-		IReadOnlyDictionary<CurrencyId, CurrencyBalance> CalculateSummary(
-			IReadOnlyCollection<VirtualBalance> balances, DateTimeOffset date, UserId user) {
+		IReadOnlyDictionary<CurrencyCode, CurrencyBalance> CalculateSummary(
+			IReadOnlyCollection<VirtualBalance> balances, DateTimeOffset date) {
 			return balances
 				.ToDictionary(b => b.Currency, b => {
 					var selfCurrency = b.Currency;
@@ -70,9 +72,9 @@ namespace InvestmentReporting.Market.UseCase {
 							continue;
 						}
 						otherReal += _exchangeManager.Exchange(
-							otherCurrency, selfCurrency, other.RealSum, date, user);
+							otherCurrency, selfCurrency, other.RealSum, date);
 						otherVirtual += _exchangeManager.Exchange(
-							otherCurrency, selfCurrency, other.VirtualSum, date, user);
+							otherCurrency, selfCurrency, other.VirtualSum, date);
 					}
 					return new CurrencyBalance(selfReal + otherReal, selfVirtual + otherVirtual);
 				});

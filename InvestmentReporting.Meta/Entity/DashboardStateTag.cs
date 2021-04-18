@@ -3,5 +3,5 @@ using InvestmentReporting.State.Entity;
 
 namespace InvestmentReporting.Meta.Entity {
 	public record DashboardStateTag(
-		string Tag, IReadOnlyCollection<DashboardAsset> Assets, IReadOnlyDictionary<CurrencyId, SumState> Sums);
+		string Tag, IReadOnlyCollection<DashboardAsset> Assets, IReadOnlyDictionary<CurrencyCode, SumState> Sums);
 }

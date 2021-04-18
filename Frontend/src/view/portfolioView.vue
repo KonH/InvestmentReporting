@@ -1,6 +1,6 @@
 <template>
 	<portfolio-summary-view />
-	<portfolio-currency-view v-for="balance in balances" :key="balance.currency" :currency-id="balance.currency" />
+	<portfolio-currency-view v-for="balance in balances" :key="balance.currency" :currency-code="balance.currency" />
 </template>
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';

@@ -63,22 +63,19 @@ namespace InvestmentReporting.Market.Logic {
 			}
 		}
 
-		public decimal GetPriceAt(CurrencyId from, CurrencyId to, DateTimeOffset date, UserId user) {
-			var state    = _stateManager.ReadState(date, user);
-			var fromCode = state.Currencies.First(c => c.Id == from).Code;
-			var toCode   = state.Currencies.First(c => c.Id == to).Code;
-			_logger.LogTrace($"Get price from '{fromCode}' to '{toCode}'");
-			if ( fromCode != "RUB" ) {
-				var price = GetPriceAt(fromCode, date);
-				_logger.LogTrace($"Direct price from '{fromCode}' to '{toCode}' is {price}");
+		public decimal GetPriceAt(CurrencyCode from, CurrencyCode to, DateTimeOffset date) {
+			_logger.LogTrace($"Get price from '{from}' to '{to}'");
+			if ( from != "RUB" ) {
+				var price = GetPriceAt(from, date);
+				_logger.LogTrace($"Direct price from '{from}' to '{to}' is {price}");
 				return price;
 			}
-			var priceDiv = GetPriceAt(toCode, date);
+			var priceDiv = GetPriceAt(to, date);
 			if ( priceDiv == 0 ) {
 				return 0;
 			}
 			var inversePrice = 1m / priceDiv;
-			_logger.LogTrace($"Inverse price from '{fromCode}' to '{toCode}' is {inversePrice}");
+			_logger.LogTrace($"Inverse price from '{from}' to '{to}' is {inversePrice}");
 			return inversePrice;
 		}
 

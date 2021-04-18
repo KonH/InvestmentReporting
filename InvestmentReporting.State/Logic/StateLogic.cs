@@ -15,14 +15,6 @@ namespace InvestmentReporting.State.Logic {
 						new(m.Id), m.DisplayName, new List<Account>(), new List<Asset>()));
 				}
 			);
-			manager.Bind<CreateCurrencyCommand, CreateCurrencyModel>(
-				cmd => new(cmd.Date, cmd.User, cmd.Id, cmd.Code, cmd.Format),
-				m => new(m.Date, new(m.User), new(m.Id), new(m.Code), new(m.Format)),
-				(state, m) => {
-					state.Currencies.Add(new(
-						new(m.Id), new(m.Code), new(m.Format)));
-				}
-			);
 			manager.Bind<CreateAccountCommand, CreateAccountModel>(
 				cmd => new (cmd.Date, cmd.User, cmd.Broker, cmd.Id, cmd.Currency, cmd.DisplayName),
 				m => new (m.Date, new(m.User), new(m.Broker), new(m.Id), new(m.Currency), m.DisplayName),
@@ -74,13 +66,13 @@ namespace InvestmentReporting.State.Logic {
 				}
 			);
 			manager.Bind<AddAssetCommand, AddAssetModel>(
-				cmd => new(cmd.Date, cmd.User, cmd.Broker, cmd.Asset, cmd.Isin, cmd.Count),
-				m => new(m.Date, new(m.User), new(m.Broker), new(m.Id), new(m.Isin), m.Count),
+				cmd => new(cmd.Date, cmd.User, cmd.Broker, cmd.Asset, cmd.Isin, cmd.Currency, cmd.Count),
+				m => new(m.Date, new(m.User), new(m.Broker), new(m.Id), new(m.Isin), new(m.Currency), m.Count),
 				(state, m) => {
 					var brokerId = new BrokerId(m.Broker);
 					var broker   = state.Brokers.First(b => b.Id == brokerId);
 					broker.Inventory.Add(new(
-						new(m.Asset), new(m.Isin), m.Count));
+						new(m.Asset), new(m.Isin), new(m.Currency), m.Count));
 				}
 			);
 			manager.Bind<ReduceAssetCommand, ReduceAssetModel>(

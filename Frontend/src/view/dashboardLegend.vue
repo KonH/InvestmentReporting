@@ -1,13 +1,14 @@
 <template>
 	<div>
-		<b>Total:</b> <money :value="sum" :currency-id="currencyId" />
+		<b>Total:</b> <money :value="sum" :currency-code="currencyCode" />
 		<ul>
 			<li v-for="tag in dashboard.tags" :key="tag.tag">
 				<b>{{ tag.tag }}</b
-				>: <money :value="getTagSum(tag.tag)" :currency-id="currencyId" /> <b>{{ getTagPercentFormat(tag.tag) }}% </b> {{ getTagPercentTargetDiff(tag.tag) }}%
+				>: <money :value="getTagSum(tag.tag)" :currency-code="currencyCode" /> <b>{{ getTagPercentFormat(tag.tag) }}% </b>
+				{{ getTagPercentTargetDiff(tag.tag) }}%
 				<ul>
 					<li v-for="asset in tag.assets" :key="asset.isin">
-						<b>{{ asset.isin }}</b> {{ asset.name }} <money :value="getAssetSum(asset.sums)" :currency-id="currencyId" />
+						<b>{{ asset.isin }}</b> {{ asset.name }} <money :value="getAssetSum(asset.sums)" :currency-code="currencyCode" />
 					</li>
 				</ul>
 			</li>
@@ -34,11 +35,11 @@ export default class DashboardLegend extends Vue {
 	dashboard!: DashboardStateDto;
 
 	@Prop()
-	currencyId!: string;
+	currencyCode!: string;
 
 	get sum() {
 		const sums = this.dashboard.sums;
-		return sums ? sums[this.currencyId].virtualSum : 0;
+		return sums ? sums[this.currencyCode].virtualSum : 0;
 	}
 
 	getTagSum(tag: string) {
@@ -47,7 +48,7 @@ export default class DashboardLegend extends Vue {
 			return 0;
 		}
 		const sums = tags.find((t) => t.tag == tag)?.sums;
-		return sums ? sums[this.currencyId].virtualSum : 0;
+		return sums ? sums[this.currencyCode].virtualSum : 0;
 	}
 
 	getTagPercentValue(tag: string) {
@@ -74,7 +75,7 @@ export default class DashboardLegend extends Vue {
 	}
 
 	getAssetSum(sums: Record<string, SumStateDto>) {
-		const sum = sums ? sums[this.currencyId] : undefined;
+		const sum = sums ? sums[this.currencyCode] : undefined;
 		return sum ? sum.virtualSum : 0;
 	}
 }

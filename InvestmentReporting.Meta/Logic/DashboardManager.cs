@@ -8,21 +8,24 @@ using InvestmentReporting.State.Entity;
 using InvestmentReporting.Market.Entity;
 using InvestmentReporting.Market.Logic;
 using InvestmentReporting.Meta.Entity;
+using InvestmentReporting.State.Logic;
 
 namespace InvestmentReporting.Meta.Logic {
 	public sealed class DashboardManager {
-		readonly IDashboardRepository _repository;
-		readonly AssetTagManager      _tagManager;
-		readonly MetadataManager      _metadataManager;
-		readonly ExchangeManager      _exchangeManager;
+		readonly IDashboardRepository  _repository;
+		readonly AssetTagManager       _tagManager;
+		readonly MetadataManager       _metadataManager;
+		readonly ExchangeManager       _exchangeManager;
+		readonly CurrencyConfiguration _currencyConfig;
 
 		public DashboardManager(
 			IDashboardRepository repository, AssetTagManager tagManager, MetadataManager metadataManager,
-			ExchangeManager exchangeManager) {
+			ExchangeManager exchangeManager, CurrencyConfiguration currencyConfig) {
 			_repository      = repository;
 			_tagManager      = tagManager;
 			_metadataManager = metadataManager;
 			_exchangeManager = exchangeManager;
+			_currencyConfig  = currencyConfig;
 		}
 
 		public async Task<DashboardConfigState> GetConfig(UserId user) {
@@ -52,7 +55,6 @@ namespace InvestmentReporting.Meta.Logic {
 			DateTimeOffset date, UserId user, DashboardId dashboardId, ReadOnlyState state, VirtualState virtualState) {
 			var configs       = await _repository.GetUserDashboardConfigs(user);
 			var dashboard     = configs.First(c => c.Id == dashboardId);
-			var currencies    = state.Currencies;
 			var tagState      = await _tagManager.GetTags(user);
 			var assetNames    = CollectAssetNames(state.Brokers.SelectMany(b => b.Inventory).ToArray());
 			var assetTags     = CollectAssetTags(tagState);
@@ -66,7 +68,7 @@ namespace InvestmentReporting.Meta.Logic {
 						.Where(isin => virtualAssets.Any(a => a.Isin == isin))
 						.Select(isin => {
 							var name = assetNames.GetValueOrDefault(isin) ?? string.Empty;
-							var sums = CalculateAssetSums(isin, currencies, virtualAssets, date, user);
+							var sums = CalculateAssetSums(isin, virtualAssets, date);
 							return new DashboardAsset(isin, name, sums);
 						})
 						.ToArray();
@@ -104,36 +106,35 @@ namespace InvestmentReporting.Meta.Logic {
 						.Select(a => a.Isin)
 						.ToArray());
 
-		IReadOnlyDictionary<CurrencyId, SumState> CalculateAssetSums(
-			AssetISIN isin, IReadOnlyCollection<ReadOnlyCurrency> currencies,
-			IReadOnlyCollection<VirtualAsset> allAssets, DateTimeOffset date, UserId user) {
+		IReadOnlyDictionary<CurrencyCode, SumState> CalculateAssetSums(
+			AssetISIN isin, IReadOnlyCollection<VirtualAsset> allAssets, DateTimeOffset date) {
 			var assets = allAssets
 				.Where(a => a.Isin == isin)
 				.ToArray();
 			if ( assets.Length == 0 ) {
-				return new Dictionary<CurrencyId, SumState>();
+				return new Dictionary<CurrencyCode, SumState>();
 			}
 			var baseCurrency   = assets[0].Currency;
 			var baseRealSum    = assets.Sum(a => a.RealSum);
 			var baseVirtualSum = assets.Sum(a => a.VirtualSum);
-			return currencies
+			return _currencyConfig.GetAll()
 				.ToDictionary(
-					c => c.Id,
+					c => c,
 					c => {
-						if ( c.Id == baseCurrency ) {
+						if ( c == baseCurrency ) {
 							return new SumState(baseRealSum, baseVirtualSum);
 						}
-						var realSum    = _exchangeManager.Exchange(baseCurrency, c.Id, baseRealSum, date, user);
-						var virtualSum = _exchangeManager.Exchange(baseCurrency, c.Id, baseRealSum, date, user);
+						var realSum    = _exchangeManager.Exchange(baseCurrency, c, baseRealSum, date);
+						var virtualSum = _exchangeManager.Exchange(baseCurrency, c, baseRealSum, date);
 						return new SumState(realSum, virtualSum);
 					}
 				);
 		}
 
-		IReadOnlyDictionary<CurrencyId, SumState> AggregateSums(
-			IEnumerable<IReadOnlyDictionary<CurrencyId, SumState>> sums) =>
+		IReadOnlyDictionary<CurrencyCode, SumState> AggregateSums(
+			IEnumerable<IReadOnlyDictionary<CurrencyCode, SumState>> sums) =>
 			sums.Aggregate(
-				new Dictionary<CurrencyId, SumState>(),
+				new Dictionary<CurrencyCode, SumState>(),
 				(dict, sumState) => {
 					foreach ( var (currency, sum) in sumState ) {
 						if ( !dict.TryGetValue(currency, out var aggregateSum) ) {

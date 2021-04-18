@@ -18,10 +18,10 @@ export default class Money extends Vue {
 	value!: number;
 
 	@Prop()
-	currencyId!: string;
+	currencyCode!: string;
 
 	get format() {
-		const currency = this.activeState.currencies?.find((c) => c.id == this.currencyId) as CurrencyDto;
+		const currency = this.activeState.currencies?.find((c) => c.code == this.currencyCode) as CurrencyDto;
 		const format = currency.format;
 		const sign = this.value < 0 ? '-' : '';
 		const value = Math.abs(this.value).toLocaleString();

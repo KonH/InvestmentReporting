@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using InvestmentReporting.State.Entity;
+using InvestmentReporting.State.Logic;
 using InvestmentReporting.State.UseCase;
 using InvestmentReporting.StateService.Dto;
 using Microsoft.AspNetCore.Authorization;
@@ -15,15 +16,18 @@ namespace InvestmentReporting.StateService.Controllers {
 	[ApiController]
 	[Route("[controller]")]
 	public class StateController : ControllerBase {
-		readonly ILogger           _logger;
-		readonly ReadStateUseCase  _readUseCase;
-		readonly ResetStateUseCase _resetUseCase;
+		readonly ILogger               _logger;
+		readonly ReadStateUseCase      _readUseCase;
+		readonly ResetStateUseCase     _resetUseCase;
+		readonly CurrencyConfiguration _currencyConfig;
 
 		public StateController(
-			ILogger<StateController> logger, ReadStateUseCase readUseCase, ResetStateUseCase resetUseCase) {
-			_logger       = logger;
-			_readUseCase  = readUseCase;
-			_resetUseCase = resetUseCase;
+			ILogger<StateController> logger, ReadStateUseCase readUseCase, ResetStateUseCase resetUseCase,
+			CurrencyConfiguration currencyConfig) {
+			_logger         = logger;
+			_readUseCase    = readUseCase;
+			_resetUseCase   = resetUseCase;
+			_currencyConfig = currencyConfig;
 		}
 
 		[HttpGet]
@@ -44,8 +48,8 @@ namespace InvestmentReporting.StateService.Controllers {
 						.Select(a => new AssetDto(a.Id, a.Isin, a.Count))
 						.ToArray()))
 				.ToArray();
-			var currencies = state.Currencies
-				.Select(c => new CurrencyDto(c.Id, c.Code, c.Format))
+			var currencies = _currencyConfig.GetAll()
+				.Select(c => new CurrencyDto(c, _currencyConfig.GetFormat(c)))
 				.ToArray();
 			var dto = new StateDto(brokers, currencies);
 			return new JsonResult(dto);

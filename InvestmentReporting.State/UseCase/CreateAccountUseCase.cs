@@ -9,20 +9,24 @@ using InvestmentReporting.State.UseCase.Exceptions;
 
 namespace InvestmentReporting.State.UseCase {
 	public sealed class CreateAccountUseCase {
-		readonly IStateManager _stateManager;
-		readonly IIdGenerator  _idGenerator;
+		readonly IStateManager         _stateManager;
+		readonly IIdGenerator          _idGenerator;
+		readonly CurrencyConfiguration _currencyConfig;
 
-		public CreateAccountUseCase(IStateManager stateManager, IIdGenerator idGenerator) {
-			_stateManager = stateManager;
-			_idGenerator  = idGenerator;
+		public CreateAccountUseCase(
+			IStateManager stateManager, IIdGenerator idGenerator, CurrencyConfiguration currencyConfig) {
+			_stateManager   = stateManager;
+			_idGenerator    = idGenerator;
+			_currencyConfig = currencyConfig;
 		}
 
-		public async Task Handle(DateTimeOffset date, UserId user, BrokerId broker, CurrencyId currency, string displayName) {
+		public async Task Handle(
+			DateTimeOffset date, UserId user, BrokerId broker, CurrencyCode currency, string displayName) {
 			if ( string.IsNullOrWhiteSpace(displayName) ) {
 				throw new InvalidAccountException();
 			}
 			var state = _stateManager.ReadState(date, user);
-			if ( state.Currencies.All(c => c.Id != currency) ) {
+			if ( !_currencyConfig.HasCurrency(currency) ) {
 				throw new CurrencyNotFoundException();
 			}
 			var brokerState = state.Brokers.FirstOrDefault(b => b.Id == broker);

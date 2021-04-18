@@ -3,10 +3,10 @@
 	Contains all balance & instruments price converted to each currency using last exchange price:
 	<ul>
 		<li v-for="(summary, currency) in virtualState.summary" :key="currency">
-			<b>{{ currencyCode(currency) }}</b
+			<b>{{ currency }}</b
 			>:
-			<money :value="summary.virtualSum" :currency-id="currency" />
-			<money-diff :old="summary.realSum" :new="summary.virtualSum" :currency-id="currency" class="ml-2" />
+			<money :value="summary.virtualSum" :currency-code="currency" />
+			<money-diff :old="summary.realSum" :new="summary.virtualSum" :currency-code="currency" class="ml-2" />
 		</li>
 	</ul>
 </template>
@@ -31,9 +31,5 @@ export default class PortfolioSummaryView extends Vue {
 
 	@State('virtualState')
 	virtualState!: VirtualStateDto;
-
-	currencyCode(currency: string) {
-		return this.activeState.currencies?.find((c) => c.id == currency)?.code;
-	}
 }
 </script>

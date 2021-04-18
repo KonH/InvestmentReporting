@@ -338,9 +338,9 @@ namespace InvestmentReporting.UnitTests {
 			new StateManagerBuilder()
 				.With(_userId)
 				.With(_brokerId)
-				.With(new CurrencyId("USD"))
+				.With(new CurrencyCode("USD"))
 				.With(_usdAccountId)
-				.With(new CurrencyId("RUB"))
+				.With(new CurrencyCode("RUB"))
 				.With(_rubAccountId)
 				.Build();
 

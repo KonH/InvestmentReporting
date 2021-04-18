@@ -12,8 +12,8 @@ namespace InvestmentReporting.Market.Logic {
 			_priceManager = priceManager;
 		}
 
-		public decimal Exchange(CurrencyId from, CurrencyId to, decimal amount, DateTimeOffset date, UserId user) {
-			var result = amount * _priceManager.GetPriceAt(from, to, date, user);
+		public decimal Exchange(CurrencyCode from, CurrencyCode to, decimal amount, DateTimeOffset date) {
+			var result = amount * _priceManager.GetPriceAt(from, to, date);
 			_logger.LogTrace($"Exchange {amount} ({from}) to {result} ({to})");
 			return result;
 		}

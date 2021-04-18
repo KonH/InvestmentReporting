@@ -10,7 +10,7 @@
 		<label>
 			Currency:
 			<select ref="currency" class="form-control">
-				<option v-for="currency in currencies" :key="currency.id" :value="currency.id">{{ currency.code }} ({{ currency.format }})</option>
+				<option v-for="currency in currencies" :key="currency.code" :value="currency.code">{{ currency.code }} ({{ currency.format }})</option>
 			</select>
 		</label>
 	</div>
@@ -47,11 +47,11 @@ export default class AddAccount extends Vue {
 
 	async onclick() {
 		const brokerId = this.$route.params.broker as string;
-		const currencyId = this.currencySelect.value;
+		const currencyCode = this.currencySelect.value;
 		const result = await Backend.tryFetch(
 			Backend.state().account.accountCreate({
 				broker: brokerId,
-				currency: currencyId,
+				currency: currencyCode,
 				displayName: this.displayNameInput.value,
 			})
 		);

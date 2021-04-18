@@ -3,7 +3,6 @@ import LoginView from '@/view/loginView.vue';
 import RegisterView from '@/view/registerView.vue';
 import Backend from '@/service/backend';
 import AddBrokerView from '@/view/addBrokerView.vue';
-import AddCurrencyView from '@/view/addCurrencyView.vue';
 import AddAccountView from '@/view/addAccountView.vue';
 import AddIncomeView from '@/view/addIncomeView.vue';
 import AddExpenseView from '@/view/addExpenseView.vue';
@@ -48,11 +47,6 @@ const routes: Array<RouteRecordRaw> = [
 		path: '/broker/new',
 		name: 'Add Broker',
 		component: AddBrokerView,
-	},
-	{
-		path: '/currency/new',
-		name: 'Add Currency',
-		component: AddCurrencyView,
 	},
 	{
 		path: '/import',

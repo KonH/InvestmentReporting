@@ -13,7 +13,7 @@ namespace InvestmentReporting.UnitTests {
 		DateTimeOffset _date       = DateTimeOffset.MinValue;
 		string         _userId     = string.Empty;
 		string         _brokerId   = string.Empty;
-		string         _currencyId = string.Empty;
+		string         _currencyCode = string.Empty;
 
 		public StateManagerBuilder With(DateTimeOffset date) {
 			_date = date;
@@ -31,19 +31,18 @@ namespace InvestmentReporting.UnitTests {
 			return this;
 		}
 
-		public StateManagerBuilder With(CurrencyId currency) {
-			_currencyId = currency.ToString();
-			With(new CreateCurrencyModel(_date, _userId, _currencyId, _currencyId, string.Empty));
+		public StateManagerBuilder With(CurrencyCode currency) {
+			_currencyCode = currency.ToString();
 			return this;
 		}
 
 		public StateManagerBuilder With(AccountId account) {
-			With(new CreateAccountModel(_date, _userId, _brokerId, account.ToString(), _currencyId, string.Empty));
+			With(new CreateAccountModel(_date, _userId, _brokerId, account.ToString(), _currencyCode, string.Empty));
 			return this;
 		}
 
 		public StateManagerBuilder With(AssetId asset, AssetISIN isin, int count) {
-			With(new AddAssetModel(_date, _userId, _brokerId, asset, isin, count));
+			With(new AddAssetModel(_date, _userId, _brokerId, asset, isin, _currencyCode, count));
 			return this;
 		}
 

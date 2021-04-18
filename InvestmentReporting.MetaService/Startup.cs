@@ -46,6 +46,7 @@ namespace InvestmentReporting.MetaService {
 			services.AddSingleton<ICurrencyPriceRepository, MongoCurrencyPriceRepository>();
 			services.AddSingleton<IAssetPriceRepository, MongoAssetPriceRepository>();
 			services.AddSingleton<IDashboardRepository, MongoDashboardRepository>();
+			services.AddSingleton<CurrencyConfiguration>();
 			services.AddSingleton<MetadataManager>();
 			services.AddSingleton<AssetTagManager>();
 			services.AddSingleton<DashboardManager>();

@@ -5,7 +5,7 @@
 	<td>{{ operation.brokerName }}</td>
 	<td>{{ operation.accountName }}</td>
 	<td>{{ operation.assetIsin }}</td>
-	<td><money :currency-id="operation.currency" :value="operation.amount" /></td>
+	<td><money :currency-code="operation.currency" :value="operation.amount" /></td>
 </template>
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';

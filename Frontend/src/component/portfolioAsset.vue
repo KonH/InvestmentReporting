@@ -5,11 +5,11 @@
 	<td>{{ asset.name }}</td>
 	<!-- Price -->
 	<td>
-		<money :value="asset.virtualPrice" :currency-id="asset.currency" />
+		<money :value="asset.virtualPrice" :currency-code="asset.currency" />
 	</td>
 	<!-- Price Change -->
 	<td>
-		<money-value-diff :old="asset.realPrice" :new="asset.virtualPrice" :currency-id="asset.currency" />
+		<money-value-diff :old="asset.realPrice" :new="asset.virtualPrice" :currency-code="asset.currency" />
 	</td>
 	<!-- % Price Change -->
 	<td>
@@ -19,19 +19,19 @@
 	<td>{{ asset.count }}</td>
 	<!-- Sum -->
 	<td>
-		<money :value="asset.virtualSum" :currency-id="asset.currency" />
+		<money :value="asset.virtualSum" :currency-code="asset.currency" />
 	</td>
 	<!-- Sum Change -->
 	<td>
-		<money-value-diff :old="asset.realSum" :new="asset.virtualSum" :currency-id="asset.currency" />
+		<money-value-diff :old="asset.realSum" :new="asset.virtualSum" :currency-code="asset.currency" />
 	</td>
 	<!-- Div/year Sum -->
 	<td>
-		<money :value="asset.yearDividend" :currency-id="asset.currency" />
+		<money :value="asset.yearDividend" :currency-code="asset.currency" />
 	</td>
 	<!-- Div/total Sum -->
 	<td>
-		<money :value="asset.dividendSum" :currency-id="asset.currency" />
+		<money :value="asset.dividendSum" :currency-code="asset.currency" />
 	</td>
 </template>
 <script lang="ts">

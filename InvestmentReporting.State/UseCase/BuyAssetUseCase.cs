@@ -48,7 +48,8 @@ namespace InvestmentReporting.State.UseCase {
 				await _stateManager.AddCommand(new IncreaseAssetCommand(date, user, brokerId, asset.Id, count));
 			} else {
 				id = new AssetId(_idGenerator.GenerateNewId());
-				await _stateManager.AddCommand(new AddAssetCommand(date, user, brokerId, id, isin, count));
+				var currency = payAccount.Currency;
+				await _stateManager.AddCommand(new AddAssetCommand(date, user, brokerId, id, isin, currency, count));
 			}
 			switch ( price ) {
 				case < 0:

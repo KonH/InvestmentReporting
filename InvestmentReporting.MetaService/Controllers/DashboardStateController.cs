@@ -46,7 +46,7 @@ namespace InvestmentReporting.MetaService.Controllers {
 			return new JsonResult(dto);
 		}
 
-		Dictionary<string, SumStateDto> ConvertSums(IReadOnlyDictionary<CurrencyId, SumState> sums) =>
+		Dictionary<string, SumStateDto> ConvertSums(IReadOnlyDictionary<CurrencyCode, SumState> sums) =>
 			sums.ToDictionary(s => s.Key.ToString(), s => new SumStateDto(s.Value.RealSum, s.Value.VirtualSum));
 	}
 }

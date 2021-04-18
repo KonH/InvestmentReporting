@@ -30,7 +30,7 @@ namespace InvestmentReporting.State.Logic {
 		}
 
 		Entity.State Take(DateTimeOffset date, UserId user) {
-			var state    = new Entity.State(new List<Broker>(), new List<Currency>());
+			var state    = new Entity.State(new List<Broker>());
 			var commands = this.ReadCommands(date, user);
 			foreach ( var command in commands ) {
 				var apply = _apply[command.GetType()];
@@ -75,7 +75,7 @@ namespace InvestmentReporting.State.Logic {
 		public async Task ResetOperations(UserId user) {
 			var commands = this.ReadCommands(user);
 			var filterCommands = commands
-				.Where(c => !(c is CreateCurrencyCommand) && !(c is CreateBrokerCommand) && !(c is CreateAccountCommand))
+				.Where(c => c is not CreateBrokerCommand && c is not CreateAccountCommand)
 				.Select(Persist)
 				.ToArray();
 			await _repository.DeleteCommands(filterCommands);

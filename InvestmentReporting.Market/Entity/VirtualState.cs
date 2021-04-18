@@ -3,6 +3,6 @@ using InvestmentReporting.State.Entity;
 
 namespace InvestmentReporting.Market.Entity {
 	public record VirtualState(
-		IReadOnlyDictionary<CurrencyId, CurrencyBalance> Summary,
+		IReadOnlyDictionary<CurrencyCode, CurrencyBalance> Summary,
 		IReadOnlyCollection<VirtualBalance> Balances);
 }
