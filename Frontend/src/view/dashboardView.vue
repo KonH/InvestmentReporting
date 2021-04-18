@@ -9,14 +9,12 @@
 				</option>
 			</select>
 		</label>
-		<div v-if="selectedCurrency">
-			<div class="row">
-				<div class="col">
-					<dashboard-legend :dashboard="selectedDashboardState" :dashboard-config="dashboardConfig" :currency-code="selectedCurrency" />
-				</div>
-				<div class="col">
-					<dashboard-chart :dashboard="selectedDashboardState" :currency-code="selectedCurrency" />
-				</div>
+		<div class="row">
+			<div class="col">
+				<dashboard-legend :dashboard="selectedDashboardState" :dashboard-config="dashboardConfig" :currency-code="selectedCurrency" />
+			</div>
+			<div class="col">
+				<dashboard-chart :dashboard="selectedDashboardState" :currency-code="selectedCurrency" />
 			</div>
 		</div>
 	</div>

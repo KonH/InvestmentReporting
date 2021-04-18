@@ -6,6 +6,9 @@
 				Name:
 				<input v-model="dashboard.name" type="text" class="form-control" />
 			</label>
+			<div class="form-group">
+				<button class="btn btn-primary" @click="save">Save</button>
+			</div>
 		</div>
 		<div class="form-group">
 			<label>
@@ -15,21 +18,19 @@
 				<dashboard-tag-card :dashboard="dashboard" :tag="tag" class="mb-2" @remove="onRemove(tag.tag)" />
 			</div>
 			<div>
-				<add-dashboard-tag-card :dashboard="dashboard" @add="onAdd" />
+				<add-dashboard-tag-card v-if="canAddTag" :dashboard="dashboard" :tags="availableTags" @add="onAdd" />
 			</div>
-		</div>
-		<div class="form-group">
-			<button class="btn btn-primary" @click="save">Save</button>
 		</div>
 	</div>
 </template>
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
 import { Prop } from 'vue-property-decorator';
-import { DashboardConfigDto, DashboardConfigTagDto } from '@/api/meta';
+import { AssetTagStateDto, DashboardConfigDto, DashboardConfigTagDto } from '@/api/meta';
 import Backend from '@/service/backend';
 import DashboardTagCard from '@/component/dashboardTagCard.vue';
 import AddDashboardTagCard from '@/component/addDashboardTagCard.vue';
+import { State } from 'vuex-class';
 
 @Options({
 	name: 'DashboardConfig',
@@ -40,6 +41,9 @@ import AddDashboardTagCard from '@/component/addDashboardTagCard.vue';
 	},
 })
 export default class DashboardConfig extends Vue {
+	@State('tagState')
+	tagState!: AssetTagStateDto;
+
 	@Prop()
 	dashboard!: DashboardConfigDto;
 
@@ -56,6 +60,19 @@ export default class DashboardConfig extends Vue {
 	async onAdd(tag: DashboardConfigTagDto) {
 		this.dashboard.tags?.push(tag);
 		await this.save();
+	}
+
+	get availableTags() {
+		const tags = this.dashboard.tags?.map((t) => t.tag);
+		const allTags = this.tagState.tags;
+		if (tags && allTags) {
+			return allTags.filter((t) => !tags.includes(t));
+		}
+		return [];
+	}
+
+	get canAddTag() {
+		return this.availableTags.length > 0;
 	}
 }
 </script>

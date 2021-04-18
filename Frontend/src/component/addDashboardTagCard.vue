@@ -19,17 +19,16 @@
 </template>
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import { Ref } from 'vue-property-decorator';
-import { AssetTagStateDto, DashboardConfigTagDto } from '@/api/meta';
-import { State } from 'vuex-class';
+import { Prop, Ref } from 'vue-property-decorator';
+import { DashboardConfigTagDto } from '@/api/meta';
 
 @Options({
 	name: 'AddDashboardTagCard',
 	emits: ['add'],
 })
 export default class AddDashboardTagCard extends Vue {
-	@State('tagState')
-	tagState!: AssetTagStateDto;
+	@Prop()
+	tags!: string[];
 
 	@Ref('tag')
 	tagInput!: HTMLInputElement;
@@ -38,10 +37,6 @@ export default class AddDashboardTagCard extends Vue {
 	targetInput!: HTMLInputElement;
 
 	isExpanded = false;
-
-	get tags() {
-		return this.tagState.tags;
-	}
 
 	expand() {
 		this.isExpanded = true;

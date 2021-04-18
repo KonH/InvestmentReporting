@@ -1,9 +1,9 @@
 <template>
-	<canvas ref="chart" />
+	<canvas id="chart" />
 </template>
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import { Prop, Ref } from 'vue-property-decorator';
+import { Prop } from 'vue-property-decorator';
 import Chart from 'chart.js';
 import { DashboardStateDto, DashboardStateTagDto } from '@/api/meta';
 
@@ -11,8 +11,7 @@ import { DashboardStateDto, DashboardStateTagDto } from '@/api/meta';
 	name: 'DashboardChart',
 })
 export default class DashboardChart extends Vue {
-	@Ref('chart')
-	canvas!: HTMLCanvasElement;
+	chartCanvas!: HTMLCanvasElement | undefined;
 
 	@Prop()
 	dashboard!: DashboardStateDto;
@@ -23,12 +22,26 @@ export default class DashboardChart extends Vue {
 	chart: Chart | undefined;
 
 	mounted() {
-		this.chart = new Chart(this.canvas, this.getConfig());
+		this.onUpdate();
+		this.$watch('dashboard', this.onUpdate);
+		this.$watch('chartCanvas', this.onUpdate);
 	}
 
 	updated() {
+		this.onUpdate();
+	}
+
+	onUpdate() {
+		if (!this.chartCanvas) {
+			this.chartCanvas = document.getElementById('chart') as HTMLCanvasElement;
+		}
 		if (this.chart) {
 			this.chart.config = this.getConfig();
+			this.chart.update();
+		} else {
+			if (this.chartCanvas) {
+				this.chart = new Chart(this.chartCanvas, this.getConfig());
+			}
 		}
 	}
 
@@ -50,10 +63,12 @@ export default class DashboardChart extends Vue {
 
 	getData(tags: DashboardStateTagDto[]) {
 		const totalSums = this.dashboard.sums;
-		const totalSum = totalSums ? totalSums[this.currencyCode].virtualSum ?? 1 : 1;
+		const totalSumHolder = totalSums ? totalSums[this.currencyCode] : undefined;
+		const totalSum = totalSumHolder ? totalSumHolder.virtualSum ?? 1 : 1;
 		return tags.map((t) => {
 			const sums = t.sums;
-			const sum = sums ? sums[this.currencyCode].virtualSum ?? 0 : 0;
+			const sumHolder = sums ? sums[this.currencyCode] : undefined;
+			const sum = sumHolder ? sumHolder.virtualSum ?? 0 : 0;
 			const percent = (sum / totalSum) * 100;
 			const pow = Math.pow(10, 2);
 			return Math.round(percent * pow) / pow;

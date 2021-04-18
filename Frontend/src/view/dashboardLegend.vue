@@ -39,7 +39,8 @@ export default class DashboardLegend extends Vue {
 
 	get sum() {
 		const sums = this.dashboard.sums;
-		return sums ? sums[this.currencyCode].virtualSum : 0;
+		const sum = sums ? sums[this.currencyCode] : undefined;
+		return sum ? sum.virtualSum : 0;
 	}
 
 	getTagSum(tag: string) {
@@ -48,7 +49,8 @@ export default class DashboardLegend extends Vue {
 			return 0;
 		}
 		const sums = tags.find((t) => t.tag == tag)?.sums;
-		return sums ? sums[this.currencyCode].virtualSum : 0;
+		const sum = sums ? sums[this.currencyCode] : undefined;
+		return sum ? sum.virtualSum : 0;
 	}
 
 	getTagPercentValue(tag: string) {
