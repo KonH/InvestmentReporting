@@ -27,6 +27,7 @@ namespace InvestmentReporting.Meta.Logic {
 			var model = await _repository.Get(user) ?? new(user, new Dictionary<string, List<string>>());
 			var assetIsins = state.Brokers
 				.SelectMany(b => b.Inventory)
+				.Where(a => a.Count > 0)
 				.Select(a => a.Isin)
 				.Distinct();
 			var assetTags = assetIsins

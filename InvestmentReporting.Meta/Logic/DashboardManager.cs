@@ -56,13 +56,14 @@ namespace InvestmentReporting.Meta.Logic {
 			var tagState      = await _tagManager.GetTags(user);
 			var assetNames    = CollectAssetNames(state.Brokers.SelectMany(b => b.Inventory).ToArray());
 			var assetTags     = CollectAssetTags(tagState);
-			var virtualAssets = virtualState.Balances.SelectMany(b => b.Inventory).ToArray();
+			var virtualAssets = CollectVirtualAssets(virtualState);
 			var tags = dashboard.Tags
 				.Select(t => {
 					if ( !assetTags.TryGetValue(new(t.Tag), out var assetIsins) ) {
 						assetIsins = Array.Empty<AssetISIN>();
 					}
 					var assets = assetIsins
+						.Where(isin => virtualAssets.Any(a => a.Isin == isin))
 						.Select(isin => {
 							var name = assetNames.GetValueOrDefault(isin) ?? string.Empty;
 							var sums = CalculateAssetSums(isin, currencies, virtualAssets, date, user);
@@ -76,6 +77,12 @@ namespace InvestmentReporting.Meta.Logic {
 			var tagSums = AggregateSums(tags.Select(t => t.Sums));
 			return new(tags, tagSums);
 		}
+
+		IReadOnlyCollection<VirtualAsset> CollectVirtualAssets(VirtualState virtualState) =>
+			virtualState.Balances
+				.SelectMany(b => b.Inventory)
+				.Where(a => a.Count > 0)
+				.ToArray();
 
 		IReadOnlyDictionary<AssetISIN, string> CollectAssetNames(IReadOnlyCollection<ReadOnlyAsset> assets) =>
 			assets
