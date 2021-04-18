@@ -5,7 +5,7 @@
 			<li v-for="tag in dashboard.tags" :key="tag.tag">
 				<b>{{ tag.tag }}</b
 				>: <money :value="getTagSum(tag.tag)" :currency-code="currencyCode" /> <b>{{ getTagPercentFormat(tag.tag) }}% </b>
-				{{ getTagPercentTargetDiff(tag.tag) }}%
+				<span :style="getTagPercentStyle(tag.tag)"> {{ getTagPercentTargetDiff(tag.tag) }}%</span>
 				<ul>
 					<li v-for="asset in tag.assets" :key="asset.isin">
 						<b>{{ asset.isin }}</b> {{ asset.name }} <money :value="getAssetSum(asset.sums)" :currency-code="currencyCode" />
@@ -66,12 +66,24 @@ export default class DashboardLegend extends Vue {
 		return tagConfig?.target ?? 0;
 	}
 
-	getTagPercentTargetDiff(tag: string) {
+	getTagPercentTargetDiffValue(tag: string) {
 		const percent = this.getTagPercentValue(tag);
 		const target = this.getTagTarget(tag);
-		const value = percent - target;
+		return percent - target;
+	}
+
+	getTagPercentTargetDiff(tag: string) {
+		const value = this.getTagPercentTargetDiffValue(tag);
 		const str = value.toFixed(2);
 		return value > 0 ? '+' + str : str;
+	}
+
+	getTagPercentColor(tag: string) {
+		return this.getTagPercentTargetDiffValue(tag) > 0 ? 'green' : 'red';
+	}
+
+	getTagPercentStyle(tag: string) {
+		return `color: ${this.getTagPercentColor(tag)}`;
 	}
 
 	getAssetSum(sums: Record<string, SumStateDto>) {
