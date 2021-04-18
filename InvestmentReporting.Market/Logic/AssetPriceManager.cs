@@ -39,8 +39,8 @@ namespace InvestmentReporting.Market.Logic {
 			var assets = inventory
 				.Where(a => a.Currency == currency)
 				.ToArray();
-			var assetRealSum = (assets.Length > 0) ? assets.Sum(a => a.RealPrice) : 0;
-			var assetVirtualSum = (assets.Length > 0) ? assets.Sum(a => a.VirtualPrice) : 0;
+			var assetRealSum = (assets.Length > 0) ? assets.Sum(a => a.RealSum) : 0;
+			var assetVirtualSum = (assets.Length > 0) ? assets.Sum(a => a.VirtualSum) : 0;
 			var inventoryForCurrency = inventory
 				.Where(a => a.Currency == currency)
 				.ToArray();
