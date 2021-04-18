@@ -52,6 +52,18 @@ export default class DashboardView extends Vue {
 
 	selectedCurrency = '';
 
+	created() {
+		const currencies = this.activeState.currencies;
+		if (!currencies || currencies.length == 0) {
+			return;
+		}
+		const firstCode = currencies[0].code;
+		if (!firstCode) {
+			return;
+		}
+		this.selectedCurrency = firstCode;
+	}
+
 	get currencies() {
 		return this.activeState.currencies;
 	}
