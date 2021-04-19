@@ -1,7 +1,7 @@
 <template>
 	<span>
-		<button v-if="!isExpanded" class="btn btn-sm btn-outline-primary" @click="expand">+</button>
-		<span v-if="isExpanded" class="form-group">
+		<button v-show="!isExpanded" class="btn btn-sm btn-outline-primary" @click="expand">+</button>
+		<span v-show="isExpanded" class="form-group">
 			<label class="mr-2">
 				Tag:
 				<select ref="tag" class="form-control">
@@ -13,8 +13,8 @@
 				<input ref="target" type="number" class="form-control" value="0" />
 			</label>
 		</span>
-		<button v-if="isExpanded" class="btn btn-sm btn-primary mr-1" @click="add">+</button>
-		<button v-if="isExpanded" class="btn btn-sm btn-outline-primary" @click="close">-</button>
+		<button v-show="isExpanded" class="btn btn-sm btn-primary mr-1" @click="add">+</button>
+		<button v-show="isExpanded" class="btn btn-sm btn-outline-primary" @click="close">-</button>
 	</span>
 </template>
 <script lang="ts">

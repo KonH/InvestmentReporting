@@ -1,9 +1,9 @@
 <template>
 	<span>
-		<button v-if="!isExpanded" class="btn btn-sm btn-outline-primary" @click="expand">+</button>
-		<input v-if="isExpanded" ref="tag" type="text" class="mr-1" />
-		<button v-if="isExpanded" class="btn btn-sm btn-primary mr-1" @click="add">+</button>
-		<button v-if="isExpanded" class="btn btn-sm btn-outline-primary" @click="close">-</button>
+		<button v-show="!isExpanded" class="btn btn-sm btn-outline-primary" @click="expand">+</button>
+		<input v-show="isExpanded" ref="tag" type="text" class="mr-1" />
+		<button v-show="isExpanded" class="btn btn-sm btn-primary mr-1" @click="add">+</button>
+		<button v-show="isExpanded" class="btn btn-sm btn-outline-primary" @click="close">-</button>
 	</span>
 </template>
 <script lang="ts">
