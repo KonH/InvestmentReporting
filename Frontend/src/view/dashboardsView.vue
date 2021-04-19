@@ -13,7 +13,7 @@ import { Options, Vue } from 'vue-class-component';
 import { DashboardConfigDto, DashboardConfigStateDto, DashboardStateDto } from '@/api/meta';
 import DashboardCard from '@/component/dashboardCard.vue';
 import AddDashboardCard from '@/component/addDashboardCard.vue';
-import DashboardConfig from '@/view/dashboardConfig.vue';
+import DashboardConfig from '@/component/dashboardConfig.vue';
 import DashboardView from '@/view/dashboardView.vue';
 import { Action, State } from 'vuex-class';
 
