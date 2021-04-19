@@ -1,6 +1,6 @@
 using System.Xml;
 
-namespace InvestmentReporting.Import.AlphaDirectMyBroker {
+namespace InvestmentReporting.Import.AlphaDirect {
 	public sealed class XmlSanitizer {
 		public XmlDocument Sanitize(XmlDocument report) {
 			var sanitizedXml    = report.OuterXml.Replace("xmlns=\"MyBroker\"", string.Empty);

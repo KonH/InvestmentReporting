@@ -15,7 +15,7 @@ using InvestmentReporting.Import.Exceptions;
 using InvestmentReporting.Import.Logic;
 using InvestmentReporting.Import.UseCase;
 
-namespace InvestmentReporting.Import.AlphaDirectMyBroker {
+namespace InvestmentReporting.Import.AlphaDirect {
 	public sealed class AlphaDirectImportUseCase : ImportUseCase, IImportUseCase {
 		readonly XmlSanitizer _sanitizer = new();
 

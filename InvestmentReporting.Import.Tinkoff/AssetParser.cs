@@ -3,7 +3,7 @@ using System.Linq;
 using ClosedXML.Excel;
 using InvestmentReporting.Import.Dto;
 
-namespace InvestmentReporting.Import.TinkoffBrokerReport {
+namespace InvestmentReporting.Import.Tinkoff {
 	public sealed class AssetParser {
 		public IReadOnlyCollection<Asset> ReadAssets(IXLWorkbook report) {
 			var result       = new List<Asset>();

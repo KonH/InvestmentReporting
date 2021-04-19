@@ -1,7 +1,7 @@
 using System;
 using ClosedXML.Excel;
 
-namespace InvestmentReporting.Import.TinkoffBrokerReport {
+namespace InvestmentReporting.Import.Tinkoff {
 	public static class ClosedXmlExtensions {
 		public static DateTime GetDateTimeExact(this IXLCell cell, params string[] format) {
 			var str = cell.GetString();

@@ -32,6 +32,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InvestmentReporting.Meta", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InvestmentReporting.MetaService", "InvestmentReporting.MetaService\InvestmentReporting.MetaService.csproj", "{B851C41E-49F3-417A-9519-4128AED0A570}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InvestmentReporting.Import.AlphaDirect", "InvestmentReporting.Import.AlphaDirect\InvestmentReporting.Import.AlphaDirect.csproj", "{AB63C42C-32DF-419F-B511-59B3BB74E5C8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InvestmentReporting.Import.Tinkoff", "InvestmentReporting.Import.Tinkoff\InvestmentReporting.Import.Tinkoff.csproj", "{87D2610E-00ED-4580-97C1-1C76FE638913}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -102,5 +106,13 @@ Global
 		{B851C41E-49F3-417A-9519-4128AED0A570}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B851C41E-49F3-417A-9519-4128AED0A570}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B851C41E-49F3-417A-9519-4128AED0A570}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB63C42C-32DF-419F-B511-59B3BB74E5C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB63C42C-32DF-419F-B511-59B3BB74E5C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB63C42C-32DF-419F-B511-59B3BB74E5C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB63C42C-32DF-419F-B511-59B3BB74E5C8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{87D2610E-00ED-4580-97C1-1C76FE638913}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87D2610E-00ED-4580-97C1-1C76FE638913}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87D2610E-00ED-4580-97C1-1C76FE638913}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87D2610E-00ED-4580-97C1-1C76FE638913}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

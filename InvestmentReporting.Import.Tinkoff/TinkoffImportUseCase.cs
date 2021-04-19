@@ -13,7 +13,7 @@ using InvestmentReporting.Import.Dto;
 using InvestmentReporting.Import.Logic;
 using InvestmentReporting.Import.UseCase;
 
-namespace InvestmentReporting.Import.TinkoffBrokerReport {
+namespace InvestmentReporting.Import.Tinkoff {
 	public sealed class TinkoffImportUseCase : ImportUseCase, IImportUseCase {
 		readonly TransactionStateManager _stateManager;
 		readonly BrokerMoneyMoveParser   _moneyMoveParser;

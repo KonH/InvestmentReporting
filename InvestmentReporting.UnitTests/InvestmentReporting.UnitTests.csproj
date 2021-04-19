@@ -17,6 +17,8 @@
 
     <ItemGroup>
       <ProjectReference Include="..\InvestmentReporting.Data.InMemory\InvestmentReporting.Data.InMemory.csproj" />
+      <ProjectReference Include="..\InvestmentReporting.Import.AlphaDirect\InvestmentReporting.Import.AlphaDirect.csproj" />
+      <ProjectReference Include="..\InvestmentReporting.Import.Tinkoff\InvestmentReporting.Import.Tinkoff.csproj" />
       <ProjectReference Include="..\InvestmentReporting.State\InvestmentReporting.State.csproj" />
       <ProjectReference Include="..\InvestmentReporting.Import\InvestmentReporting.Import.csproj" />
     </ItemGroup>

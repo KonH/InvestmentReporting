@@ -4,7 +4,7 @@ using System.Xml;
 using InvestmentReporting.Import.Dto;
 using InvestmentReporting.Import.Exceptions;
 
-namespace InvestmentReporting.Import.AlphaDirectMyBroker {
+namespace InvestmentReporting.Import.AlphaDirect {
 	public sealed class BrokerMoneyMoveParser {
 		const string OperationsXpath =
 			"Report[@Name=\"MyBroker\"]/*/Report[@Name=\"3_BrokerMoneyMove\"]/Tablix1/settlement_date_Collection/settlement_date/rn_Collection/rn";

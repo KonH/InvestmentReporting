@@ -12,6 +12,8 @@
     <ItemGroup>
       <ProjectReference Include="..\InvestmentReporting.Data.Core\InvestmentReporting.Data.Core.csproj" />
       <ProjectReference Include="..\InvestmentReporting.Data.Mongo\InvestmentReporting.Data.Mongo.csproj" />
+      <ProjectReference Include="..\InvestmentReporting.Import.AlphaDirect\InvestmentReporting.Import.AlphaDirect.csproj" />
+      <ProjectReference Include="..\InvestmentReporting.Import.Tinkoff\InvestmentReporting.Import.Tinkoff.csproj" />
       <ProjectReference Include="..\InvestmentReporting.State\InvestmentReporting.State.csproj" />
       <ProjectReference Include="..\InvestmentReporting.Import\InvestmentReporting.Import.csproj" />
       <ProjectReference Include="..\InvestmentReporting.Shared\InvestmentReporting.Shared.csproj" />

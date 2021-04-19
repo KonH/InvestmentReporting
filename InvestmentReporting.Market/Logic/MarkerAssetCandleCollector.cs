@@ -24,6 +24,9 @@ namespace InvestmentReporting.Market.Logic {
 
 		public async Task Collect(SandboxContext context) {
 			foreach ( var metadata in _metadataManager.GetAll() ) {
+				if ( metadata.Figi == null ) {
+					continue;
+				}
 				var isin     = metadata.Isin;
 				var interval = _intervalCalculator.TryCalculateRequiredInterval(isin);
 				if ( interval == null ) {

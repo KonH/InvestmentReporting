@@ -1,20 +1,23 @@
 using System;
-using InvestmentReporting.Import.AlphaDirectMyBroker;
-using InvestmentReporting.Import.TinkoffBrokerReport;
+using System.Collections.Generic;
 
 namespace InvestmentReporting.Import.UseCase {
 	public sealed class ImportUseCaseFactory {
 		readonly Func<Type, IImportUseCase> _factory;
 
+		readonly Dictionary<string, Type> _importers = new();
+
 		public ImportUseCaseFactory(Func<Type, IImportUseCase> factory) {
 			_factory = factory;
 		}
 
+		public void Register<T>(string name) where T : IImportUseCase {
+			_importers.Add(name, typeof(T));
+		}
+
 		public IImportUseCase Create(string importerName) =>
-			importerName switch {
-				"AlphaDirectMyBroker" => _factory(typeof(AlphaDirectImportUseCase)),
-				"TinkoffBrokerReport" => _factory(typeof(TinkoffImportUseCase)),
-				_                     => throw new NotSupportedException("Importer '{}' is unknown")
-			};
+			_importers.TryGetValue(importerName, out var importerType)
+				? _factory(importerType)
+				: throw new NotSupportedException($"Importer '{importerName}' is unknown");
 	}
 }

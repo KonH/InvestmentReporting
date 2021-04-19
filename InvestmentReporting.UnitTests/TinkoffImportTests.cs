@@ -9,7 +9,7 @@ using InvestmentReporting.State.Entity;
 using InvestmentReporting.State.Logic;
 using InvestmentReporting.State.UseCase;
 using InvestmentReporting.State.UseCase.Exceptions;
-using InvestmentReporting.Import.TinkoffBrokerReport;
+using InvestmentReporting.Import.Tinkoff;
 using InvestmentReporting.Import.Dto;
 using InvestmentReporting.Import.Logic;
 using NUnit.Framework;

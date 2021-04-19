@@ -5,7 +5,7 @@ using ClosedXML.Excel;
 using InvestmentReporting.Import.Dto;
 using InvestmentReporting.Import.Exceptions;
 
-namespace InvestmentReporting.Import.TinkoffBrokerReport {
+namespace InvestmentReporting.Import.Tinkoff {
 	public sealed class BrokerMoneyMoveParser {
 		public IReadOnlyCollection<Transfer> ReadIncomeTransfers(IXLWorkbook report) =>
 			ReadTransfers(

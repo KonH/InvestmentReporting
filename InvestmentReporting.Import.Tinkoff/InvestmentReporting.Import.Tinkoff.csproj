@@ -7,7 +7,13 @@
 
     <ItemGroup>
       <ProjectReference Include="..\InvestmentReporting.Data.InMemory\InvestmentReporting.Data.InMemory.csproj" />
+      <ProjectReference Include="..\InvestmentReporting.Import\InvestmentReporting.Import.csproj" />
       <ProjectReference Include="..\InvestmentReporting.State\InvestmentReporting.State.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="ClosedXML" Version="0.95.4" />
+      <PackageReference Include="runtime.osx.10.10-x64.CoreCompat.System.Drawing" Version="5.8.64" />
     </ItemGroup>
 
 </Project>

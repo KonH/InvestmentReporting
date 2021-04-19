@@ -5,7 +5,7 @@ using System.Xml;
 using InvestmentReporting.Import.Dto;
 using InvestmentReporting.Import.Exceptions;
 
-namespace InvestmentReporting.Import.AlphaDirectMyBroker {
+namespace InvestmentReporting.Import.AlphaDirect {
 	public sealed class TradeParser {
 		const string DetailsXPath =
 			"Report[@Name=\"MyBroker\"]/Trades/Report[@Name=\"2_Trades\"]/Tablix2/Details_Collection/Details";

@@ -1,10 +1,10 @@
 using InvestmentReporting.Data.Core.Repository;
 using InvestmentReporting.Data.Mongo.Repository;
+using InvestmentReporting.Import.AlphaDirect;
 using InvestmentReporting.State.Logic;
 using InvestmentReporting.State.UseCase;
-using InvestmentReporting.Import.AlphaDirectMyBroker;
 using InvestmentReporting.Import.Logic;
-using InvestmentReporting.Import.TinkoffBrokerReport;
+using InvestmentReporting.Import.Tinkoff;
 using InvestmentReporting.Import.UseCase;
 using InvestmentReporting.Shared.Extensions;
 using Microsoft.AspNetCore.Builder;
@@ -14,10 +14,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
-using AlphaBrokerMoneyMoveParser = InvestmentReporting.Import.AlphaDirectMyBroker.BrokerMoneyMoveParser;
-using AlphaTradeParser = InvestmentReporting.Import.AlphaDirectMyBroker.TradeParser;
-using TinkoffBrokerMoneyMoveParser = InvestmentReporting.Import.TinkoffBrokerReport.BrokerMoneyMoveParser;
-using TinkoffTradeParser = InvestmentReporting.Import.TinkoffBrokerReport.TradeParser;
+using AlphaBrokerMoneyMoveParser = InvestmentReporting.Import.AlphaDirect.BrokerMoneyMoveParser;
+using AlphaTradeParser = InvestmentReporting.Import.AlphaDirect.TradeParser;
+using TinkoffBrokerMoneyMoveParser = InvestmentReporting.Import.Tinkoff.BrokerMoneyMoveParser;
+using TinkoffTradeParser = InvestmentReporting.Import.Tinkoff.TradeParser;
 
 namespace InvestmentReporting.ImportService {
 	public class Startup {
@@ -48,7 +48,12 @@ namespace InvestmentReporting.ImportService {
 			services.AddSingleton<StateManager>();
 			services.AddScoped<TransactionStateManager>();
 			services.AddScoped<IStateManager>(sp => sp.GetRequiredService<TransactionStateManager>());
-			services.AddScoped(sp => new ImportUseCaseFactory(t => (IImportUseCase)sp.GetRequiredService(t)));
+			services.AddScoped(sp => {
+				var factory = new ImportUseCaseFactory(t => (IImportUseCase) sp.GetRequiredService(t));
+				factory.Register<AlphaDirectImportUseCase>("AlphaDirectMyBroker");
+				factory.Register<TinkoffImportUseCase>("TinkoffBrokerReport");
+				return factory;
+			});
 			services.AddScoped<AlphaDirectImportUseCase>();
 			services.AddScoped<AlphaBrokerMoneyMoveParser>();
 			services.AddScoped<AlphaTradeParser>();
