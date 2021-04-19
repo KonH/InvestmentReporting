@@ -55,7 +55,6 @@ const routes: Array<RouteRecordRaw> = [
 	},
 	{
 		path: '/operations',
-		alias: '/',
 		name: 'operations',
 		component: OperationsView,
 	},
