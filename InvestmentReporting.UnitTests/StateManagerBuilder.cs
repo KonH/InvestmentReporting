@@ -42,7 +42,7 @@ namespace InvestmentReporting.UnitTests {
 		}
 
 		public StateManagerBuilder With(AssetId asset, AssetISIN isin, int count) {
-			With(new AddAssetModel(_date, _userId, _brokerId, asset, isin, _currencyCode, count));
+			With(new AddAssetModel(_date, _userId, _brokerId, asset, isin, _currencyCode, string.Empty, count));
 			return this;
 		}
 

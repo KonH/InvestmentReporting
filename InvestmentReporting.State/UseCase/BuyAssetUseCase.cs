@@ -21,7 +21,7 @@ namespace InvestmentReporting.State.UseCase {
 
 		public async Task<AssetId> Handle(
 			DateTimeOffset date, UserId user, BrokerId brokerId, AccountId payAccountId, AccountId feeAccountId,
-			AssetISIN isin, decimal price, decimal fee, int count) {
+			AssetISIN isin, decimal price, decimal fee, string name, int count) {
 			if ( string.IsNullOrWhiteSpace(isin.Value) ) {
 				throw new InvalidAssetException();
 			}
@@ -49,7 +49,7 @@ namespace InvestmentReporting.State.UseCase {
 			} else {
 				id = new AssetId(_idGenerator.GenerateNewId());
 				var currency = payAccount.Currency;
-				await _stateManager.AddCommand(new AddAssetCommand(date, user, brokerId, id, isin, currency, count));
+				await _stateManager.AddCommand(new AddAssetCommand(date, user, brokerId, id, isin, currency, name, count));
 			}
 			switch ( price ) {
 				case < 0:

@@ -26,7 +26,7 @@ namespace InvestmentReporting.UnitTests {
 			var buyUseCase   = GetBuyUseCase(stateManager);
 
 			await buyUseCase.Handle(
-				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _isin, 1, 1, 1);
+				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _isin, 1, 1, string.Empty, 1);
 
 			var state  = stateManager.ReadState(_date, _userId);
 			var broker = state.Brokers.First(b => b.Id == _brokerId);
@@ -41,7 +41,7 @@ namespace InvestmentReporting.UnitTests {
 			var buyUseCase   = GetBuyUseCase(stateManager);
 
 			await buyUseCase.Handle(
-				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _isin, 1, 1, 1);
+				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _isin, 1, 1, string.Empty, 1);
 
 			var operations = stateManager.ReadAccountOperations(_date, _userId, _brokerId, _payAccountId);
 			operations.Should().NotBeEmpty();
@@ -54,7 +54,7 @@ namespace InvestmentReporting.UnitTests {
 			var buyUseCase   = GetBuyUseCase(stateManager);
 
 			await buyUseCase.Handle(
-				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _isin, 1, 1, 1);
+				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _isin, 1, 1, string.Empty, 1);
 
 			var operations = stateManager.ReadAccountOperations(_date, _userId, _brokerId, _feeAccountId);
 			operations.Should().NotBeEmpty();
@@ -67,7 +67,7 @@ namespace InvestmentReporting.UnitTests {
 			var buyUseCase   = GetBuyUseCase(stateManager);
 
 			await buyUseCase.Handle(
-				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _isin, 1, 1, 1);
+				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _isin, 1, 1, string.Empty, 1);
 
 			var state  = stateManager.ReadState(_date, _userId);
 			var broker = state.Brokers.First(b => b.Id == _brokerId);
@@ -83,7 +83,7 @@ namespace InvestmentReporting.UnitTests {
 			var price        = 100;
 
 			await buyUseCase.Handle(
-				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _isin, price, 1, 1);
+				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _isin, price, 1, string.Empty, 1);
 
 			var state   = stateManager.ReadState(_date, _userId);
 			var broker  = state.Brokers.First(b => b.Id == _brokerId);
@@ -98,7 +98,7 @@ namespace InvestmentReporting.UnitTests {
 			var fee          = 100;
 
 			await buyUseCase.Handle(
-				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _isin, 1, fee, 1);
+				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _isin, 1, fee, string.Empty, 1);
 
 			var state   = stateManager.ReadState(_date, _userId);
 			var broker  = state.Brokers.First(b => b.Id == _brokerId);
@@ -112,7 +112,7 @@ namespace InvestmentReporting.UnitTests {
 			var buyUseCase   = GetBuyUseCase(stateManager);
 
 			Assert.DoesNotThrowAsync(() => buyUseCase.Handle(
-				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _isin, 0, 1, 1));
+				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _isin, 0, 1, string.Empty, 1));
 		}
 
 		[Test]
@@ -121,7 +121,7 @@ namespace InvestmentReporting.UnitTests {
 			var buyUseCase   = GetBuyUseCase(stateManager);
 
 			Assert.DoesNotThrowAsync(() => buyUseCase.Handle(
-				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _isin, 1, 0, 1));
+				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _isin, 1, 0, string.Empty, 1));
 		}
 
 		[Test]
@@ -130,7 +130,7 @@ namespace InvestmentReporting.UnitTests {
 			var buyUseCase   = GetBuyUseCase(stateManager);
 
 			Assert.ThrowsAsync<InvalidBrokerException>(() => buyUseCase.Handle(
-				_date, _userId, new(string.Empty), _payAccountId, _feeAccountId, _isin, 1, 1, 1));
+				_date, _userId, new(string.Empty), _payAccountId, _feeAccountId, _isin, 1, 1, string.Empty, 1));
 		}
 
 		[Test]
@@ -139,7 +139,7 @@ namespace InvestmentReporting.UnitTests {
 			var buyUseCase   = GetBuyUseCase(stateManager);
 
 			Assert.ThrowsAsync<InvalidAccountException>(() => buyUseCase.Handle(
-				_date, _userId, _brokerId, new(string.Empty), _feeAccountId, _isin, 1, 1, 1));
+				_date, _userId, _brokerId, new(string.Empty), _feeAccountId, _isin, 1, 1, string.Empty, 1));
 		}
 
 		[Test]
@@ -148,7 +148,7 @@ namespace InvestmentReporting.UnitTests {
 			var buyUseCase   = GetBuyUseCase(stateManager);
 
 			Assert.ThrowsAsync<InvalidAccountException>(() => buyUseCase.Handle(
-				_date, _userId, _brokerId, _payAccountId, new(string.Empty), _isin, 1, 1, 1));
+				_date, _userId, _brokerId, _payAccountId, new(string.Empty), _isin, 1, 1, string.Empty, 1));
 		}
 
 		[Test]
@@ -157,7 +157,7 @@ namespace InvestmentReporting.UnitTests {
 			var buyUseCase   = GetBuyUseCase(stateManager);
 
 			Assert.ThrowsAsync<InvalidAssetException>(() => buyUseCase.Handle(
-				_date, _userId, _brokerId, _payAccountId, _feeAccountId, new(string.Empty), 1, 1, 1));
+				_date, _userId, _brokerId, _payAccountId, _feeAccountId, new(string.Empty), 1, 1, string.Empty, 1));
 		}
 
 		[Test]
@@ -166,7 +166,7 @@ namespace InvestmentReporting.UnitTests {
 			var buyUseCase   = GetBuyUseCase(stateManager);
 
 			Assert.ThrowsAsync<InvalidCountException>(() => buyUseCase.Handle(
-				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _isin, 1, 1, 0));
+				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _isin, 1, 1, string.Empty, 0));
 		}
 
 		[Test]
@@ -175,7 +175,7 @@ namespace InvestmentReporting.UnitTests {
 			var buyUseCase   = GetBuyUseCase(stateManager);
 
 			Assert.ThrowsAsync<InvalidPriceException>(() => buyUseCase.Handle(
-				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _isin,-1, 1, 1));
+				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _isin,-1, 1, string.Empty, 1));
 		}
 
 		[Test]
@@ -184,7 +184,7 @@ namespace InvestmentReporting.UnitTests {
 			var buyUseCase   = GetBuyUseCase(stateManager);
 
 			Assert.ThrowsAsync<InvalidPriceException>(() => buyUseCase.Handle(
-				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _isin, 1, -1, 1));
+				_date, _userId, _brokerId, _payAccountId, _feeAccountId, _isin, 1, -1, string.Empty, 1));
 		}
 
 		[Test]

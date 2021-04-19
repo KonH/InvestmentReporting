@@ -30,9 +30,9 @@ namespace InvestmentReporting.Market.UseCase {
 				.SelectMany(broker => broker.Inventory
 					.Where(asset => asset.Count > 0)
 					.Select(asset => {
-						var metadata     = _metadataManager.GetMetadata(asset.Isin);
-						var name         = metadata?.Name;
-						var type         = metadata?.Type;
+						var metadata     = _metadataManager.GetMetadataWithFallback(asset.Isin, user);
+						var name         = metadata.Name;
+						var type         = metadata.Type;
 						var currency     = asset.Currency;
 						var realSum      = _priceManager.GetRealPriceSum(date, user, asset.Id);
 						var realPrice    = realSum / asset.Count;
@@ -78,7 +78,7 @@ namespace InvestmentReporting.Market.UseCase {
 					}
 					var state = _stateManager.ReadState(date, user);
 					var accounts = state.Brokers
-						.SelectMany(b => b.Accounts)
+						.SelectMany(broker => broker.Accounts)
 						.Where(a => a.Currency == b.Currency)
 						.ToArray();
 					var accountSum = (accounts.Length > 0) ? accounts.Sum(a => a.Balance) : 0;

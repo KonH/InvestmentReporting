@@ -56,7 +56,7 @@ namespace InvestmentReporting.Meta.Logic {
 			var configs       = await _repository.GetUserDashboardConfigs(user);
 			var dashboard     = configs.First(c => c.Id == dashboardId);
 			var tagState      = await _tagManager.GetTags(user);
-			var assetNames    = CollectAssetNames(state.Brokers.SelectMany(b => b.Inventory).ToArray());
+			var assetNames    = CollectAssetNames(state.Brokers.SelectMany(b => b.Inventory).ToArray(), user);
 			var assetTags     = CollectAssetTags(tagState);
 			var virtualAssets = CollectVirtualAssets(virtualState);
 			var tags = dashboard.Tags
@@ -86,15 +86,16 @@ namespace InvestmentReporting.Meta.Logic {
 				.Where(a => a.Count > 0)
 				.ToArray();
 
-		IReadOnlyDictionary<AssetISIN, string> CollectAssetNames(IReadOnlyCollection<ReadOnlyAsset> assets) =>
+		IReadOnlyDictionary<AssetISIN, string> CollectAssetNames(
+			IReadOnlyCollection<ReadOnlyAsset> assets, UserId user) =>
 			assets
 				.GroupBy(a => a.Isin)
 				.ToDictionary(
 					a => a.Key,
 					a => {
 						var isin     = a.First().Isin;
-						var metadata = _metadataManager.GetMetadata(isin);
-						return metadata?.Name ?? string.Empty;
+						var metadata = _metadataManager.GetMetadataWithFallback(isin, user);
+						return metadata.Name;
 					});
 
 		IReadOnlyDictionary<AssetTag, IReadOnlyCollection<AssetISIN>> CollectAssetTags(AssetTagState tagState) =>

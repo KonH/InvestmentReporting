@@ -86,7 +86,7 @@ namespace InvestmentReporting.Import.TinkoffBrokerReport {
 						continue;
 					}
 					var assetId = await _buyAssetUseCase.Handle(
-						date, user, brokerId, payAccount, feeAccount, new(isin), price, fee, count);
+						date, user, brokerId, payAccount, feeAccount, new(isin), price, fee, trade.Name, count);
 					assetIds[isin] = assetId;
 				} else {
 					var allAssetIds = addCommands

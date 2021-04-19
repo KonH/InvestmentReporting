@@ -32,7 +32,7 @@ namespace InvestmentReporting.Meta.Logic {
 				.Distinct();
 			var assetTags = assetIsins
 				.Select(isin => {
-					var name      = _metadataManager.GetMetadata(isin)?.Name ?? string.Empty;
+					var name      = _metadataManager.GetMetadataWithFallback(isin, user).Name;
 					var modelTags = model.Tags.TryGetValue(isin, out var value) ? value : new List<string>();
 					var tags      = modelTags.Select(t => new AssetTag(t)).ToHashSet();
 					return new AssetTagSet(isin, name, tags);

@@ -66,13 +66,13 @@ namespace InvestmentReporting.State.Logic {
 				}
 			);
 			manager.Bind<AddAssetCommand, AddAssetModel>(
-				cmd => new(cmd.Date, cmd.User, cmd.Broker, cmd.Asset, cmd.Isin, cmd.Currency, cmd.Count),
-				m => new(m.Date, new(m.User), new(m.Broker), new(m.Id), new(m.Isin), new(m.Currency), m.Count),
+				cmd => new(cmd.Date, cmd.User, cmd.Broker, cmd.Asset, cmd.Isin, cmd.Currency, cmd.RawName, cmd.Count),
+				m => new(m.Date, new(m.User), new(m.Broker), new(m.Id), new(m.Isin), new(m.Currency), m.RawName, m.Count),
 				(state, m) => {
 					var brokerId = new BrokerId(m.Broker);
 					var broker   = state.Brokers.First(b => b.Id == brokerId);
 					broker.Inventory.Add(new(
-						new(m.Asset), new(m.Isin), new(m.Currency), m.Count));
+						new(m.Asset), new(m.Isin), new(m.Currency), m.RawName, m.Count));
 				}
 			);
 			manager.Bind<ReduceAssetCommand, ReduceAssetModel>(
