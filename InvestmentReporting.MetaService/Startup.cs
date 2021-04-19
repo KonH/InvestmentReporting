@@ -60,6 +60,7 @@ namespace InvestmentReporting.MetaService {
 			services.AddSingleton<RemoveAssetTagUseCase>();
 			services.AddSingleton<ReadDashboardConfigsUseCase>();
 			services.AddSingleton<UpdateDashboardConfigUseCase>();
+			services.AddSingleton<RemoveDashboardConfigUseCase>();
 			services.AddSingleton<ReadDashboardStateUseCase>();
 		}
 

@@ -41,5 +41,10 @@ namespace InvestmentReporting.Data.Mongo.Repository {
 			};
 			await _collection.InsertOneAsync(newModel);
 		}
+
+		public async Task RemoveDashboard(string user, string id) {
+			var objectId = new ObjectId(id);
+			await _collection.DeleteOneAsync(m => m.Id == objectId);
+		}
 	}
 }

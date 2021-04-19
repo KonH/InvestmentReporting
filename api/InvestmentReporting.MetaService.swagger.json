@@ -52,6 +52,26 @@
             "description": "Success"
           }
         }
+      },
+      "delete": {
+        "tags": [
+          "DashboardConfig"
+        ],
+        "parameters": [
+          {
+            "name": "dashboard",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
       }
     },
     "/DashboardState": {

@@ -5,8 +5,8 @@
 		</div>
 		<add-dashboard-card @click="onNewDashboardClick()" />
 	</div>
-	<dashboard-config v-if="selectedDashboard" :dashboard="selectedDashboard" @save="onConfigSave" />
-	<dashboard-view v-if="selectedDashboardState" :dashboard-config="selectedDashboard" />
+	<dashboard-config v-if="selectedDashboard" :dashboard="selectedDashboard" @save="onConfigSave" @remove="onConfigRemove" />
+	<dashboard-view v-if="selectedDashboard && selectedDashboardState" :dashboard-config="selectedDashboard" />
 </template>
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
@@ -82,6 +82,11 @@ export default class DashboardsView extends Vue {
 		this.hasNewDashboard = false;
 		this.fetchDashboardConfigState();
 		this.fetchDashboardState(this.selectedDashboardId);
+	}
+
+	onConfigRemove() {
+		this.hasNewDashboard = false;
+		this.selectedDashboardId = '';
 	}
 }
 </script>

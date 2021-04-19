@@ -80,6 +80,9 @@ namespace InvestmentReporting.Meta.Logic {
 			return new(tags, tagSums);
 		}
 
+		public async Task RemoveDashboard(UserId user, DashboardId dashboard) =>
+			await _repository.RemoveDashboard(user, dashboard);
+
 		IReadOnlyCollection<VirtualAsset> CollectVirtualAssets(VirtualState virtualState) =>
 			virtualState.Balances
 				.SelectMany(b => b.Inventory)

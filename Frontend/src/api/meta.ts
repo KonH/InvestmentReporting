@@ -289,6 +289,21 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         type: ContentType.Json,
         ...params,
       }),
+
+    /**
+     * No description
+     *
+     * @tags DashboardConfig
+     * @name DashboardConfigDelete
+     * @request DELETE:/DashboardConfig
+     */
+    dashboardConfigDelete: (query: { dashboard: string }, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/DashboardConfig`,
+        method: "DELETE",
+        query: query,
+        ...params,
+      }),
   };
   dashboardState = {
     /**

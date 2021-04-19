@@ -18,13 +18,15 @@ namespace InvestmentReporting.MetaService.Controllers {
 		readonly ILogger                      _logger;
 		readonly ReadDashboardConfigsUseCase  _readUseCase;
 		readonly UpdateDashboardConfigUseCase _updateUseCase;
+		readonly RemoveDashboardConfigUseCase _removeUseCase;
 
 		public DashboardConfigController(
 			ILogger<DashboardConfigController> logger, ReadDashboardConfigsUseCase readUseCase,
-			UpdateDashboardConfigUseCase updateUseCase) {
+			UpdateDashboardConfigUseCase updateUseCase, RemoveDashboardConfigUseCase removeUseCase) {
 			_logger        = logger;
 			_readUseCase   = readUseCase;
 			_updateUseCase = updateUseCase;
+			_removeUseCase = removeUseCase;
 		}
 
 		[HttpGet]
@@ -55,6 +57,15 @@ namespace InvestmentReporting.MetaService.Controllers {
 					.Select(t => new DashboardConfigTag(new(t.Tag), t.Target))
 					.ToArray());
 			await _updateUseCase.Handle(userId, dashboardEntity);
+			return Ok();
+		}
+
+		[HttpDelete]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		public async Task<IActionResult> Delete([Required] string dashboard) {
+			var userId = new UserId(User.Identity?.Name ?? string.Empty);
+			_logger.LogInformation($"Remove dashboard '{dashboard}' for user '{userId}'");
+			await _removeUseCase.Handle(userId, new(dashboard));
 			return Ok();
 		}
 	}

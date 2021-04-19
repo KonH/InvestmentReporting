@@ -6,5 +6,7 @@ namespace InvestmentReporting.Data.Core.Repository {
 		Task<IReadOnlyCollection<DashboardConfigModel>> GetUserDashboardConfigs(string user);
 
 		Task AddOrUpdateDashboard(string user, DashboardConfigModel dashboard);
+
+		Task RemoveDashboard(string user, string id);
 	}
 }

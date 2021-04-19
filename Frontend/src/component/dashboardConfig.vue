@@ -9,16 +9,19 @@
 			<div class="form-group">
 				<button class="btn btn-primary" @click="save">Save</button>
 			</div>
+			<div class="form-group">
+				<button class="btn btn-danger" @click="remove">Remove</button>
+			</div>
 		</div>
 		<div class="form-group">
 			<label>
 				<b>Tags:</b>
 			</label>
 			<div v-for="tag in dashboard.tags" :key="tag">
-				<dashboard-tag-card :dashboard="dashboard" :tag="tag" class="mb-2" @remove="onRemove(tag.tag)" />
+				<dashboard-tag-card :dashboard="dashboard" :tag="tag" class="mb-2" @remove="onRemoveTag(tag.tag)" />
 			</div>
 			<div>
-				<add-dashboard-tag-card v-if="canAddTag" :dashboard="dashboard" :tags="availableTags" @add="onAdd" />
+				<add-dashboard-tag-card v-if="canAddTag" :dashboard="dashboard" :tags="availableTags" @add="onAddTag" />
 			</div>
 		</div>
 	</div>
@@ -34,7 +37,7 @@ import { State } from 'vuex-class';
 
 @Options({
 	name: 'DashboardConfig',
-	emits: ['save'],
+	emits: ['save', 'remove'],
 	components: {
 		DashboardTagCard,
 		AddDashboardTagCard,
@@ -52,12 +55,19 @@ export default class DashboardConfig extends Vue {
 		this.$emit('save');
 	}
 
-	async onRemove(tag: string) {
+	async remove() {
+		await Backend.meta().dashboardConfig.dashboardConfigDelete({
+			dashboard: this.dashboard.id ?? '',
+		});
+		this.$emit('remove');
+	}
+
+	async onRemoveTag(tag: string) {
 		this.dashboard.tags = this.dashboard.tags?.filter((t) => t.tag != tag) ?? [];
 		await this.save();
 	}
 
-	async onAdd(tag: DashboardConfigTagDto) {
+	async onAddTag(tag: DashboardConfigTagDto) {
 		this.dashboard.tags?.push(tag);
 		await this.save();
 	}
