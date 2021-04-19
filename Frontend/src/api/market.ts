@@ -281,7 +281,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name VirtualStateList
      * @request GET:/VirtualState
      */
-    virtualStateList: (query: { date: string }, params: RequestParams = {}) =>
+    virtualStateList: (query: { date: string; period?: string | null }, params: RequestParams = {}) =>
       this.request<VirtualStateDto, any>({
         path: `/VirtualState`,
         method: "GET",

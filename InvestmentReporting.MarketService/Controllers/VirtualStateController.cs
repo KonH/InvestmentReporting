@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using InvestmentReporting.State.Entity;
 using InvestmentReporting.Market.Dto;
+using InvestmentReporting.Market.Entity;
 using InvestmentReporting.Market.UseCase;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -25,10 +26,11 @@ namespace InvestmentReporting.MarketService.Controllers {
 		[HttpGet]
 		[Produces("application/json")]
 		[ProducesResponseType(typeof(VirtualStateDto), StatusCodes.Status200OK)]
-		public IActionResult Get([Required] DateTimeOffset date) {
+		public IActionResult Get([Required] DateTimeOffset date, string period) {
 			var userId = new UserId(User.Identity?.Name ?? string.Empty);
-			_logger.LogInformation($"Retrieve virtual state for user '{userId}' at {date}");
-			var state = _useCase.Handle(date, userId);
+			_logger.LogInformation($"Retrieve virtual state for user '{userId}' at {date} with period '{period}'");
+			var periodValue = !string.IsNullOrEmpty(period) ? Enum.Parse<VirtualPeriod>(period) : VirtualPeriod.AllTime;
+			var state       = _useCase.Handle(date, userId, periodValue);
 			var summary = state.Summary
 				.ToDictionary(s => s.Key.ToString(), s => new CurrencyBalanceDto(s.Value.RealSum, s.Value.VirtualSum));
 			var balancesDto = state.Balances

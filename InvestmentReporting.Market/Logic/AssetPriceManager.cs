@@ -32,8 +32,8 @@ namespace InvestmentReporting.Market.Logic {
 			var assets = inventory
 				.Where(a => a.Currency == currency)
 				.ToArray();
-			var assetRealSum = (assets.Length > 0) ? assets.Sum(a => a.RealSum) : 0;
-			var assetVirtualSum = (assets.Length > 0) ? assets.Sum(a => a.VirtualSum) : 0;
+			var assetRealSum = assets.Sum(a => a.RealSum);
+			var assetVirtualSum = assets.Sum(a => a.VirtualSum);
 			var inventoryForCurrency = inventory
 				.Where(a => a.Currency == currency)
 				.ToArray();
@@ -47,6 +47,15 @@ namespace InvestmentReporting.Market.Logic {
 		public IEnumerable<AddAssetCommand> GetAddAssetCommands(AssetISIN isin) =>
 			_stateManager.ReadCommands<AddAssetCommand>()
 				.Where(c => c.Isin == isin);
+
+		public DateTimeOffset GetLastBuyDate(UserId user, AssetId asset) {
+			var buyCommands = _stateManager.ReadCommands<AddExpenseCommand>(user, asset)
+				.Where(a => (a.Category == ExpenseCategory.BuyAsset))
+				.ToArray();
+			return (buyCommands.Length > 0)
+				? buyCommands.Max(c => c.Date)
+				: DateTimeOffset.MinValue;
+		}
 
 		public decimal GetRealPriceSum(DateTimeOffset date, UserId user, AssetId asset) {
 			var assetIncomes = _stateManager.ReadCommands<AddIncomeCommand>(date, user, asset)

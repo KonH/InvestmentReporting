@@ -92,6 +92,11 @@ namespace InvestmentReporting.State.Logic {
 			where TCommand : class, IAssetCommand =>
 			stateManager.ReadCommands<TCommand>(_minDate, endDate, user, asset);
 
+		public static IEnumerable<TCommand> ReadCommands<TCommand>(
+			this IStateManager stateManager, UserId user, AssetId asset)
+			where TCommand : class, IAssetCommand =>
+			stateManager.ReadCommands<TCommand>(_minDate, _maxDate, user, asset);
+
 		static IEnumerable<TCommand> Filter<TCommand>(IEnumerable<ICommand> commands) where TCommand : class, ICommand =>
 			commands
 				.Select(c => c as TCommand)
