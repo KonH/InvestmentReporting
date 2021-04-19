@@ -2,7 +2,7 @@
 	<h3>Accounts</h3>
 	Contains all unused balance for each account:
 	<ul>
-		<li v-for="broker in activeState.brokers" :key="broker.id">
+		<li v-for="broker in brokers" :key="broker.id">
 			<b>{{ broker.displayName }}</b
 			>:
 			<ul>
@@ -21,14 +21,23 @@ import MoneyDiff from '@/component/moneyDiff.vue';
 import { StateDto } from '@/api/state';
 
 @Options({
-	name: 'PortfolioAccountView',
+	name: 'PortfolioAccountsView',
 	components: {
 		Money,
 		MoneyDiff,
 	},
 })
-export default class PortfolioAccountView extends Vue {
+export default class PortfolioAccountsView extends Vue {
 	@State('activeState')
 	activeState!: StateDto;
+
+	@State('selectedVirtualStateBroker')
+	selectedVirtualStateBroker!: string;
+
+	get brokers() {
+		const allBrokers = this.activeState.brokers ?? [];
+		const selectedId = this.selectedVirtualStateBroker;
+		return allBrokers.filter((b) => !selectedId || b.id == selectedId);
+	}
 }
 </script>

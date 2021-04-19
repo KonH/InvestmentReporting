@@ -28,11 +28,13 @@ namespace InvestmentReporting.Market.UseCase {
 			_exchangeManager = exchangeManager;
 		}
 
-		public VirtualState Handle(DateTimeOffset date, UserId user, VirtualPeriod period = VirtualPeriod.AllTime) {
+		public VirtualState Handle(
+			DateTimeOffset date, UserId user, VirtualPeriod period = VirtualPeriod.AllTime, BrokerId? brokerId = null) {
 			var state       = _stateManager.ReadState(date, user);
 			var periodStart = GetPeriodStart(date, period);
 			_logger.LogTrace($"Period ({period}) start: {periodStart}");
 			var inventory = state.Brokers
+				.Where(broker => (brokerId == null) || (broker.Id == brokerId))
 				.SelectMany(broker => broker.Inventory
 					.Where(asset => asset.Count > 0)
 					.Select(asset => {

@@ -16,6 +16,9 @@ export default createStore({
 		applySelectedVirtualStatePeriod(appState: AppState, period: string) {
 			appState.selectedVirtualStatePeriod = period;
 		},
+		applySelectedVirtualStateBroker(appState: AppState, broker: string) {
+			appState.selectedVirtualStateBroker = broker;
+		},
 		applyVirtualState(appState: AppState, virtualState: VirtualStateDto) {
 			appState.virtualState = virtualState;
 		},
@@ -45,11 +48,16 @@ export default createStore({
 			commit('applySelectedVirtualStatePeriod', period);
 			dispatch('fetchVirtualState');
 		},
+		async changeSelectedVirtualStateBroker({ commit, dispatch }, broker: string) {
+			commit('applySelectedVirtualStateBroker', broker);
+			dispatch('fetchVirtualState');
+		},
 		async fetchVirtualState({ state, commit }) {
 			const date = new Date().toISOString();
 			const response = await Backend.market().virtualState.virtualStateList({
 				date: date,
 				period: state.selectedVirtualStatePeriod,
+				broker: state.selectedVirtualStateBroker,
 			});
 			commit('applyVirtualState', response.data);
 		},

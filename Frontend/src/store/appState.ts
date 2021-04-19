@@ -7,6 +7,7 @@ export default class AppState {
 		brokers: [],
 	};
 	selectedVirtualStatePeriod = 'AllTime';
+	selectedVirtualStateBroker = '';
 	virtualState: VirtualStateDto = {
 		balances: [],
 	};

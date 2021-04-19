@@ -39,6 +39,14 @@
               "type": "string",
               "nullable": true
             }
+          },
+          {
+            "name": "broker",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
           }
         ],
         "responses": {
