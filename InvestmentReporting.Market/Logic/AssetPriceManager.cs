@@ -28,14 +28,7 @@ namespace InvestmentReporting.Market.Logic {
 			_repository.GetAll()
 				.FirstOrDefault(m => m.Isin == isin);
 
-		public VirtualBalance GetVirtualBalance(
-			DateTimeOffset date, UserId user, CurrencyCode currency, IReadOnlyCollection<VirtualAsset> inventory) {
-			var state = _stateManager.ReadState(date, user);
-			var accounts = state.Brokers
-				.SelectMany(b => b.Accounts)
-				.Where(a => a.Currency == currency)
-				.ToArray();
-			var accountSum = (accounts.Length > 0) ? accounts.Sum(a => a.Balance) : 0;
+		public VirtualBalance GetVirtualBalance(CurrencyCode currency, IReadOnlyCollection<VirtualAsset> inventory) {
 			var assets = inventory
 				.Where(a => a.Currency == currency)
 				.ToArray();
@@ -45,8 +38,8 @@ namespace InvestmentReporting.Market.Logic {
 				.Where(a => a.Currency == currency)
 				.ToArray();
 			return new VirtualBalance(
-				RealSum: accountSum + assetRealSum,
-				VirtualSum: accountSum + assetVirtualSum,
+				RealSum: assetRealSum,
+				VirtualSum: assetVirtualSum,
 				inventoryForCurrency,
 				currency);
 		}
