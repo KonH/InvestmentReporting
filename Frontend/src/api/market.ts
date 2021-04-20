@@ -264,12 +264,26 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      *
      * @tags Sync
      * @name SyncCreate
-     * @request POST:/Sync
+     * @request POST:/Sync/Sync
      */
     syncCreate: (params: RequestParams = {}) =>
       this.request<void, any>({
-        path: `/Sync`,
+        path: `/Sync/Sync`,
         method: "POST",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Sync
+     * @name ResetDelete
+     * @request DELETE:/Sync/Reset
+     */
+    resetDelete: (params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/Sync/Reset`,
+        method: "DELETE",
         ...params,
       }),
   };

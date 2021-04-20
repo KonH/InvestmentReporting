@@ -3,7 +3,8 @@
 		<h2>Service</h2>
 		<button :onclick="sync" class="btn btn-primary">Sync</button>
 		<button :onclick="resetOps" class="btn btn-danger ml-2">Reset (operations)</button>
-		<button :onclick="resetAll" class="btn btn-danger ml-2">Reset (full)</button>
+		<button :onclick="resetState" class="btn btn-danger ml-2">Reset (state)</button>
+		<button :onclick="resetPrices" class="btn btn-danger ml-2">Reset (prices)</button>
 		<button :onclick="logout" class="btn btn-secondary ml-2">Logout</button>
 	</div>
 </template>
@@ -31,8 +32,13 @@ export default class ConfigView extends Vue {
 		await router.push('/config');
 	}
 
-	async resetAll() {
+	async resetState() {
 		await Backend.state().state.stateDelete();
+		await router.push('/config');
+	}
+
+	async resetPrices() {
+		await Backend.market().sync.resetDelete();
 		await router.push('/config');
 	}
 

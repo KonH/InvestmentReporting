@@ -90,5 +90,7 @@ namespace InvestmentReporting.Market.Logic {
 			_logger.LogTrace($"Last candle value for '{currency}' before '{date}' is {lastCandleBeforeDate}");
 			return lastCandleBeforeDate?.Close ?? 0;
 		}
+
+		public async Task Reset() => await _repository.Clear();
 	}
 }

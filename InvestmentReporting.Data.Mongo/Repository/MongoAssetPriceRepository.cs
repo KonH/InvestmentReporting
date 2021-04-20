@@ -40,5 +40,9 @@ namespace InvestmentReporting.Data.Mongo.Repository {
 				.ToArray();
 			return models;
 		}
+
+		public async Task Clear() {
+			await _collection.DeleteManyAsync(m => true);
+		}
 	}
 }

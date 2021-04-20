@@ -112,5 +112,7 @@ namespace InvestmentReporting.Market.Logic {
 				await _repository.Add(newModel);
 			}
 		}
+
+		public async Task Reset() => await _repository.Clear();
 	}
 }

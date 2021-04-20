@@ -58,6 +58,7 @@ namespace InvestmentReporting.MarketService {
 			services.AddSingleton<SynchronizationUseCase>();
 			services.AddHostedService<SynchronizationHostedService>();
 			services.AddSingleton<ReadVirtualStateUseCase>();
+			services.AddSingleton<MarketCandleResetUseCase>();
 		}
 
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {

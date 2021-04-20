@@ -12,20 +12,31 @@ namespace InvestmentReporting.MarketService.Controllers {
 	[ApiController]
 	[Route("[controller]")]
 	public sealed class SyncController : ControllerBase {
-		readonly ILogger                _logger;
-		readonly SynchronizationUseCase _useCase;
+		readonly ILogger                  _logger;
+		readonly SynchronizationUseCase   _syncUseCase;
+		readonly MarketCandleResetUseCase _resetUseCase;
 
-		public SyncController(ILogger<SyncController> logger, SynchronizationUseCase useCase) {
-			_logger  = logger;
-			_useCase = useCase;
+		public SyncController(
+			ILogger<SyncController> logger, SynchronizationUseCase syncUseCase, MarketCandleResetUseCase resetUseCase) {
+			_logger       = logger;
+			_syncUseCase  = syncUseCase;
+			_resetUseCase = resetUseCase;
 		}
 
-		[HttpPost]
+		[HttpPost("Sync")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		public async Task<IActionResult> Post() {
 			var userId = new UserId(User.Identity?.Name ?? string.Empty);
 			_logger.LogInformation($"Request sync from user '{userId}'");
-			await _useCase.Handle(CancellationToken.None);
+			await _syncUseCase.Handle(CancellationToken.None);
+			return Ok();
+		}
+
+		[HttpDelete("Reset")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		public async Task<IActionResult> Reset() {
+			_logger.LogInformation("Request reset");
+			await _resetUseCase.Handle();
 			return Ok();
 		}
 	}

@@ -8,5 +8,7 @@ namespace InvestmentReporting.Data.Core.Repository {
 		Task Update(AssetPriceModel metadata);
 
 		IReadOnlyCollection<AssetPriceModel> GetAll();
+
+		Task Clear();
 	}
 }

@@ -5,8 +5,20 @@
     "version": "v1"
   },
   "paths": {
-    "/Sync": {
+    "/Sync/Sync": {
       "post": {
+        "tags": [
+          "Sync"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/Sync/Reset": {
+      "delete": {
         "tags": [
           "Sync"
         ],
