@@ -14,12 +14,6 @@
 	</div>
 	<div class="form-group">
 		<label>
-			Category:
-			<input ref="category" type="text" class="form-control" />
-		</label>
-	</div>
-	<div class="form-group">
-		<label>
 			ISIN:
 			<input ref="isin" type="text" class="form-control" />
 		</label>
@@ -88,9 +82,6 @@ export default class BuyAsset extends Vue {
 	@Ref('name')
 	nameInput!: HTMLInputElement;
 
-	@Ref('category')
-	categoryInput!: HTMLInputElement;
-
 	@Ref('isin')
 	isinInput!: HTMLInputElement;
 
@@ -134,7 +125,6 @@ export default class BuyAsset extends Vue {
 				payAccount: this.payAccountSelect.value,
 				feeAccount: this.feeAccountSelect.value,
 				name: this.nameInput.value,
-				category: this.categoryInput.value,
 				isin: this.isinInput.value,
 				price: Number.parseFloat(this.priceInput.value),
 				fee: Number.parseFloat(this.feeInput.value),

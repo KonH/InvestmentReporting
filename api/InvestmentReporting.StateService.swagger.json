@@ -94,14 +94,6 @@
             }
           },
           {
-            "name": "category",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "name": "isin",
             "in": "query",
             "required": true,

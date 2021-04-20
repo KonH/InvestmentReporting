@@ -284,7 +284,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         payAccount: string;
         feeAccount: string;
         name: string;
-        category: string;
         isin: string;
         price: number;
         fee: number;

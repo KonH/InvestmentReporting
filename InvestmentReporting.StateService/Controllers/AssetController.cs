@@ -29,11 +29,11 @@ namespace InvestmentReporting.StateService.Controllers {
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		public async Task<IActionResult> BuyAsset(
 			[Required] DateTimeOffset date, [Required] string broker, [Required] string payAccount,
-			[Required] string feeAccount, [Required] string name, [Required] string category, [Required] string isin,
+			[Required] string feeAccount, [Required] string name, [Required] string isin,
 			[Required] decimal price, [Required] decimal fee, [Required] int count) {
 			var userId = new UserId(User.Identity?.Name ?? string.Empty);
 			_logger.LogInformation(
-				$"Buy asset (name: '{name}', category: '{category}', isin: '{isin}', price: {price}, fee: {fee}, count: {count}) " +
+				$"Buy asset (name: '{name}', isin: '{isin}', price: {price}, fee: {fee}, count: {count}) " +
 				$"at '{date}' for user '{userId}' on broker '{broker}' and pay account '{payAccount}' / fee account '{feeAccount}'");
 			try {
 				await _buyUseCase.Handle(
