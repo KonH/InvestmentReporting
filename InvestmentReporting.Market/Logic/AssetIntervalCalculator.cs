@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using InvestmentReporting.State.Entity;
 using Microsoft.Extensions.Logging;
@@ -14,16 +15,26 @@ namespace InvestmentReporting.Market.Logic {
 			_priceManager = priceManager;
 		}
 
-		public Tuple<DateTime, DateTime>? TryCalculateRequiredInterval(AssetISIN isin) {
+		public IReadOnlyCollection<(DateTime, DateTime)> TryCalculateRequiredIntervals(AssetISIN isin) {
 			var startDate = GetStartDate(isin);
 			var endDate   = GetEndDate();
 			_logger.LogTrace($"Interval for ISIN '{isin}' is {startDate}-{endDate}");
-			var diff = (endDate - startDate);
+			var result = new List<(DateTime, DateTime)>();
+			var diff   = (endDate - startDate);
 			if ( diff < TimeSpan.FromDays(1) ) {
 				_logger.LogTrace("No processing required");
-				return null;
+				return result;
 			}
-			return new Tuple<DateTime, DateTime>(startDate, endDate);
+			var date = startDate;
+			while ( date < endDate ) {
+				var interval = (endDate - date);
+				var nextDate = (interval.TotalDays < 365) ? endDate : date.AddDays(365);
+				result.Add((date, nextDate));
+				date = nextDate.AddDays(1);
+			}
+			_logger.LogTrace(
+				$"Interval splits into {result.Count} parts: {string.Join("; ", result.Select(r => r.ToString()))}");
+			return result;
 		}
 
 		DateTime GetStartDate(AssetISIN isin) {

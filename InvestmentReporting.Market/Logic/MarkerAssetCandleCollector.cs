@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -27,17 +26,15 @@ namespace InvestmentReporting.Market.Logic {
 				if ( metadata.Figi == null ) {
 					continue;
 				}
-				var isin     = metadata.Isin;
-				var interval = _intervalCalculator.TryCalculateRequiredInterval(isin);
-				if ( interval == null ) {
-					continue;
-				}
-				var (startDate, endDate) = interval;
-				var candles = await context.MarketCandlesAsync(
-					metadata.Figi, startDate, endDate, CandleInterval.Day);
-				_logger.LogTrace($"Found asset candles: {string.Join("\n", candles.Candles.Select(c => c.ToString()))}");
-				if ( candles.Candles.Count > 0 ) {
-					await _priceManager.AddOrAppendCandles(isin, candles);
+				var isin      = metadata.Isin;
+				var intervals = _intervalCalculator.TryCalculateRequiredIntervals(isin);
+				foreach ( var (startDate, endDate) in intervals ) {
+					var candles = await context.MarketCandlesAsync(
+						metadata.Figi, startDate, endDate, CandleInterval.Day);
+					_logger.LogTrace($"Found asset candles: {string.Join("\n", candles.Candles.Select(c => c.ToString()))}");
+					if ( candles.Candles.Count > 0 ) {
+						await _priceManager.AddOrAppendCandles(isin, candles);
+					}
 				}
 			}
 		}

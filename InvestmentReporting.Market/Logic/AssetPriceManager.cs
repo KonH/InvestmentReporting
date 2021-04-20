@@ -68,10 +68,12 @@ namespace InvestmentReporting.Market.Logic {
 		public decimal? GetVirtualPricePerOne(AssetISIN isin, DateTimeOffset date) {
 			var model = TryGetModel(isin);
 			if ( model == null ) {
+				_logger.LogWarning($"No model for ISIN '{isin}'");
 				return null;
 			}
 			var lastCandleBeforeDate = model.Candles
 				.LastOrDefault(c => c.Date < date);
+			_logger.LogTrace($"Last candle value for ISIN '{isin}' before {date} is {lastCandleBeforeDate}");
 			return lastCandleBeforeDate?.Close;
 		}
 

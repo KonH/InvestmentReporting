@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -39,16 +38,14 @@ namespace InvestmentReporting.Market.Logic {
 					_logger.LogError($"Unknown currency: '{currency}'");
 					continue;
 				}
-				var interval = _intervalCalculator.TryCalculateRequiredInterval(new(figi));
-				if ( interval == null ) {
-					continue;
-				}
-				var (startDate, endDate) = interval;
-				var candles = await context.MarketCandlesAsync(
-					figi, startDate, endDate, CandleInterval.Day);
-				_logger.LogTrace($"Found currency candles: {string.Join("\n", candles.Candles.Select(c => c.ToString()))}");
-				if ( candles.Candles.Count > 0 ) {
-					await _priceManager.AddOrAppendCandles(currency, new(figi), candles);
+				var intervals = _intervalCalculator.TryCalculateRequiredIntervals(new(figi));
+				foreach ( var (startDate, endDate) in intervals ) {
+					var candles = await context.MarketCandlesAsync(
+						figi, startDate, endDate, CandleInterval.Day);
+					_logger.LogTrace($"Found currency candles: {string.Join("\n", candles.Candles.Select(c => c.ToString()))}");
+					if ( candles.Candles.Count > 0 ) {
+						await _priceManager.AddOrAppendCandles(currency, new(figi), candles);
+					}
 				}
 			}
 		}
