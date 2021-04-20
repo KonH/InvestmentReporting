@@ -18,29 +18,26 @@
 			<input ref="category" type="text" class="form-control" />
 		</label>
 	</div>
-	<div>
-		<label>
-			Asset:
-			<select ref="asset" class="form-control">
-				<option v-for="asset in assets" :key="asset.id" :value="asset.id">
-					{{ renderAsset(asset) }}
-				</option>
-			</select>
-		</label>
+	<div class="form-group">
+		<asset-selector :value="asset" :broker-id="brokerId" :account-id="accountId" @input="onAssetSelect" />
 	</div>
 	<button :onclick="onclick" class="btn btn-primary">Add</button>
 	<router-link to="/custom" class="btn btn-secondary ml-2">Back</router-link>
 </template>
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import Backend from '@/service/backend';
-import router from '@/router';
 import { Action, State } from 'vuex-class';
 import { AssetDto, StateDto } from '@/api/state';
 import { Ref } from 'vue-property-decorator';
+import AssetSelector from '@/component/common/assetSelector.vue';
+import Backend from '@/service/backend';
+import router from '@/router';
 
 @Options({
 	name: 'AddExpenseView',
+	components: {
+		AssetSelector,
+	},
 })
 export default class AddExpense extends Vue {
 	@State('activeState')
@@ -55,8 +52,7 @@ export default class AddExpense extends Vue {
 	@Ref('category')
 	categoryInput!: HTMLInputElement;
 
-	@Ref('asset')
-	assetSelect!: HTMLSelectElement;
+	asset = '';
 
 	@Action('fetchState')
 	fetchState!: () => void;
@@ -69,18 +65,15 @@ export default class AddExpense extends Vue {
 		return this.$route.params.account as string;
 	}
 
+	onAssetSelect(value: string) {
+		this.asset = value;
+	}
+
 	get assets() {
 		const broker = this.activeState.brokers?.find((b) => b.id == this.brokerId);
 		const viewArray: [AssetDto] = [{ id: '' }];
 		const inventory = broker?.inventory ?? [];
 		return viewArray.concat(inventory);
-	}
-
-	renderAsset(asset: AssetDto | null) {
-		if (asset?.id) {
-			return `${asset.isin}`;
-		}
-		return '';
 	}
 
 	mounted() {
@@ -92,7 +85,6 @@ export default class AddExpense extends Vue {
 	}
 
 	async onclick() {
-		const asset = this.assetSelect.value ? this.assetSelect.value : null;
 		const result = await Backend.tryFetch(
 			Backend.state().expense.expenseCreate({
 				date: new Date(this.dateInput.value).toISOString(),
@@ -100,7 +92,7 @@ export default class AddExpense extends Vue {
 				account: this.accountId,
 				amount: Number.parseFloat(this.amountInput.value),
 				category: this.categoryInput.value,
-				asset: asset,
+				asset: this.asset,
 			})
 		);
 		if (result?.ok) {
