@@ -10,6 +10,7 @@
 
     <ItemGroup>
         <PackageReference Include="FluentAssertions" Version="5.10.3" />
+        <PackageReference Include="Moq" Version="4.16.1" />
         <PackageReference Include="NUnit" Version="3.12.0" />
         <PackageReference Include="NUnit3TestAdapter" Version="3.16.1" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
@@ -19,6 +20,7 @@
       <ProjectReference Include="..\InvestmentReporting.Data.InMemory\InvestmentReporting.Data.InMemory.csproj" />
       <ProjectReference Include="..\InvestmentReporting.Import.AlphaDirect\InvestmentReporting.Import.AlphaDirect.csproj" />
       <ProjectReference Include="..\InvestmentReporting.Import.Tinkoff\InvestmentReporting.Import.Tinkoff.csproj" />
+      <ProjectReference Include="..\InvestmentReporting.Market\InvestmentReporting.Market.csproj" />
       <ProjectReference Include="..\InvestmentReporting.State\InvestmentReporting.State.csproj" />
       <ProjectReference Include="..\InvestmentReporting.Import\InvestmentReporting.Import.csproj" />
     </ItemGroup>

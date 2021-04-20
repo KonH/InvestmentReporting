@@ -66,9 +66,17 @@ namespace InvestmentReporting.Market.Logic {
 		public decimal GetPriceAt(CurrencyCode from, CurrencyCode to, DateTimeOffset date) {
 			_logger.LogTrace($"Get price from '{from}' to '{to}'");
 			if ( from != "RUB" ) {
-				var price = GetPriceAt(from, date);
-				_logger.LogTrace($"Direct price from '{from}' to '{to}' is {price}");
-				return price;
+				var directPrice = GetPriceAt(from, date);
+				_logger.LogTrace($"Direct price of '{from}' is {directPrice} RUB");
+				if ( to != "RUB" ) {
+					var transferPrice = GetPriceAt(to, date);
+					_logger.LogTrace($"Transfer price of '{to}' is {transferPrice} RUB");
+					var result =  directPrice / transferPrice;
+					_logger.LogTrace($"Final price of '{from}' to '{to}' is {result}");
+					return result;
+				}
+				_logger.LogTrace($"Direct price of '{from}' to '{to}' is {directPrice} RUB");
+				return directPrice;
 			}
 			var priceDiv = GetPriceAt(to, date);
 			if ( priceDiv == 0 ) {

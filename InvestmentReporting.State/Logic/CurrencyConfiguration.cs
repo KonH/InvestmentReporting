@@ -7,6 +7,7 @@ namespace InvestmentReporting.State.Logic {
 		readonly Dictionary<CurrencyCode, CurrencyFormat> _currencies = new() {
 			[new("RUB")] = new("{sign}{value} ₽"),
 			[new("USD")] = new("{sign}${value}"),
+			[new("EUR")] = new("{sign}€{value}"),
 		};
 
 		public IReadOnlyCollection<CurrencyCode> GetAll() => _currencies.Keys.ToArray();
