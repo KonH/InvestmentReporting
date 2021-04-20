@@ -11,10 +11,10 @@
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
 import { DashboardConfigDto, DashboardConfigStateDto, DashboardStateDto } from '@/api/meta';
-import DashboardCard from '@/component/dashboardCard.vue';
-import AddDashboardCard from '@/component/addDashboardCard.vue';
-import DashboardConfig from '@/component/dashboardConfig.vue';
-import DashboardView from '@/view/dashboardView.vue';
+import DashboardCard from '@/component/dashboard/dashboardCard.vue';
+import AddDashboardCard from '@/component/dashboard/addDashboardCard.vue';
+import DashboardConfig from '@/component/dashboard/dashboardConfig.vue';
+import DashboardView from '@/view/dashboard/dashboardView.vue';
 import { Action, State } from 'vuex-class';
 
 @Options({

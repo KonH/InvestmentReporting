@@ -15,8 +15,8 @@
 import { Options, Vue } from 'vue-class-component';
 import { Prop } from 'vue-property-decorator';
 import { AssetTagSetDto } from '@/api/meta';
-import TagCard from '@/component/tagCard.vue';
-import AddTagCard from '@/component/addTagCard.vue';
+import TagCard from '@/component/tag/tagCard.vue';
+import AddTagCard from '@/component/tag/addTagCard.vue';
 
 @Options({
 	name: 'TagAsset',

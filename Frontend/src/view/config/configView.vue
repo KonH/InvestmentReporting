@@ -5,9 +5,9 @@
 </template>
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import AccountsView from '@/view/accountsView.vue';
-import BrokersView from '@/view/brokersView.vue';
-import ServiceView from '@/view/serviceView.vue';
+import AccountsView from '@/view/config/accountsView.vue';
+import BrokersView from '@/view/config/brokersView.vue';
+import ServiceView from '@/view/config/serviceView.vue';
 
 @Options({
 	name: 'ConfigView',

@@ -24,9 +24,9 @@ import { Options, Vue } from 'vue-class-component';
 import { DashboardConfigDto, DashboardStateDto } from '@/api/meta';
 import { Prop } from 'vue-property-decorator';
 import { Action, State } from 'vuex-class';
-import DashboardLegend from '@/component/dashboardLegend.vue';
+import DashboardLegend from '@/component/dashboard/dashboardLegend.vue';
 import { StateDto } from '@/api/state';
-import DashboardChart from '@/component/dashboardChart.vue';
+import DashboardChart from '@/component/dashboard/dashboardChart.vue';
 
 @Options({
 	name: 'DashboardView',

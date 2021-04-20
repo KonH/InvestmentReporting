@@ -18,7 +18,7 @@
 import { Options, Vue } from 'vue-class-component';
 import { Action, State } from 'vuex-class';
 import { AssetTagStateDto } from '@/api/meta';
-import TagAsset from '@/component/tagAsset.vue';
+import TagAsset from '@/component/tag/tagAsset.vue';
 
 @Options({
 	name: 'TagsView',

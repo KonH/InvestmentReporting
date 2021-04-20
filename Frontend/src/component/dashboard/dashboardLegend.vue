@@ -19,7 +19,7 @@
 import { Options, Vue } from 'vue-class-component';
 import { Prop } from 'vue-property-decorator';
 import { DashboardConfigDto, DashboardStateDto, SumStateDto } from '@/api/meta';
-import Money from '@/component/money.vue';
+import Money from '@/component/common/money.vue';
 
 @Options({
 	name: 'DashboardLegend',

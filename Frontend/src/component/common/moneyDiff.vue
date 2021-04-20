@@ -4,7 +4,7 @@
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
 import { Prop } from 'vue-property-decorator';
-import Money from '@/component/money.vue';
+import Money from '@/component/common/money.vue';
 
 @Options({
 	name: 'MoneyDiff',

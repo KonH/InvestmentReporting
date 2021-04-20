@@ -14,8 +14,8 @@
 </template>
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import AccountCard from '@/component/accountCard.vue';
-import AddAccountCard from '@/component/addAccountCard.vue';
+import AccountCard from '@/component/config/accountCard.vue';
+import AddAccountCard from '@/component/config/addAccountCard.vue';
 import { StateDto } from '@/api/state';
 import { State } from 'vuex-class';
 

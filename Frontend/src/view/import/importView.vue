@@ -33,9 +33,9 @@ import { Ref } from 'vue-property-decorator';
 import { StateDto } from '@/api/state';
 
 @Options({
-	name: 'Import',
+	name: 'ImportView',
 })
-export default class Import extends Vue {
+export default class ImportView extends Vue {
 	@State('activeState')
 	activeState!: StateDto;
 

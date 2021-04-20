@@ -11,7 +11,7 @@
 import { Options, Vue } from 'vue-class-component';
 import OperationData from '@/dto/operationData';
 import { Prop } from 'vue-property-decorator';
-import Money from '@/component/money.vue';
+import Money from '@/component/common/money.vue';
 
 @Options({
 	name: 'Operation',

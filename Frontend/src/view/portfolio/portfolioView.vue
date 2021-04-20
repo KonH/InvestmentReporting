@@ -6,12 +6,12 @@
 </template>
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import PortfolioCurrencyView from '@/view/portfolioCurrencyView.vue';
+import PortfolioCurrencyView from '@/view/portfolio/portfolioCurrencyView.vue';
 import { State } from 'vuex-class';
 import { VirtualStateDto } from '@/api/market';
-import PortfolioSettingsView from '@/view/portfolioSettingsView.vue';
-import PortfolioAccountsView from '@/view/portfolioAccountsView.vue';
-import PortfolioExchangeView from '@/view/portfolioExchangeView.vue';
+import PortfolioSettingsView from '@/view/portfolio/portfolioSettingsView.vue';
+import PortfolioAccountsView from '@/view/portfolio/portfolioAccountsView.vue';
+import PortfolioExchangeView from '@/view/portfolio/portfolioExchangeView.vue';
 
 @Options({
 	name: 'PortfolioView',

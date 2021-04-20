@@ -7,7 +7,7 @@
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
 import { Action } from 'vuex-class';
-import NavBarView from '@/view/navBarView.vue';
+import NavBarView from '@/view/common/navBarView.vue';
 
 @Options({
 	name: 'App',

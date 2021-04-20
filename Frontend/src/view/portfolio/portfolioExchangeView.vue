@@ -14,8 +14,8 @@
 import { Options, Vue } from 'vue-class-component';
 import { State } from 'vuex-class';
 import { VirtualStateDto } from '@/api/market';
-import Money from '@/component/money.vue';
-import MoneyDiff from '@/component/moneyDiff.vue';
+import Money from '@/component/common/money.vue';
+import MoneyDiff from '@/component/common/moneyDiff.vue';
 import { StateDto } from '@/api/state';
 
 @Options({

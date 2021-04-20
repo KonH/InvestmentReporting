@@ -38,9 +38,9 @@
 import { Options, Vue } from 'vue-class-component';
 import { Prop } from 'vue-property-decorator';
 import { VirtualAssetDto } from '@/api/market';
-import Money from '@/component/money.vue';
-import MoneyValueDiff from '@/component/moneyValueDiff.vue';
-import PercentDiff from '@/component/percentDiff.vue';
+import Money from '@/component/common/money.vue';
+import MoneyValueDiff from '@/component/common/moneyValueDiff.vue';
+import PercentDiff from '@/component/common/percentDiff.vue';
 
 @Options({
 	name: 'PortfolioAsset',

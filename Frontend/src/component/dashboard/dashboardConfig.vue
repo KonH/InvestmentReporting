@@ -31,8 +31,8 @@ import { Options, Vue } from 'vue-class-component';
 import { Prop } from 'vue-property-decorator';
 import { AssetTagStateDto, DashboardConfigDto, DashboardConfigTagDto } from '@/api/meta';
 import Backend from '@/service/backend';
-import DashboardTagCard from '@/component/dashboardTagCard.vue';
-import AddDashboardTagCard from '@/component/addDashboardTagCard.vue';
+import DashboardTagCard from '@/component/dashboard/dashboardTagCard.vue';
+import AddDashboardTagCard from '@/component/dashboard/addDashboardTagCard.vue';
 import { State } from 'vuex-class';
 
 @Options({

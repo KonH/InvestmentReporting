@@ -11,8 +11,8 @@
 </template>
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import BrokerCard from '@/component/brokerCard.vue';
-import AddBrokerCard from '@/component/addBrokerCard.vue';
+import BrokerCard from '@/component/config/brokerCard.vue';
+import AddBrokerCard from '@/component/config/addBrokerCard.vue';
 import { StateDto } from '@/api/state';
 import { State } from 'vuex-class';
 

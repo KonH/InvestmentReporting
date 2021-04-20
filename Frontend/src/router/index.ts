@@ -1,20 +1,20 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
-import LoginView from '@/view/loginView.vue';
-import RegisterView from '@/view/registerView.vue';
+import LoginView from '@/view/common/loginView.vue';
+import RegisterView from '@/view/common/registerView.vue';
 import Backend from '@/service/backend';
-import AddBrokerView from '@/view/addBrokerView.vue';
-import AddAccountView from '@/view/addAccountView.vue';
-import AddIncomeView from '@/view/addIncomeView.vue';
-import AddExpenseView from '@/view/addExpenseView.vue';
-import ImportView from '@/view/importView.vue';
-import BuyAssetView from '@/view/buyAssetView.vue';
-import SellAssetView from '@/view/sellAssetView.vue';
-import ConfigView from '@/view/configView.vue';
-import OperationsView from '@/view/operationsView.vue';
-import PortfolioView from '@/view/portfolioView.vue';
-import TagsView from '@/view/tagsView.vue';
-import DashboardsView from '@/view/dashboardsView.vue';
-import CustomView from '@/view/customView.vue';
+import AddBrokerView from '@/view/config/addBrokerView.vue';
+import AddAccountView from '@/view/config/addAccountView.vue';
+import ConfigView from '@/view/config/configView.vue';
+import ImportView from '@/view/import/importView.vue';
+import OperationsView from '@/view/operation/operationsView.vue';
+import TagsView from '@/view/tag/tagsView.vue';
+import PortfolioView from '@/view/portfolio/portfolioView.vue';
+import DashboardsView from '@/view/dashboard/dashboardsView.vue';
+import AddIncomeView from '@/view/custom/addIncomeView.vue';
+import AddExpenseView from '@/view/custom/addExpenseView.vue';
+import BuyAssetView from '@/view/custom/buyAssetView.vue';
+import SellAssetView from '@/view/custom/sellAssetView.vue';
+import CustomView from '@/view/custom/customView.vue';
 
 const routes: Array<RouteRecordRaw> = [
 	{

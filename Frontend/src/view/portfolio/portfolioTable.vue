@@ -23,7 +23,7 @@
 </template>
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import PortfolioAsset from '@/component/portfolioAsset.vue';
+import PortfolioAsset from '@/component/portfolio/portfolioAsset.vue';
 import { State } from 'vuex-class';
 import { VirtualAssetDto, VirtualStateDto } from '@/api/market';
 import { Prop } from 'vue-property-decorator';

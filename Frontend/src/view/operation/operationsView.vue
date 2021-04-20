@@ -46,7 +46,7 @@
 </template>
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import Operation from '@/component/operation.vue';
+import Operation from '@/component/operation/operation.vue';
 import Backend from '@/service/backend';
 import { AccountDto, BrokerDto, OperationDto, StateDto } from '@/api/state';
 import OperationData from '@/dto/operationData';
