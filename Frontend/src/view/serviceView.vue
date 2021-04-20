@@ -21,6 +21,9 @@ export default class ConfigView extends Vue {
 	@Action('fetchState')
 	fetchState!: () => void;
 
+	@Action('logout')
+	logoutAction!: () => void;
+
 	async sync() {
 		await Backend.tryFetch(Backend.market().sync.syncCreate());
 		this.fetchState();
@@ -43,8 +46,8 @@ export default class ConfigView extends Vue {
 	}
 
 	async logout() {
-		await Backend.auth().logout.logoutCreate();
-		await router.push('/');
+		this.logoutAction();
+		await router.push('/login');
 	}
 }
 </script>

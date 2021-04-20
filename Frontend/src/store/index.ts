@@ -31,6 +31,9 @@ export default createStore({
 		applySelectedDashboardState(appState: AppState, state: DashboardStateDto) {
 			appState.selectedDashboardState = state;
 		},
+		resetState(appState: AppState) {
+			Object.assign(appState, new AppState());
+		},
 	},
 	actions: {
 		async fetchState({ dispatch }) {
@@ -76,6 +79,10 @@ export default createStore({
 				dashboard: dashboardId,
 			});
 			commit('applySelectedDashboardState', response.data);
+		},
+		async logout({ commit }) {
+			await Backend.auth().logout.logoutCreate();
+			commit('resetState');
 		},
 	},
 	modules: {},

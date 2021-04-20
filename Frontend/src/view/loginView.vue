@@ -20,11 +20,15 @@ import { Options, Vue } from 'vue-class-component';
 import Backend from '@/service/backend';
 import router from '@/router';
 import { Ref } from 'vue-property-decorator';
+import { Action } from 'vuex-class';
 
 @Options({
 	name: 'LoginView',
 })
 export default class Login extends Vue {
+	@Action('fetchState')
+	fetchState!: () => void;
+
 	@Ref('login')
 	loginInput!: HTMLInputElement;
 
@@ -39,6 +43,7 @@ export default class Login extends Vue {
 			})
 		);
 		if (loginResult?.ok) {
+			this.fetchState();
 			await router.push('/');
 		} else {
 			alert('Login failed');
