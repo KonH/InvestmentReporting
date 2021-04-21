@@ -1,6 +1,14 @@
 <template>
 	<div class="form-group">
 		<label>
+			Category:
+			<select ref="category" class="form-control" @change="onCategoryChange">
+				<option v-for="category in categories" :key="category" :value="category">
+					{{ category }}
+				</option>
+			</select>
+		</label>
+		<label class="ml-3">
 			Broker:
 			<select ref="broker" class="form-control" @change="onBrokerChange">
 				<option v-for="broker in brokers" :key="broker.id" :value="broker.id">
@@ -58,6 +66,9 @@ export default class OperationsView extends Vue {
 	@State('activeState')
 	activeState!: StateDto;
 
+	@Ref('category')
+	categoryInput!: HTMLSelectElement;
+
 	@Ref('broker')
 	brokerInput!: HTMLSelectElement;
 
@@ -66,6 +77,7 @@ export default class OperationsView extends Vue {
 
 	allOperations: OperationDto[] = [];
 
+	targetCategory = '';
 	targetBroker = '';
 	targetAccount = '';
 	targetAsset = '';
@@ -85,6 +97,11 @@ export default class OperationsView extends Vue {
 	}
 
 	preFilter(dto: OperationDto) {
+		if (this.targetCategory) {
+			if (dto.category != this.targetCategory) {
+				return false;
+			}
+		}
 		if (this.targetBroker) {
 			if (this.targetAccount) {
 				return dto.account == this.targetAccount;
@@ -149,6 +166,16 @@ export default class OperationsView extends Vue {
 		const empty = [''];
 		const assetIsins = this.allOperations.map((dto) => this.createView(dto).assetIsin).filter((v) => v != 'N/A');
 		return new Set(empty.concat(assetIsins));
+	}
+
+	get categories() {
+		const empty = [''];
+		const categories = this.allOperations.map((dto) => this.createView(dto).category ?? '');
+		return new Set(empty.concat(categories));
+	}
+
+	onCategoryChange() {
+		this.targetCategory = this.categoryInput.value;
 	}
 
 	onBrokerChange() {
