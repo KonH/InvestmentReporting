@@ -16,14 +16,7 @@
 				</option>
 			</select>
 		</label>
-		<label class="ml-3">
-			Asset:
-			<select ref="asset" class="form-control" @change="onAssetChange">
-				<option v-for="asset in assets" :key="asset" :value="asset">
-					{{ asset }}
-				</option>
-			</select>
-		</label>
+		<asset-selector :value="targetAsset" emit-isin="true" class="ml-3" @input="onAssetChange" />
 	</div>
 	<table class="table table-sm table-striped">
 		<thead>
@@ -52,11 +45,13 @@ import { AccountDto, BrokerDto, OperationDto, StateDto } from '@/api/state';
 import OperationData from '@/dto/operationData';
 import { State } from 'vuex-class';
 import { Ref } from 'vue-property-decorator';
+import AssetSelector from '@/component/common/assetSelector.vue';
 
 @Options({
 	name: 'OperationsView',
 	components: {
 		Operation,
+		AssetSelector,
 	},
 })
 export default class OperationsView extends Vue {
@@ -68,9 +63,6 @@ export default class OperationsView extends Vue {
 
 	@Ref('account')
 	accountInput!: HTMLSelectElement;
-
-	@Ref('asset')
-	assetInput!: HTMLSelectElement;
 
 	allOperations: OperationDto[] = [];
 
@@ -155,7 +147,7 @@ export default class OperationsView extends Vue {
 
 	get assets() {
 		const empty = [''];
-		const assetIsins = this.allOperations.map((dto) => this.createView(dto).assetIsin);
+		const assetIsins = this.allOperations.map((dto) => this.createView(dto).assetIsin).filter((v) => v != 'N/A');
 		return new Set(empty.concat(assetIsins));
 	}
 
@@ -168,8 +160,8 @@ export default class OperationsView extends Vue {
 		this.targetAccount = this.accountInput.value;
 	}
 
-	onAssetChange() {
-		this.targetAsset = this.assetInput.value;
+	onAssetChange(value: string) {
+		this.targetAsset = value;
 	}
 }
 </script>

@@ -2,7 +2,7 @@
 	<label>
 		Asset:
 		<select ref="asset" class="form-control" @input="onInput">
-			<option v-for="asset in assets" :key="asset.id" :value="asset.id">
+			<option v-for="asset in assets" :key="getAssetKey(asset)" :value="getAssetKey(asset)">
 				{{ renderAsset(asset) }}
 			</option>
 		</select>
@@ -26,6 +26,9 @@ export default class AssetSelector extends Vue {
 	@Prop()
 	value!: string;
 
+	@Prop()
+	emitIsin!: boolean;
+
 	@State('activeState')
 	activeState!: StateDto;
 
@@ -39,15 +42,19 @@ export default class AssetSelector extends Vue {
 	fetchState!: () => void;
 
 	get assets() {
-		const broker = this.activeState.brokers?.find((b) => b.id == this.brokerId);
+		const brokers = this.activeState.brokers?.filter((b) => !this.brokerId || b.id == this.brokerId);
 		const viewArray: [AssetDto] = [{ id: '' }];
-		const inventory = broker?.inventory ?? [];
+		const inventory = brokers?.flatMap((b) => b.inventory ?? []) ?? [];
 		return viewArray.concat(inventory);
 	}
 
 	getAssetName(id: string) {
 		const assets = this.virtualState.balances?.map((b) => b.inventory?.find((a) => a.id == id))?.filter((a) => a);
 		return assets && assets.length > 0 ? assets[0]?.name : undefined;
+	}
+
+	getAssetKey(asset: AssetDto | null) {
+		return this.emitIsin ? asset?.isin : asset?.id;
 	}
 
 	renderAsset(asset: AssetDto | null) {
