@@ -1,8 +1,7 @@
 export default class OperationData {
 	id?: string | null;
 
-	/** @format date-time */
-	date?: string;
+	date?: Date;
 	kind?: string | null;
 	currency?: string | null;
 

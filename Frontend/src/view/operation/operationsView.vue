@@ -1,6 +1,14 @@
 <template>
 	<div class="form-group">
 		<label>
+			Start date:
+			<input ref="startDate" type="date" class="form-control" @change="onStartDateChange" />
+		</label>
+		<label class="ml-3">
+			End date:
+			<input ref="endDate" type="date" class="form-control" @change="onEndDateChange" />
+		</label>
+		<label class="ml-3">
 			Category:
 			<select ref="category" class="form-control" @change="onCategoryChange">
 				<option v-for="category in categories" :key="category" :value="category">
@@ -66,6 +74,12 @@ export default class OperationsView extends Vue {
 	@State('activeState')
 	activeState!: StateDto;
 
+	@Ref('startDate')
+	startDateInput!: HTMLInputElement;
+
+	@Ref('endDate')
+	endDateInput!: HTMLInputElement;
+
 	@Ref('category')
 	categoryInput!: HTMLSelectElement;
 
@@ -77,6 +91,8 @@ export default class OperationsView extends Vue {
 
 	allOperations: OperationDto[] = [];
 
+	startDateValue = new Date(1, 1, 1);
+	endDateValue = new Date(Number.MAX_VALUE, 1, 1);
 	targetCategory = '';
 	targetBroker = '';
 	targetAccount = '';
@@ -112,6 +128,14 @@ export default class OperationsView extends Vue {
 	}
 
 	postFilter(data: OperationData) {
+		if (data.date) {
+			if (data.date < this.startDateValue) {
+				return false;
+			}
+			if (data.date > this.endDateValue) {
+				return false;
+			}
+		}
 		if (this.targetAsset) {
 			return data.assetIsin == this.targetAsset;
 		}
@@ -122,7 +146,7 @@ export default class OperationsView extends Vue {
 		const id = (dto.date ?? '') + (dto.category ?? '') + (dto.broker ?? '') + (dto.account ?? '') + (dto.asset ?? '') + (Math.random() * 1000).toString();
 		return {
 			id: id,
-			date: dto.date,
+			date: new Date(dto.date ?? ''),
 			kind: dto.kind,
 			currency: dto.currency,
 			amount: dto.amount,
@@ -172,6 +196,14 @@ export default class OperationsView extends Vue {
 		const empty = [''];
 		const categories = this.allOperations.map((dto) => this.createView(dto).category ?? '');
 		return new Set(empty.concat(categories));
+	}
+
+	onStartDateChange() {
+		this.startDateValue = new Date(this.startDateInput.value);
+	}
+
+	onEndDateChange() {
+		this.endDateValue = new Date(this.endDateInput.value);
 	}
 
 	onCategoryChange() {
