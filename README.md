@@ -1,3 +1,10 @@
+# Import
+
+| Broker      | Transfers | Share | ETF | Bond | Dividends | Coupons |
+|-------------|:---------:|:-----:|:---:|:----:|:---------:|:-------:|
+| AlphaDirect | +         | +     | +   | +    | +         | +       |
+| Tinkoff     | +         | +     | +   | +    | -         | -       |
+
 ![portfolio](Docs/Screenshots/portfolio.png)
 ![portfolio_table](Docs/Screenshots/portfolio_table.png)
 ![dashboard_1](Docs/Screenshots/dashboard_1.png)
