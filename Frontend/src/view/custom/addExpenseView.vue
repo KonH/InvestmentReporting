@@ -15,7 +15,9 @@
 	<div class="form-group">
 		<label>
 			Category:
-			<input ref="category" type="text" class="form-control" />
+			<select ref="category" class="form-control">
+				<option selected>Expense Transfer</option>
+			</select>
 		</label>
 	</div>
 	<div class="form-group">
@@ -51,7 +53,7 @@ export default class AddExpense extends Vue {
 	amountInput!: HTMLInputElement;
 
 	@Ref('category')
-	categoryInput!: HTMLInputElement;
+	categorySelect!: HTMLSelectElement;
 
 	asset = '';
 
@@ -88,7 +90,7 @@ export default class AddExpense extends Vue {
 				broker: this.brokerId,
 				account: this.accountId,
 				amount: Number.parseFloat(this.amountInput.value),
-				category: this.categoryInput.value,
+				category: this.categorySelect.value,
 				asset: this.asset,
 			})
 		);
