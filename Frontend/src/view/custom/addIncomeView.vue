@@ -19,7 +19,7 @@
 		</label>
 	</div>
 	<div class="form-group">
-		<asset-selector :value="asset" :broker-id="brokerId" :account-id="accountId" @input="onAssetSelect" />
+		<asset-selector :value="asset" :broker-id="brokerId" @input="onAssetSelect" />
 	</div>
 	<button :onclick="onclick" class="btn btn-primary">Add</button>
 	<router-link to="/custom" class="btn btn-secondary ml-2">Back</router-link>
@@ -32,6 +32,7 @@ import { Action, State } from 'vuex-class';
 import { AssetDto, StateDto } from '@/api/state';
 import { Ref } from 'vue-property-decorator';
 import AssetSelector from '@/component/common/assetSelector.vue';
+import InputUtils from '@/utils/inputUtils';
 
 @Options({
 	name: 'AddIncomeView',
@@ -77,11 +78,7 @@ export default class AddIncome extends Vue {
 	}
 
 	mounted() {
-		this.setCurrentDate();
-	}
-
-	setCurrentDate() {
-		this.dateInput.value = new Date().toISOString();
+		InputUtils.setCurrentDate(this.dateInput);
 	}
 
 	async onclick() {

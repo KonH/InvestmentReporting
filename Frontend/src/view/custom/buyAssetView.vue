@@ -62,6 +62,7 @@ import router from '@/router';
 import { Action, State } from 'vuex-class';
 import { StateDto } from '@/api/state';
 import { Ref } from 'vue-property-decorator';
+import InputUtils from '@/utils/inputUtils';
 
 @Options({
 	name: 'BuyAssetView',
@@ -110,11 +111,7 @@ export default class BuyAsset extends Vue {
 	}
 
 	mounted() {
-		this.setCurrentDate();
-	}
-
-	setCurrentDate() {
-		this.dateInput.value = new Date().toISOString();
+		InputUtils.setCurrentDate(this.dateInput);
 	}
 
 	async onclick() {

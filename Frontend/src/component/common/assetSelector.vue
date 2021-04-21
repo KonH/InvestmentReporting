@@ -24,9 +24,6 @@ export default class AssetSelector extends Vue {
 	brokerId: string | undefined;
 
 	@Prop()
-	accountId: string | undefined;
-
-	@Prop()
 	value!: string;
 
 	@State('activeState')
