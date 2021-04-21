@@ -5,18 +5,18 @@
 	<td>{{ operation.brokerName }}</td>
 	<td>{{ operation.accountName }}</td>
 	<td>{{ operation.assetIsin }}</td>
-	<td><money :currency-code="operation.currency" :value="operation.amount" /></td>
+	<td><money-value-diff :currency-code="operation.currency" :old="0" :new="operation.amount" /></td>
 </template>
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
 import OperationData from '@/dto/operationData';
 import { Prop } from 'vue-property-decorator';
-import Money from '@/component/common/money.vue';
+import MoneyValueDiff from '@/component/common/moneyValueDiff.vue';
 
 @Options({
 	name: 'Operation',
 	components: {
-		Money,
+		MoneyValueDiff,
 	},
 })
 export default class Operation extends Vue {
