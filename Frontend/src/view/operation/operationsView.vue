@@ -34,6 +34,14 @@
 		</label>
 		<asset-selector :value="targetAsset" emit-isin="true" class="ml-3" @input="onAssetChange" />
 	</div>
+	<div>
+		<label>
+			<b>Total:</b>&nbsp;
+			<template v-for="currencyCode in currencyCodes" :key="currencyCode">
+				<money :value="getCurrencySum(currencyCode)" :currency-code="currencyCode" />&nbsp;
+			</template>
+		</label>
+	</div>
 	<table class="table table-sm table-striped">
 		<thead>
 			<tr>
@@ -62,12 +70,14 @@ import OperationData from '@/dto/operationData';
 import { State } from 'vuex-class';
 import { Ref } from 'vue-property-decorator';
 import AssetSelector from '@/component/common/assetSelector.vue';
+import Money from '@/component/common/money.vue';
 
 @Options({
 	name: 'OperationsView',
 	components: {
 		Operation,
 		AssetSelector,
+		Money,
 	},
 })
 export default class OperationsView extends Vue {
@@ -221,6 +231,15 @@ export default class OperationsView extends Vue {
 
 	onAssetChange(value: string) {
 		this.targetAsset = value;
+	}
+
+	get currencyCodes() {
+		return this.activeState.currencies?.map((c) => c.code);
+	}
+
+	getCurrencySum(code: string) {
+		const currencyOps = this.operations.filter((o) => o.currency == code);
+		return currencyOps.map((o) => o.amount ?? 0).reduce((p, c) => p + c, 0);
 	}
 }
 </script>
