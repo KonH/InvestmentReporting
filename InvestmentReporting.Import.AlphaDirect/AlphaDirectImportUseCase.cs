@@ -22,25 +22,21 @@ namespace InvestmentReporting.Import.AlphaDirect {
 		readonly TransactionStateManager _stateManager;
 		readonly BrokerMoneyMoveParser   _moneyMoveParser;
 		readonly TradeParser             _tradeParser;
+		readonly CouponParser            _couponParser;
 		readonly BuyAssetUseCase         _buyAssetUseCase;
 		readonly SellAssetUseCase        _sellAssetUseCase;
 
 		// To receive ISIN from any string
 		readonly Regex _dividendIsinRegex = new("([A-Z0-9]{12})");
 
-		// To receive organization name and series from coupon comment
-		readonly Regex _couponRegex = new("\\(Облигации (.*) сери.*(\\w{4}-\\w{2})\\)");
-
-		// To receive organization name and series from asset name
-		readonly Regex _bondRegex = new("(.*) сери.*(\\w{4}-\\w{2})");
-
 		public AlphaDirectImportUseCase(
 			TransactionStateManager stateManager, BrokerMoneyMoveParser moneyMoveParser, TradeParser tradeParser,
-			AddIncomeUseCase addIncomeUseCase, AddExpenseUseCase addExpenseUseCase,
+			CouponParser couponParser, AddIncomeUseCase addIncomeUseCase, AddExpenseUseCase addExpenseUseCase,
 			BuyAssetUseCase buyAssetUseCase, SellAssetUseCase sellAssetUseCase) : base(addIncomeUseCase, addExpenseUseCase) {
 			_stateManager     = stateManager;
 			_moneyMoveParser  = moneyMoveParser;
 			_tradeParser      = tradeParser;
+			_couponParser     = couponParser;
 			_buyAssetUseCase  = buyAssetUseCase;
 			_sellAssetUseCase = sellAssetUseCase;
 		}
@@ -162,46 +158,11 @@ namespace InvestmentReporting.Import.AlphaDirect {
 				if ( IsAlreadyPresent(couponTransfer.Date, couponTransfer.Amount, incomeAccountCommands[accountId]) ) {
 					continue;
 				}
-				var asset = DetectAssetFromCoupon(couponTransfer.Comment, trades, assets);
+				var asset = _couponParser.DetectAssetFromCoupon(couponTransfer.Comment, trades, assets);
 				await AddIncomeUseCase.Handle(
 					couponTransfer.Date, user, brokerId, accountId, couponTransfer.Amount,
 					IncomeCategory.Coupon, asset);
 			}
-		}
-
-		AssetId DetectAssetFromCoupon(string comment, IReadOnlyCollection<Trade> trades, Dictionary<string, AssetId> assets) {
-			var couponMatch = _couponRegex.Match(comment);
-			if ( !couponMatch.Success ) {
-				throw new UnexpectedFormatException($"Failed to detect organization and/or series from comment '{comment}'");
-			}
-			var organization      = couponMatch.Groups[1].Value.Trim();
-			var shortOrganization = TryGetShortOrganizationName(organization);
-			var series            = couponMatch.Groups[2].Value;
-			foreach ( var trade in trades ) {
-				var tradeMatch = _bondRegex.Match(trade.Name);
-				if ( !tradeMatch.Success ) {
-					continue;
-				}
-				var tradeOrganization = tradeMatch.Groups[1].Value;
-				var tradeSeries       = tradeMatch.Groups[2].Value;
-				if ( !tradeOrganization.StartsWith(organization) || (series != tradeSeries) ) {
-					var tradeShortOrganization = TryGetShortOrganizationName(organization);
-					if ( shortOrganization != tradeShortOrganization ) {
-						continue;
-					}
-				}
-				var isin = trade.Isin;
-				if ( assets.TryGetValue(isin, out var assetId) ) {
-					return assetId;
-				}
-				throw new InvalidOperationException($"Failed to find asset for ISIN '{isin}'");
-			}
-			throw new InvalidOperationException($"Failed to find asset for '{organization}' '{series}'");
-		}
-
-		string? TryGetShortOrganizationName(string organization) {
-			var parts = organization.Split('"');
-			return (parts.Length > 1) ? parts[^2] : null;
 		}
 	}
 }

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Report Name="MyBroker">
+    <Trades>
+        <Report Name="2_Trades">
+            <Tablix2>
+                <Details_Collection>
+                    <Details trade_no="000000001" db_time="01.01.2000 00:00:00&#xD;&#xA; 01.01.2000 00:00:00"
+                             settlement_time="01.01.2000 00:00:00&#xD;&#xA; 01.01.2000 00:00:00" acc_code="000001-000"
+                             place_name="МБ ФР" isin_reg="RU0000000001" p_name="ОФЗ ПД 00001 в." qty="1"
+                             Price="100.00000000" summ_trade="100.00" curr_calc="RUB" bank_tax="10.00"/>
+                </Details_Collection>
+            </Tablix2>
+        </Report>
+    </Trades>
+    <Trades2>
+        <Report Name="3_BrokerMoneyMove">
+            <Tablix1>
+                <settlement_date_Collection>
+                    <settlement_date settlement_date="2000-01-01T00:00:00">
+                        <rn_Collection>
+                            <rn last_update="2020-01-01T01:02:03">
+                                <oper_type oper_type="Перевод">
+                                    <comment
+                                            comment="погашение купона 000000000 (Минфин России выпуск 00001) д.ф.22.03.21.(Удержан налог 16 руб.)">
+                                        <money_volume_begin1_Collection>
+                                            <money_volume_begin1>
+                                                <p_code_Collection>
+                                                    <p_code>
+                                                        <p_code p_code="RUB" volume="100.00"/>
+                                                    </p_code>
+                                                    <p_code>
+                                                        <p_code p_code="USD"/>
+                                                    </p_code>
+                                                </p_code_Collection>
+                                            </money_volume_begin1>
+                                        </money_volume_begin1_Collection>
+                                    </comment>
+                                </oper_type>
+                            </rn>
+                        </rn_Collection>
+                    </settlement_date>
+                </settlement_date_Collection>
+            </Tablix1>
+        </Report>
+    </Trades2>
+</Report>

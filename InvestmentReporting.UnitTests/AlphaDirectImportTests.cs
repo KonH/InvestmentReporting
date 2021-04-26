@@ -275,7 +275,7 @@ namespace InvestmentReporting.UnitTests {
 		}
 
 		[Test]
-		public void IsCouponTransfersRead() {
+		public void IsCouponTransfersReadSimple() {
 			var sample = LoadXml("AlphaDirect_BrokerMoneyMove_CouponSample.xml");
 			var parser = new BrokerMoneyMoveParser();
 
@@ -288,9 +288,22 @@ namespace InvestmentReporting.UnitTests {
 		}
 
 		[Test]
-		public async Task IsCouponTransfersImported() {
+		public void IsCouponTransfersReadOfz() {
+			var sample = LoadXml("AlphaDirect_BrokerMoneyMove_CouponSample2.xml");
+			var parser = new BrokerMoneyMoveParser();
+
+			var actualTransfers = parser.ReadCouponTransfers(sample);
+
+			var expectedTransfers = new[] {
+				new Transfer(DateTimeOffset.Parse("2020-01-01T01:02:03+3"), "Перевод погашение купона 000000000 (Минфин России выпуск 00001) д.ф.22.03.21.(Удержан налог 16 руб.)", "RUB", 100),
+			};
+			actualTransfers.Should().Contain(expectedTransfers);
+		}
+
+		[Test]
+		public async Task IsCouponTransfersImportedOfz() {
 			var stateManager = GetStateManager();
-			await using var sample = LoadStream("AlphaDirect_BrokerMoneyMove_CouponSample.xml");
+			await using var sample = LoadStream("AlphaDirect_BrokerMoneyMove_CouponSample2.xml");
 			var useCase = GetUseCase(stateManager);
 
 			await useCase.Handle(_date, _userId, _brokerId, sample);
@@ -342,11 +355,12 @@ namespace InvestmentReporting.UnitTests {
 			var transStateManager = new TransactionStateManager(loggerFactory, stateManager);
 			var moneyMoveParser   = new BrokerMoneyMoveParser();
 			var tradeParser       = new TradeParser();
+			var couponParser      = new CouponParser();
 			var idGenerator       = new GuidIdGenerator();
 			var addIncomeUseCase  = new AddIncomeUseCase(stateManager, idGenerator);
 			var addExpenseUseCase = new AddExpenseUseCase(stateManager, idGenerator);
 			return new AlphaDirectImportUseCase(
-				transStateManager, moneyMoveParser, tradeParser,
+				transStateManager, moneyMoveParser, tradeParser, couponParser,
 				addIncomeUseCase,
 				addExpenseUseCase,
 				new BuyAssetUseCase(stateManager, idGenerator, addExpenseUseCase),
