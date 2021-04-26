@@ -1,5 +1,7 @@
 <template>
-	<span :style="style">{{ sign }}<money :value="priceValueRound" :currency-code="currencyCode" /> ({{ percent }}%)</span>
+	<span :style="style"
+		>{{ sign }}<money :value="priceValueRound" :currency-code="currencyCode" /> <template v-if="hasPercent">({{ percent }}%)</template></span
+	>
 </template>
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
@@ -30,10 +32,17 @@ export default class MoneyDiff extends Vue {
 		return this.priceValue.toFixed(2);
 	}
 
-	get percent() {
+	get ratio() {
 		const ratio = this.new / this.old - 1;
-		const signPercent = ratio * 100;
-		return Math.abs(signPercent).toFixed(2);
+		return ratio * 100;
+	}
+
+	get percent() {
+		return Math.abs(this.ratio).toFixed(2);
+	}
+
+	get hasPercent() {
+		return Number.isFinite(this.ratio) && this.ratio != 0;
 	}
 
 	get sign() {
@@ -41,6 +50,9 @@ export default class MoneyDiff extends Vue {
 	}
 
 	get color() {
+		if (this.priceValue == 0) {
+			return 'black';
+		}
 		return this.priceValue >= 0 ? 'green' : 'red';
 	}
 

@@ -17,6 +17,20 @@ export interface CurrencyBalanceDto {
   virtualSum?: number;
 }
 
+export interface DividendStateDto {
+  /** @format double */
+  previousDividend?: number;
+
+  /** @format double */
+  lastDividend?: number;
+
+  /** @format double */
+  yearDividend?: number;
+
+  /** @format double */
+  dividendSum?: number;
+}
+
 export interface VirtualAssetDto {
   id?: string | null;
   broker?: string | null;
@@ -38,12 +52,7 @@ export interface VirtualAssetDto {
 
   /** @format double */
   virtualSum?: number;
-
-  /** @format double */
-  yearDividend?: number;
-
-  /** @format double */
-  dividendSum?: number;
+  dividend?: DividendStateDto;
   currency?: string | null;
 }
 

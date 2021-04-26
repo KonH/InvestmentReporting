@@ -77,17 +77,28 @@ namespace InvestmentReporting.Market.Logic {
 			return lastCandleBeforeDate?.Close;
 		}
 
-		public decimal GetYearDividend(DateTimeOffset date, UserId user, AssetId asset) =>
-			GetDividends(date.AddYears(-1), date, user, asset);
-
-		public decimal GetDividendSum(DateTimeOffset date, UserId user, AssetId asset) =>
-			GetDividends(DateTimeOffset.MinValue, date, user, asset);
-
-		decimal GetDividends(DateTimeOffset startDate, DateTimeOffset endDate, UserId user, AssetId asset) {
-			var dividendIncomes = _stateManager.ReadCommands<AddIncomeCommand>(startDate, endDate, user, asset)
-				.Where(a => (a.Category == IncomeCategory.Dividend));
-			return dividendIncomes.Aggregate(0m, (sum, a) => sum + a.Amount);
+		public DividendState GetDividendState(DateTimeOffset date, UserId user, AssetId asset) {
+			var dividendIncomes = _stateManager
+				.ReadCommands<AddIncomeCommand>(DateTimeOffset.MinValue, date, user, asset)
+				.Where(a => (a.Category == IncomeCategory.Dividend))
+				.ToArray();
+			var previousDividend = (dividendIncomes.Length > 1) ? dividendIncomes[^2].Amount : 0m;
+			var lastDividend     = (dividendIncomes.Length > 0) ? dividendIncomes[^1].Amount : 0m;
+			var yearDividend     = GetYearDividend(dividendIncomes, date);
+			var dividendSum      = GetDividendSum(dividendIncomes);
+			return new(previousDividend, lastDividend, yearDividend, dividendSum);
 		}
+
+		decimal GetYearDividend(IReadOnlyCollection<AddIncomeCommand> commands, DateTimeOffset date) =>
+			GetDividends(date.AddYears(-1), commands);
+
+		decimal GetDividendSum(IReadOnlyCollection<AddIncomeCommand> commands) =>
+			GetDividends(DateTimeOffset.MinValue, commands);
+
+		decimal GetDividends(DateTimeOffset date, IReadOnlyCollection<AddIncomeCommand> commands) =>
+			commands
+				.Where(c => c.Date >= date)
+				.Aggregate(0m, (sum, a) => sum + a.Amount);
 
 		public AssetPrice? TryGet(AssetISIN isin) {
 			var model = TryGetModel(isin);

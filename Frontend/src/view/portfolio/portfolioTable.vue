@@ -10,6 +10,8 @@
 				<th class="noselect" scope="col" @click="click('count')">{{ orderTag('count') }} Count</th>
 				<th class="noselect" scope="col" @click="click('virtualSum')">{{ orderTag('virtualSum') }} Sum</th>
 				<th class="noselect" scope="col" @click="click('sumChange')">{{ orderTag('sumChange') }} Sum Change</th>
+				<th class="noselect" scope="col" @click="click('lastDividend')">{{ orderTag('lastDividend') }} Div/last Sum</th>
+				<th class="noselect" scope="col" @click="click('lastDividendChange')">{{ orderTag('lastDividendChange') }} Div/last Change</th>
 				<th class="noselect" scope="col" @click="click('yearDividend')">{{ orderTag('yearDividend') }} Div/year Sum</th>
 				<th class="noselect" scope="col" @click="click('dividendSum')">{{ orderTag('dividendSum') }} Div/total Sum</th>
 			</tr>
@@ -97,6 +99,14 @@ export default class PortfolioView extends Vue {
 			case 'priceChangePercent':
 			case 'sumChange':
 				return (asset.virtualPrice ?? 0) - (asset.realPrice ?? 0);
+			case 'lastDividend':
+				return asset.dividend?.lastDividend ?? 0;
+			case 'lastDividendChange':
+				return (asset.dividend?.lastDividend ?? 0) - (asset.dividend?.previousDividend ?? 0);
+			case 'yearDividend':
+				return asset.dividend?.yearDividend ?? 0;
+			case 'dividendSum':
+				return asset.dividend?.dividendSum ?? 0;
 		}
 		return 0;
 	}

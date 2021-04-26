@@ -92,6 +92,28 @@
         },
         "additionalProperties": false
       },
+      "DividendStateDto": {
+        "type": "object",
+        "properties": {
+          "previousDividend": {
+            "type": "number",
+            "format": "double"
+          },
+          "lastDividend": {
+            "type": "number",
+            "format": "double"
+          },
+          "yearDividend": {
+            "type": "number",
+            "format": "double"
+          },
+          "dividendSum": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
       "VirtualAssetDto": {
         "type": "object",
         "properties": {
@@ -135,13 +157,8 @@
             "type": "number",
             "format": "double"
           },
-          "yearDividend": {
-            "type": "number",
-            "format": "double"
-          },
-          "dividendSum": {
-            "type": "number",
-            "format": "double"
+          "dividend": {
+            "$ref": "#/components/schemas/DividendStateDto"
           },
           "currency": {
             "type": "string",
