@@ -15,7 +15,7 @@ namespace InvestmentReporting.Import.AlphaDirect {
 		readonly Regex _bondCommonRegex = new("(.*) сери.*(\\w{4}-\\w{2})");
 		readonly Regex _bondOfzRegex    = new("ОФЗ ПД (\\w{5}) в.");
 
-		public AssetId DetectAssetFromCoupon(string comment, IReadOnlyCollection<Trade> trades, Dictionary<string, AssetId> assets) {
+		public AssetId DetectAssetFromTransfer(string comment, IReadOnlyCollection<Trade> trades, Dictionary<string, AssetId> assets) {
 			var holder = DetectCouponHolder(comment);
 			foreach ( var trade in trades ) {
 				var isin = TryGetIsinForHolder(holder, trade);

@@ -31,6 +31,11 @@ namespace InvestmentReporting.Import.AlphaDirect {
 				report,
 				comment => comment.StartsWith("погашение купона"));
 
+		public IReadOnlyCollection<Transfer> ReadRedemptionTransfers(XmlDocument report) =>
+			ReadTransfers(
+				report,
+				comment => comment.StartsWith("полное погашение номинала"));
+
 		public IReadOnlyCollection<Transfer> ReadExpenseTransfers(XmlDocument report) =>
 			ReadTransfers(
 				report,

@@ -331,6 +331,38 @@ namespace InvestmentReporting.UnitTests {
 			rubAccount.Balance.Should().Be(-100 - 10 + 100);
 		}
 
+		[Test]
+		public async Task IsBondLifecycleImported() {
+			var             stateManager = GetStateManager();
+			await using var sample       = LoadStream("AlphaDirect_BrokerMoneyMove_BondLifecycleSample.xml");
+			var             useCase      = GetUseCase(stateManager);
+
+			await useCase.Handle(_date, _userId, _brokerId, sample);
+
+			AssertBondLifecycle(stateManager);
+		}
+
+		[Test]
+		public async Task IsBondLifecycleNotDuplicated() {
+			var             stateManager = GetStateManager();
+			await using var sample       = LoadStream("AlphaDirect_BrokerMoneyMove_BondLifecycleSample.xml");
+			var             useCase      = GetUseCase(stateManager);
+
+			await useCase.Handle(_date, _userId, _brokerId, sample);
+			sample.Position = 0;
+			await useCase.Handle(_date, _userId, _brokerId, sample);
+
+			AssertBondLifecycle(stateManager);
+		}
+
+		void AssertBondLifecycle(StateManager stateManager) {
+			var state      = stateManager.ReadState(DateTimeOffset.MaxValue, _userId);
+			var broker     = state.Brokers.First(b => b.Id == _brokerId);
+			var rubAccount = broker.Accounts.First(a => a.Id == _rubAccountId);
+			rubAccount.Balance.Should().Be(-(1000 + 10 + 3) + (30 + 1000));
+			broker.Inventory.Sum(a => a.Count).Should().Be(0);
+		}
+
 		Stream LoadStream(string name) => File.OpenRead(Path.Combine("Samples", name));
 
 		XmlDocument LoadXml(string name) {
@@ -356,15 +388,17 @@ namespace InvestmentReporting.UnitTests {
 			var moneyMoveParser   = new BrokerMoneyMoveParser();
 			var tradeParser       = new TradeParser();
 			var couponParser      = new CouponParser();
+			var transferParser    = new TransferParser();
 			var idGenerator       = new GuidIdGenerator();
 			var addIncomeUseCase  = new AddIncomeUseCase(stateManager, idGenerator);
 			var addExpenseUseCase = new AddExpenseUseCase(stateManager, idGenerator);
 			return new AlphaDirectImportUseCase(
-				transStateManager, moneyMoveParser, tradeParser, couponParser,
+				transStateManager, moneyMoveParser, tradeParser, couponParser, transferParser,
 				addIncomeUseCase,
 				addExpenseUseCase,
 				new BuyAssetUseCase(stateManager, idGenerator, addExpenseUseCase),
-				new SellAssetUseCase(stateManager, addIncomeUseCase, addExpenseUseCase));
+				new SellAssetUseCase(stateManager, addIncomeUseCase, addExpenseUseCase),
+				new ReduceAssetUseCase(stateManager));
 		}
 	}
 }

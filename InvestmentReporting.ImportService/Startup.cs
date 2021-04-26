@@ -61,10 +61,13 @@ namespace InvestmentReporting.ImportService {
 			services.AddScoped<TinkoffBrokerMoneyMoveParser>();
 			services.AddScoped<AssetParser>();
 			services.AddScoped<TinkoffTradeParser>();
+			services.AddScoped<CouponParser>();
+			services.AddScoped<TransferParser>();
 			services.AddScoped<AddIncomeUseCase>();
 			services.AddScoped<AddExpenseUseCase>();
 			services.AddScoped<BuyAssetUseCase>();
 			services.AddScoped<SellAssetUseCase>();
+			services.AddScoped<ReduceAssetUseCase>();
 		}
 
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {

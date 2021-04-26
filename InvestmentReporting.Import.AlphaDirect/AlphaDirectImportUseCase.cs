@@ -23,22 +23,28 @@ namespace InvestmentReporting.Import.AlphaDirect {
 		readonly BrokerMoneyMoveParser   _moneyMoveParser;
 		readonly TradeParser             _tradeParser;
 		readonly CouponParser            _couponParser;
+		readonly TransferParser          _transferParser;
 		readonly BuyAssetUseCase         _buyAssetUseCase;
 		readonly SellAssetUseCase        _sellAssetUseCase;
+		readonly ReduceAssetUseCase      _reduceAssetUseCase;
 
 		// To receive ISIN from any string
 		readonly Regex _dividendIsinRegex = new("([A-Z0-9]{12})");
 
 		public AlphaDirectImportUseCase(
 			TransactionStateManager stateManager, BrokerMoneyMoveParser moneyMoveParser, TradeParser tradeParser,
-			CouponParser couponParser, AddIncomeUseCase addIncomeUseCase, AddExpenseUseCase addExpenseUseCase,
-			BuyAssetUseCase buyAssetUseCase, SellAssetUseCase sellAssetUseCase) : base(addIncomeUseCase, addExpenseUseCase) {
-			_stateManager     = stateManager;
-			_moneyMoveParser  = moneyMoveParser;
-			_tradeParser      = tradeParser;
-			_couponParser     = couponParser;
-			_buyAssetUseCase  = buyAssetUseCase;
-			_sellAssetUseCase = sellAssetUseCase;
+			CouponParser couponParser, TransferParser transferParser,
+			AddIncomeUseCase addIncomeUseCase, AddExpenseUseCase addExpenseUseCase,
+			BuyAssetUseCase buyAssetUseCase, SellAssetUseCase sellAssetUseCase,
+			ReduceAssetUseCase reduceAssetUseCase) : base(addIncomeUseCase, addExpenseUseCase) {
+			_stateManager       = stateManager;
+			_moneyMoveParser    = moneyMoveParser;
+			_tradeParser        = tradeParser;
+			_couponParser       = couponParser;
+			_transferParser     = transferParser;
+			_buyAssetUseCase    = buyAssetUseCase;
+			_sellAssetUseCase   = sellAssetUseCase;
+			_reduceAssetUseCase = reduceAssetUseCase;
 		}
 
 		public async Task Handle(DateTimeOffset date, UserId user, BrokerId brokerId, Stream stream) {
@@ -72,6 +78,10 @@ namespace InvestmentReporting.Import.AlphaDirect {
 			await FillDividends(user, brokerId, dividendTransfers, currencyAccounts, incomeAccountCommands, assets);
 			var couponTransfers = _moneyMoveParser.ReadCouponTransfers(report);
 			await FillCoupons(user, brokerId, couponTransfers, currencyAccounts, incomeAccountCommands, trades, assets);
+			var redemptionTransfers = _moneyMoveParser.ReadRedemptionTransfers(report);
+			await FillRedemptions(user, brokerId, redemptionTransfers, currencyAccounts, incomeAccountCommands, trades, assets);
+			var assetTransfers = _transferParser.ReadAssetTransfers(report);
+			await FillAssetTransfers(user, brokerId, assetTransfers, assets, addAssetCommands, reduceAssetCommands);
 			await _stateManager.Push();
 		}
 
@@ -158,10 +168,50 @@ namespace InvestmentReporting.Import.AlphaDirect {
 				if ( IsAlreadyPresent(couponTransfer.Date, couponTransfer.Amount, incomeAccountCommands[accountId]) ) {
 					continue;
 				}
-				var asset = _couponParser.DetectAssetFromCoupon(couponTransfer.Comment, trades, assets);
+				var asset = _couponParser.DetectAssetFromTransfer(couponTransfer.Comment, trades, assets);
 				await AddIncomeUseCase.Handle(
 					couponTransfer.Date, user, brokerId, accountId, couponTransfer.Amount,
 					IncomeCategory.Coupon, asset);
+			}
+		}
+
+		async Task FillRedemptions(
+			UserId user, BrokerId brokerId, IReadOnlyCollection<Transfer> redemptionTransfers,
+			Dictionary<CurrencyCode, AccountId> currencyAccounts,
+			Dictionary<AccountId, IReadOnlyCollection<AddIncomeCommand>> incomeAccountCommands,
+			IReadOnlyCollection<Trade> trades, Dictionary<string, AssetId> assets) {
+			foreach ( var couponTransfer in redemptionTransfers ) {
+				var accountId = currencyAccounts[new(couponTransfer.Currency)];
+				if ( IsAlreadyPresent(couponTransfer.Date, couponTransfer.Amount, incomeAccountCommands[accountId]) ) {
+					continue;
+				}
+				var asset = _couponParser.DetectAssetFromTransfer(couponTransfer.Comment, trades, assets);
+				await AddIncomeUseCase.Handle(
+					couponTransfer.Date, user, brokerId, accountId, couponTransfer.Amount,
+					IncomeCategory.Coupon, asset);
+			}
+		}
+
+		async Task FillAssetTransfers(
+			UserId user, BrokerId brokerId, IReadOnlyCollection<AssetTransfer> transfers,
+			Dictionary<string, AssetId> assets, IReadOnlyCollection<AddAssetCommand> addCommands,
+			IReadOnlyCollection<ReduceAssetCommand> reduceCommands) {
+			foreach ( var trade in transfers ) {
+				var date  = trade.Date;
+				var count = trade.Count;
+				var isin  = trade.Name.Split('\n')[1].Trim();
+				var buy   = trade.Count > 0;
+				if ( buy ) {
+					continue;
+				}
+				var assetId = assets.TryGetValue(isin, out var id)
+					? id
+					: addCommands.First(c => c.Isin == isin).Asset;
+				var reduceCount = -count;
+				if ( IsAlreadyPresent(date, assetId, reduceCount, reduceCommands) ) {
+					continue;
+				}
+				await _reduceAssetUseCase.Handle(date, user, brokerId, assetId, reduceCount);
 			}
 		}
 	}

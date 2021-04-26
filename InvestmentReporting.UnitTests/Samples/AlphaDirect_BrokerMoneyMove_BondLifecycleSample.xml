@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Report Name="MyBroker">
+    <Trades>
+        <Report Name="2_Trades">
+            <Tablix2>
+                <Details_Collection>
+                    <Details trade_no="0000000001" db_time="01.01.2000 00:00:00&#xD;&#xA; 01.01.2000 00:00:00"
+                             settlement_time="01.01.2000 0:00:00&#xD;&#xA; 01.01.2000 0:00:00" acc_code="000000-001"
+                             place_name="МБ ФР" isin_reg="RU0000000001" p_name="ОФЗ ПД 00001 в." qty="1"
+                             Price="100.00000000" summ_trade="1010.00" summ_nkd="10.00" curr_calc="RUB"
+                             bank_tax="3.00"/>
+                </Details_Collection>
+            </Tablix2>
+            <Tablix3/>
+        </Report>
+    </Trades>
+    <Trades2>
+        <Report Name="3_BrokerMoneyMove">
+            <Tablix1>
+                <settlement_date_Collection>
+                    <settlement_date settlement_date="2000-01-01T00:00:00">
+                        <rn_Collection>
+                            <rn last_update="2000-01-01T00:00:00">
+                                <oper_type oper_type="Расчеты по сделке">
+                                    <comment comment="c ОФЗ ПД 00001 в.">
+                                        <money_volume_begin1_Collection>
+                                            <money_volume_begin1>
+                                                <p_code_Collection>
+                                                    <p_code>
+                                                        <p_code p_code="RUB" volume="-1000.00"/>
+                                                    </p_code>
+                                                    <p_code>
+                                                        <p_code p_code="USD"/>
+                                                    </p_code>
+                                                </p_code_Collection>
+                                            </money_volume_begin1>
+                                        </money_volume_begin1_Collection>
+                                    </comment>
+                                </oper_type>
+                            </rn>
+                            <rn last_update="2000-01-01T00:00:00">
+                                <oper_type oper_type="НКД по сделке">
+                                    <comment comment="c ОФЗ ПД 00001 в.">
+                                        <money_volume_begin1_Collection>
+                                            <money_volume_begin1>
+                                                <p_code_Collection>
+                                                    <p_code>
+                                                        <p_code p_code="RUB" volume="-10.00"/>
+                                                    </p_code>
+                                                    <p_code>
+                                                        <p_code p_code="USD"/>
+                                                    </p_code>
+                                                </p_code_Collection>
+                                            </money_volume_begin1>
+                                        </money_volume_begin1_Collection>
+                                    </comment>
+                                </oper_type>
+                            </rn>
+                            <rn last_update="2000-01-01T00:00:00">
+                                <oper_type oper_type="Комиссия">
+                                    <comment comment="по сделке с ОФЗ ПД 00001 в.">
+                                        <money_volume_begin1_Collection>
+                                            <money_volume_begin1>
+                                                <p_code_Collection>
+                                                    <p_code>
+                                                        <p_code p_code="RUB" volume="-3.00"/>
+                                                    </p_code>
+                                                    <p_code>
+                                                        <p_code p_code="USD"/>
+                                                    </p_code>
+                                                </p_code_Collection>
+                                            </money_volume_begin1>
+                                        </money_volume_begin1_Collection>
+                                    </comment>
+                                </oper_type>
+                            </rn>
+                            <rn last_update="2000-01-02T00:00:00">
+                                <oper_type oper_type="Перевод">
+                                    <comment
+                                            comment="погашение купона 000000000 (Минфин России выпуск 00001) д.ф.01.01.00.(Удержан налог 5 руб.)">
+                                        <money_volume_begin1_Collection>
+                                            <money_volume_begin1>
+                                                <p_code_Collection>
+                                                    <p_code>
+                                                        <p_code p_code="RUB" volume="30.00"/>
+                                                    </p_code>
+                                                    <p_code>
+                                                        <p_code p_code="USD"/>
+                                                    </p_code>
+                                                </p_code_Collection>
+                                            </money_volume_begin1>
+                                        </money_volume_begin1_Collection>
+                                    </comment>
+                                </oper_type>
+                            </rn>
+                            <rn last_update="2000-01-03T00:00:00">
+                                <oper_type oper_type="Перевод">
+                                    <comment
+                                            comment="полное погашение номинала 000000000 (Минфин России выпуск 00001) д.ф.01.01.00">
+                                        <money_volume_begin1_Collection>
+                                            <money_volume_begin1>
+                                                <p_code_Collection>
+                                                    <p_code>
+                                                        <p_code p_code="RUB" volume="1000.00"/>
+                                                    </p_code>
+                                                    <p_code>
+                                                        <p_code p_code="USD"/>
+                                                    </p_code>
+                                                </p_code_Collection>
+                                            </money_volume_begin1>
+                                        </money_volume_begin1_Collection>
+                                    </comment>
+                                </oper_type>
+                            </rn>
+                        </rn_Collection>
+                    </settlement_date>
+                </settlement_date_Collection>
+            </Tablix1>
+        </Report>
+    </Trades2>
+    <Trades3>
+        <Report Name="4_Transfers">
+            <Tablix1>
+                <Details_Collection>
+                    <Details settlement_date="2000-01-03T00:00:00" settlement_time="00:00:00" place_name="НРД"
+                             oper_type="Аннулирование" p_name="ОФЗ ПД 00001 в.&#xD;&#xA;RU0000000001"
+                             comment_new="Аннулирование выпуска OFZPD00001." qty="-1" acc_code="000000-001"/>
+                </Details_Collection>
+            </Tablix1>
+        </Report>
+    </Trades3>
+</Report>

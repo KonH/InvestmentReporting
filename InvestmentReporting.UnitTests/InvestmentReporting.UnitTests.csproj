@@ -26,6 +26,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Content Include="Samples\AlphaDirect_BrokerMoneyMove_BondLifecycleSample.xml" CopyToOutputDirectory="Always" />
       <Content Include="Samples\AlphaDirect_BrokerMoneyMove_CouponSample.xml" CopyToOutputDirectory="Always" />
       <Content Include="Samples\AlphaDirect_BrokerMoneyMove_CouponSample2.xml" CopyToOutputDirectory="Always" />
       <Content Include="Samples\AlphaDirect_BrokerMoneyMove_DividendSample.xml" CopyToOutputDirectory="Always" />
