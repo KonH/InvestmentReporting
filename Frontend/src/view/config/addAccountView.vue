@@ -55,11 +55,11 @@ export default class AddAccount extends Vue {
 				displayName: this.displayNameInput.value,
 			})
 		);
-		if (result?.ok) {
+		if (result.ok) {
 			this.fetchState();
 			await router.push('/config');
 		} else {
-			alert(`Failed: ${result?.error}`);
+			alert(`Failed: ${result.statusText}`);
 		}
 	}
 }

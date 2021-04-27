@@ -28,10 +28,10 @@ export default class AddBroker extends Vue {
 				displayName: this.displayNameInput.value,
 			})
 		);
-		if (result?.ok) {
+		if (result.ok) {
 			await router.push('/config');
 		} else {
-			alert(`Failed: ${result?.error}`);
+			alert(`Failed: ${result.statusText}`);
 		}
 	}
 }

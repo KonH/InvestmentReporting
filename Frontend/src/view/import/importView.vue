@@ -74,12 +74,12 @@ export default class ImportView extends Vue {
 				}
 			)
 		);
-		if (result?.ok) {
+		if (result.ok) {
 			await Backend.tryFetch(Backend.market().sync.syncCreate());
 			this.fetchState();
 			await router.push('/');
 		} else {
-			alert(`Failed: ${result?.error}`);
+			alert(`Failed: ${result.statusText}`);
 		}
 	}
 }

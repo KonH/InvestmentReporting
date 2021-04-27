@@ -128,11 +128,11 @@ export default class SellAsset extends Vue {
 				count: Number.parseFloat(this.countInput.value),
 			})
 		);
-		if (result?.ok) {
+		if (result.ok) {
 			this.fetchState();
 			await router.push('/custom');
 		} else {
-			alert(`Failed: ${result?.error}`);
+			alert(`Failed: ${result.statusText}`);
 		}
 	}
 }

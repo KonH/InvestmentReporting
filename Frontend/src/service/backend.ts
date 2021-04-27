@@ -34,8 +34,7 @@ export default class Backend {
 		try {
 			return await promise;
 		} catch (e) {
-			console.log(e);
-			return undefined;
+			return e as Response;
 		}
 	}
 }

@@ -96,11 +96,11 @@ export default class AddIncome extends Vue {
 				asset: this.asset,
 			})
 		);
-		if (result?.ok) {
+		if (result.ok) {
 			this.fetchState();
 			await router.push('/custom');
 		} else {
-			alert(`Failed: ${result?.error}`);
+			alert(`Failed: ${result.statusText}`);
 		}
 	}
 }
