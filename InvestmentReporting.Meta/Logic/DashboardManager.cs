@@ -54,12 +54,13 @@ namespace InvestmentReporting.Meta.Logic {
 		public async Task<DashboardState> GetState(
 			DateTimeOffset date, UserId user, DashboardId dashboardId, ReadOnlyState state, VirtualState virtualState) {
 			var configs       = await _repository.GetUserDashboardConfigs(user);
-			var dashboard     = configs.First(c => c.Id == dashboardId);
+			var dashboard     = configs.FirstOrDefault(c => c.Id == dashboardId);
 			var tagState      = await _tagManager.GetTags(user);
 			var assetNames    = CollectAssetNames(state.Brokers.SelectMany(b => b.Inventory).ToArray(), user);
 			var assetTags     = CollectAssetTags(tagState);
 			var virtualAssets = CollectVirtualAssets(virtualState);
-			var tags = dashboard.Tags
+			var dashboardTags = dashboard?.Tags ?? new List<DashboardConfigTagModel>();
+			var tags = dashboardTags
 				.Select(t => {
 					if ( !assetTags.TryGetValue(new(t.Tag), out var assetIsins) ) {
 						assetIsins = Array.Empty<AssetISIN>();
