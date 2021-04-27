@@ -1,6 +1,6 @@
 # Summary
 
-This self-hosted service allows you to manage your long-term investments in financial instruments and see statistics. It can be especially useful in case of different brokers usage.  
+This self-hosted service allows you to manage your long-term investments in financial instruments and see statistics. It can be especially useful in the case of different brokers' usage.
 
 # Features
 
@@ -21,12 +21,12 @@ Tags is used in dashboards, for example to handle country and industry diversifi
 ![dashboard_2](Docs/Screenshots/dashboard_2.png)
 ![dashboard_2_view](Docs/Screenshots/dashboard_2_view.png)
 
-You can set target for each tag in dashboard and see difference between real share of that tag and you target.
+You can set a target for each tag in the dashboard and see a difference between a real share of that tag and your target.
 It's useful to understand which category is under or overloaded.
 
 # Operation inspection
 
-You can review all operations and filter them by different criteria: 
+You can review all operations and filter them by different criteria:
 ![operations](Docs/Screenshots/operations.png)
 
 For example, you can filter operations related to specific asset:
@@ -51,15 +51,15 @@ You can manually insert your operations:
 
 ## Account/broker management
 
-You can set up your brokers and accounts, assign currencies for each account: 
+You can set up your brokers and accounts, assign currencies for each account:
 ![accounts](Docs/Screenshots/accounts.png)
 
 # Warranty notice
 
-The service is in initial prototype stage and should not be used in production.
-No guaranties provided, especially for complex cases, which not fully supported.
+The service is in the initial prototype stage and should not be used in production.
+No guarantees provided, especially for complex cases, which not fully supported.
 Statistics data may be inexact and should not be used as financial advice without additional investigations.
-The service is not directed to short-term operations, data is collected with noticeable delay, which fine for long-term period.
+The service is not directed to short-term operations, data is collected with noticeable delay, which fine for a long-term period.
 
 # Installation guide
 
@@ -88,13 +88,13 @@ MONGO_INITDB_ROOT_PASSWORD=%MONGO_PASSWORD%
 TINKOFF_API_SANDBOX_KEY=%TINKOFF_API_KEY%
 ```
 - Mongo credentials related to embedded mongo database, which will be created at start
-- Tinkoff API key described here - https://tinkoffcreditsystems.github.io/invest-openapi/auth/ 
+- Tinkoff API key described here - https://tinkoffcreditsystems.github.io/invest-openapi/auth/
 - Start services: `nuke --target Start --configuration Production`
 - Navigate to http://localhost:8082
 
 ## Register
 
-- Registration is based on token, which available in service logs 
-- Lookup token in logs: `docker-compose logs invite-service` 
-- Use that token in registration process
-- Register is locked if you make invalid attempt, just restart invite-service to reset access timer
+- Registration is based on token, which available in service logs
+- Lookup token in logs: `docker-compose logs invite-service`
+- Use that token in the registration process
+- Register is locked if you make an invalid attempt, just restart the invite-service to reset the access timer
