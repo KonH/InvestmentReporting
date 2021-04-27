@@ -71,6 +71,9 @@ namespace InvestmentReporting.Market.Logic {
 				if ( to != "RUB" ) {
 					var transferPrice = GetPriceAt(to, date);
 					_logger.LogTrace($"Transfer price of '{to}' is {transferPrice} RUB");
+					if ( transferPrice == 0 ) {
+						return 0;
+					}
 					var result =  directPrice / transferPrice;
 					_logger.LogTrace($"Final price of '{from}' to '{to}' is {result}");
 					return result;
