@@ -29,12 +29,10 @@ namespace InvestmentReporting.Import.Tinkoff {
 				var isin     = assets.Single(a => a.Name == name).Isin;
 				var count = (int)row.Cell("BB").GetDouble();
 				count = buy ? count : -count;
-				var currency       = row.Cell("AW").GetString().Trim();
-				var sum            = row.Cell("BQ").GetDecimal();
-				var brokerFee      = row.Cell("CC").GetDecimal();
-				var marketFee      = row.Cell("CL").GetDecimal();
-				var clearCenterFee = row.Cell("CW").GetDecimal();
-				var fee            = brokerFee + marketFee + clearCenterFee;
+				var currency  = row.Cell("AW").GetString().Trim();
+				var sum       = row.Cell("BQ").GetDecimal();
+				var brokerFee = row.Cell("CC").GetDecimal();
+				var fee       = brokerFee;
 				result.Add(new(fullDate, isin, name, count, currency, sum, fee));
 			}
 			return result;
