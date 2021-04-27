@@ -37,6 +37,10 @@ export default createStore({
 	},
 	actions: {
 		async fetchState({ dispatch }) {
+			const response = await Backend.tryFetch(Backend.auth().check.checkList());
+			if (!response.ok) {
+				return;
+			}
 			dispatch('fetchActiveState');
 			dispatch('fetchVirtualState');
 			dispatch('fetchTagState');

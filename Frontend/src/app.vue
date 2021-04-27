@@ -19,12 +19,8 @@ export default class App extends Vue {
 	@Action('fetchState')
 	fetchState!: () => void;
 
-	@Action('fetchVirtualState')
-	fetchVirtualState!: () => void;
-
 	created() {
 		this.fetchState();
-		this.fetchVirtualState();
 	}
 }
 </script>
