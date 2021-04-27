@@ -38,7 +38,7 @@ namespace InvestmentReporting.InviteService.Controllers {
 			var createResult = await _userManager.CreateAsync(user, password);
 			if ( !createResult.Succeeded ) {
 				_logger.LogWarning($"{nameof(Register)}: failed to create user: {createResult}");
-				return BadRequest();
+				return BadRequest(createResult.ToString());
 			}
 			_logger.LogInformation($"{nameof(Register)}: user created '{userName}'");
 			_tokenService.Rotate();

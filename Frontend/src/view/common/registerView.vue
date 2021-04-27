@@ -48,10 +48,11 @@ export default class Register extends Vue {
 				password: this.passwordInput.value,
 			})
 		);
-		if (inviteResult?.ok) {
+		if (inviteResult.ok) {
 			await router.push('/');
 		} else {
-			alert('Register failed');
+			const text = await inviteResult.text();
+			alert(`Register failed: ${inviteResult.statusText} (${text})`);
 		}
 	}
 }
