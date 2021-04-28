@@ -1,4 +1,5 @@
 ![github action status](https://github.com/KonH/InvestmentReporting/actions/workflows/build.yml/badge.svg?branch=master)
+[![coverage status](https://coveralls.io/repos/github/KonH/InvestmentReporting/badge.svg?branch=master)](https://coveralls.io/github/KonH/InvestmentReporting?branch=master)
 
 # Summary
 
