@@ -33,6 +33,7 @@ namespace InvestmentReporting.Data.Mongo.Repository {
 				.Where(m => m.IsGenericMethod)
 				.Single(m => m.GetParameters().Length == 0);
 			foreach ( var modelType in modelTypes ) {
+				_logger.LogTrace($"Register command model: {modelType}");
 				var method = targetOpenMethod.MakeGenericMethod(modelType);
 				method.Invoke(null, Array.Empty<object>());
 			}
@@ -47,6 +48,7 @@ namespace InvestmentReporting.Data.Mongo.Repository {
 				.Select(e => e.User)
 				.Distinct()
 				.ToArray();
+			_logger.LogTrace($"Users found: {users.Length}");
 			return users;
 		}
 
@@ -60,6 +62,7 @@ namespace InvestmentReporting.Data.Mongo.Repository {
 				.Where(e => e.Date >= startDate)
 				.Where(e => e.Date <= endDate)
 				.ToArray();
+			_logger.LogTrace($"Commands found: {models.Length}");
 			return models;
 		}
 
@@ -77,6 +80,7 @@ namespace InvestmentReporting.Data.Mongo.Repository {
 				.Select(e => e.Id)
 				.ToArray();
 			await _collection.DeleteManyAsync(m => dbModels.Contains(m.Id));
+			_logger.LogTrace($"Commands deleted: {commands.Count}");
 		}
 	}
 }

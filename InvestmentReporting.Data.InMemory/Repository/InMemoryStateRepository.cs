@@ -36,6 +36,7 @@ namespace InvestmentReporting.Data.InMemory.Repository {
 		}
 
 		public Task DeleteCommands(IReadOnlyCollection<ICommandModel> commands) {
+			_logger.LogTrace($"Delete {commands.Count} commands");
 			_commands.RemoveAll(commands.Contains);
 			return Task.CompletedTask;
 		}

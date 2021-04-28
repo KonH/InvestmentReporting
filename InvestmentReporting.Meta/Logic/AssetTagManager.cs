@@ -8,15 +8,19 @@ using InvestmentReporting.State.Entity;
 using InvestmentReporting.State.Logic;
 using InvestmentReporting.Market.Logic;
 using InvestmentReporting.Meta.Entity;
+using Microsoft.Extensions.Logging;
 
 namespace InvestmentReporting.Meta.Logic {
 	public sealed class AssetTagManager {
+		readonly ILogger             _logger;
 		readonly IStateManager       _stateManager;
 		readonly IAssetTagRepository _repository;
 		readonly MetadataManager     _metadataManager;
 
 		public AssetTagManager(
+			ILogger<AssetTagManager> logger,
 			IStateManager stateManager, IAssetTagRepository repository, MetadataManager metadataManager) {
+			_logger          = logger;
 			_stateManager    = stateManager;
 			_repository      = repository;
 			_metadataManager = metadataManager;
@@ -42,6 +46,7 @@ namespace InvestmentReporting.Meta.Logic {
 				.SelectMany(a => a.Tags)
 				.Distinct()
 				.ToHashSet();
+			_logger.LogTrace($"Found {commonTags.Count} tags");
 			return new(commonTags, assetTags);
 		}
 

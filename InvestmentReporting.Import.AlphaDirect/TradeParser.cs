@@ -4,17 +4,25 @@ using System.Globalization;
 using System.Xml;
 using InvestmentReporting.Import.Dto;
 using InvestmentReporting.Import.Exceptions;
+using Microsoft.Extensions.Logging;
 
 namespace InvestmentReporting.Import.AlphaDirect {
 	public sealed class TradeParser {
 		const string DetailsXPath =
 			"Report[@Name=\"MyBroker\"]/Trades/Report[@Name=\"2_Trades\"]/Tablix2/Details_Collection/Details";
 
+		readonly ILogger _logger;
+
+		public TradeParser(ILogger<TradeParser> logger) {
+			_logger = logger;
+		}
+
 		public IReadOnlyCollection<Trade> ReadTrades(XmlDocument report) {
 			var detailsNodes = report.SelectNodes(DetailsXPath);
 			if ( detailsNodes == null ) {
 				throw new UnexpectedFormatException($"Failed to retrieve details via XPath '{DetailsXPath}'");
 			}
+			_logger.LogTrace($"Found {detailsNodes.Count} trade nodes");
 			var result = new List<Trade>();
 			foreach ( XmlNode detailsNode in detailsNodes ) {
 				ProcessDetails(detailsNode, result);
@@ -22,7 +30,7 @@ namespace InvestmentReporting.Import.AlphaDirect {
 			return result;
 		}
 
-		static void ProcessDetails(XmlNode detailsNode, List<Trade> result) {
+		void ProcessDetails(XmlNode detailsNode, List<Trade> result) {
 			if ( detailsNode.Attributes == null ) {
 				throw new UnexpectedFormatException("Failed to retrieve details attributes");
 			}
@@ -33,7 +41,9 @@ namespace InvestmentReporting.Import.AlphaDirect {
 			var sumTrade       = detailsNode.Attributes["summ_trade"]?.Value ?? string.Empty;
 			var currency       = detailsNode.Attributes["curr_calc"]?.Value ?? string.Empty;
 			var bankTax        = detailsNode.Attributes["bank_tax"]?.Value ?? string.Empty;
-			var timeParts      = settlementTime.Split('\r');
+			_logger.LogTrace(
+				$"Raw values for trade: {settlementTime}, {isin}, {name}, {qty}, {sumTrade}, {currency}, {bankTax}");
+			var timeParts = settlementTime.Split('\r');
 			if ( timeParts.Length < 1 ) {
 				throw new UnexpectedFormatException($"Failed to parse date from '{settlementTime}'");
 			}

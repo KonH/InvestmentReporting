@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using InvestmentReporting.Data.InMemory.Repository;
 using InvestmentReporting.State.Command;
@@ -24,10 +25,11 @@ namespace InvestmentReporting.Import.Logic {
 		}
 
 		public void Prepare(UserId user) {
-			_logger.LogTrace($"Prepare for '{user}'");
+			_logger.LogTrace($"Prepare state for '{user}'");
 			var repository = new InMemoryStateRepository(_loggerFactory.CreateLogger<InMemoryStateRepository>(), new());
 			_simulatedStateManager = new StateManager(repository);
-			var commands = _storeStateManager.ReadCommands(user);
+			var commands = _storeStateManager.ReadCommands(user).ToArray();
+			_logger.LogTrace($"Add {commands.Length} commands");
 			foreach ( var command in commands ) {
 				_simulatedStateManager.AddCommand(command);
 			}

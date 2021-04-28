@@ -12,6 +12,7 @@ using InvestmentReporting.State.UseCase.Exceptions;
 using InvestmentReporting.Import.AlphaDirect;
 using InvestmentReporting.Import.Dto;
 using InvestmentReporting.Import.Logic;
+using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 
 namespace InvestmentReporting.UnitTests {
@@ -46,7 +47,7 @@ namespace InvestmentReporting.UnitTests {
 		[Test]
 		public void IsIncomeTransfersRead() {
 			var sample = LoadXml("AlphaDirect_BrokerMoneyMove_IncomeSample.xml");
-			var parser = new BrokerMoneyMoveParser();
+			var parser = GetBrokerMoneyMoveParser();
 
 			var actualTransfers = parser.ReadIncomeTransfers(sample);
 
@@ -60,7 +61,7 @@ namespace InvestmentReporting.UnitTests {
 		[Test]
 		public void IsIncomeTransfersSkipDividend() {
 			var sample = LoadXml("AlphaDirect_BrokerMoneyMove_DividendSample.xml");
-			var parser = new BrokerMoneyMoveParser();
+			var parser = GetBrokerMoneyMoveParser();
 
 			var actualTransfers = parser.ReadIncomeTransfers(sample);
 
@@ -70,7 +71,7 @@ namespace InvestmentReporting.UnitTests {
 		[Test]
 		public void IsIncomeTransfersSkipExpenseTransfer() {
 			var sample = LoadXml("AlphaDirect_BrokerMoneyMove_ExpenseSample.xml");
-			var parser = new BrokerMoneyMoveParser();
+			var parser = GetBrokerMoneyMoveParser();
 
 			var actualTransfers = parser.ReadIncomeTransfers(sample);
 
@@ -113,7 +114,7 @@ namespace InvestmentReporting.UnitTests {
 		[Test]
 		public void IsExpenseTransfersRead() {
 			var sample = LoadXml("AlphaDirect_BrokerMoneyMove_ExpenseSample.xml");
-			var parser = new BrokerMoneyMoveParser();
+			var parser = GetBrokerMoneyMoveParser();
 
 			var actualTransfers = parser.ReadExpenseTransfers(sample);
 
@@ -127,7 +128,7 @@ namespace InvestmentReporting.UnitTests {
 		[Test]
 		public void IsExpenseTransfersSkipDividend() {
 			var sample = LoadXml("AlphaDirect_BrokerMoneyMove_DividendSample.xml");
-			var parser = new BrokerMoneyMoveParser();
+			var parser = GetBrokerMoneyMoveParser();
 
 			var actualTransfers = parser.ReadExpenseTransfers(sample);
 
@@ -137,7 +138,7 @@ namespace InvestmentReporting.UnitTests {
 		[Test]
 		public void IsExpenseTransfersSkipIncomeTransfer() {
 			var sample = LoadXml("AlphaDirect_BrokerMoneyMove_IncomeSample.xml");
-			var parser = new BrokerMoneyMoveParser();
+			var parser = GetBrokerMoneyMoveParser();
 
 			var actualTransfers = parser.ReadExpenseTransfers(sample);
 
@@ -180,7 +181,7 @@ namespace InvestmentReporting.UnitTests {
 		[Test]
 		public void IsTradesRead() {
 			var sample = LoadXml("AlphaDirect_BrokerMoneyMove_BuySellAssetSample.xml");
-			var parser = new TradeParser();
+			var parser = new TradeParser(new TestLoggerFactory().CreateLogger<TradeParser>());
 
 			var actualTrades = parser.ReadTrades(sample);
 
@@ -233,7 +234,7 @@ namespace InvestmentReporting.UnitTests {
 		[Test]
 		public void IsDividendTransfersRead() {
 			var sample = LoadXml("AlphaDirect_BrokerMoneyMove_DividendSample.xml");
-			var parser = new BrokerMoneyMoveParser();
+			var parser = GetBrokerMoneyMoveParser();
 
 			var actualTransfers = parser.ReadDividendTransfers(sample);
 
@@ -277,7 +278,7 @@ namespace InvestmentReporting.UnitTests {
 		[Test]
 		public void IsCouponTransfersReadSimple() {
 			var sample = LoadXml("AlphaDirect_BrokerMoneyMove_CouponSample.xml");
-			var parser = new BrokerMoneyMoveParser();
+			var parser = GetBrokerMoneyMoveParser();
 
 			var actualTransfers = parser.ReadCouponTransfers(sample);
 
@@ -290,7 +291,7 @@ namespace InvestmentReporting.UnitTests {
 		[Test]
 		public void IsCouponTransfersReadOfz() {
 			var sample = LoadXml("AlphaDirect_BrokerMoneyMove_CouponSample2.xml");
-			var parser = new BrokerMoneyMoveParser();
+			var parser = GetBrokerMoneyMoveParser();
 
 			var actualTransfers = parser.ReadCouponTransfers(sample);
 
@@ -382,13 +383,16 @@ namespace InvestmentReporting.UnitTests {
 				.With(_rubAccountId)
 				.Build();
 
+		BrokerMoneyMoveParser GetBrokerMoneyMoveParser() =>
+			new(new TestLoggerFactory().CreateLogger<BrokerMoneyMoveParser>());
+
 		AlphaDirectImportUseCase GetUseCase(StateManager stateManager) {
 			var loggerFactory     = new TestLoggerFactory();
 			var transStateManager = new TransactionStateManager(loggerFactory, stateManager);
-			var moneyMoveParser   = new BrokerMoneyMoveParser();
-			var tradeParser       = new TradeParser();
-			var couponParser      = new CouponParser();
-			var transferParser    = new TransferParser();
+			var moneyMoveParser   = new BrokerMoneyMoveParser(loggerFactory.CreateLogger<BrokerMoneyMoveParser>());
+			var tradeParser       = new TradeParser(loggerFactory.CreateLogger<TradeParser>());
+			var couponParser      = new CouponParser(loggerFactory.CreateLogger<CouponParser>());
+			var transferParser    = new TransferParser(loggerFactory.CreateLogger<TransferParser>());
 			var idGenerator       = new GuidIdGenerator();
 			var addIncomeUseCase  = new AddIncomeUseCase(stateManager, idGenerator);
 			var addExpenseUseCase = new AddExpenseUseCase(stateManager, idGenerator);

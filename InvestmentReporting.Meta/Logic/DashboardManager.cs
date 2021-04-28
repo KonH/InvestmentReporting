@@ -9,9 +9,11 @@ using InvestmentReporting.Market.Entity;
 using InvestmentReporting.Market.Logic;
 using InvestmentReporting.Meta.Entity;
 using InvestmentReporting.State.Logic;
+using Microsoft.Extensions.Logging;
 
 namespace InvestmentReporting.Meta.Logic {
 	public sealed class DashboardManager {
+		readonly ILogger               _logger;
 		readonly IDashboardRepository  _repository;
 		readonly AssetTagManager       _tagManager;
 		readonly MetadataManager       _metadataManager;
@@ -19,8 +21,10 @@ namespace InvestmentReporting.Meta.Logic {
 		readonly CurrencyConfiguration _currencyConfig;
 
 		public DashboardManager(
+			ILogger<DashboardManager> logger,
 			IDashboardRepository repository, AssetTagManager tagManager, MetadataManager metadataManager,
 			ExchangeManager exchangeManager, CurrencyConfiguration currencyConfig) {
+			_logger          = logger;
 			_repository      = repository;
 			_tagManager      = tagManager;
 			_metadataManager = metadataManager;
@@ -38,6 +42,7 @@ namespace InvestmentReporting.Meta.Logic {
 						.Select(t => new DashboardConfigTag(new(t.Tag), t.Target))
 						.ToArray()))
 				.ToArray();
+			_logger.LogTrace($"Found {dashboards.Length} dashboards for user {user}");
 			return new DashboardConfigState(dashboards);
 		}
 
@@ -60,6 +65,7 @@ namespace InvestmentReporting.Meta.Logic {
 			var assetTags     = CollectAssetTags(tagState);
 			var virtualAssets = CollectVirtualAssets(virtualState);
 			var dashboardTags = dashboard?.Tags ?? new List<DashboardConfigTagModel>();
+			_logger.LogTrace($"Dashboard {dashboardId} contains {dashboardTags.Count} tags");
 			var tags = dashboardTags
 				.Select(t => {
 					if ( !assetTags.TryGetValue(new(t.Tag), out var assetIsins) ) {

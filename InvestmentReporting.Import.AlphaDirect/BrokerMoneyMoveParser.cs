@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Xml;
 using InvestmentReporting.Import.Dto;
 using InvestmentReporting.Import.Exceptions;
+using Microsoft.Extensions.Logging;
 
 namespace InvestmentReporting.Import.AlphaDirect {
 	public sealed class BrokerMoneyMoveParser {
@@ -15,6 +16,12 @@ namespace InvestmentReporting.Import.AlphaDirect {
 
 		const string PCodesXpath =
 			"money_volume_begin1_Collection/money_volume_begin1/p_code_Collection/p_code/p_code";
+
+		readonly ILogger _logger;
+
+		public BrokerMoneyMoveParser(ILogger<BrokerMoneyMoveParser> logger) {
+			_logger = logger;
+		}
 
 		public IReadOnlyCollection<Transfer> ReadIncomeTransfers(XmlDocument report) =>
 			ReadTransfers(
@@ -48,17 +55,19 @@ namespace InvestmentReporting.Import.AlphaDirect {
 				throw new UnexpectedFormatException($"Failed to retrieve operations via XPath '{OperationsXpath}'");
 			}
 			var result = new List<Transfer>();
+			_logger.LogTrace($"Found {operations.Count} transfer nodes");
 			foreach ( XmlNode operationNode in operations ) {
 				HandleOperationNode(operationNode, result, commentFilter);
 			}
 			return result;
 		}
 
-		static void HandleOperationNode(
+		void HandleOperationNode(
 			XmlNode operationNode, List<Transfer> result, Func<string, bool> commentFilter) {
 			var rawLastUpdateStr =
 				operationNode.Attributes?["last_update"]?.Value ??
 				throw new UnexpectedFormatException("Failed to retrieve 'last_update' operation attribute");
+			_logger.LogTrace($"Found last update {rawLastUpdateStr}");
 			// We expect that it's Moscow time, but no timezone provided
 			// and for backward-compatibility we should use fixed value
 			var lastUpdateStr = $"{rawLastUpdateStr}+3";
@@ -70,22 +79,25 @@ namespace InvestmentReporting.Import.AlphaDirect {
 				throw new UnexpectedFormatException(
 					$"Failed to retrieve operations via XPath '{OperationsXpath}/{OperationTypesXPath}'");
 			}
+			_logger.LogTrace($"Found {operationTypeNodes.Count} operation type nodes");
 			foreach ( XmlNode operationTypeNode in operationTypeNodes ) {
 				HandleOperationTypeNode(operationTypeNode, lastUpdate, result, commentFilter);
 			}
 		}
 
-		static void HandleOperationTypeNode(
+		void HandleOperationTypeNode(
 			XmlNode operationTypeNode, DateTimeOffset lastUpdate, List<Transfer> result,
 			Func<string, bool> commentFilter) {
 			var operationType = operationTypeNode.Attributes?["oper_type"]?.Value ?? string.Empty;
-			var commentNode   = operationTypeNode.SelectSingleNode(CommentXpath);
+			_logger.LogTrace($"Found operation type {operationType}");
+			var commentNode = operationTypeNode.SelectSingleNode(CommentXpath);
 			if ( commentNode == null ) {
 				throw new UnexpectedFormatException(
 					$"Failed to retrieve operation details via XPath " +
 					$"'{OperationsXpath}/{OperationTypesXPath}/{CommentXpath}'");
 			}
 			var comment = commentNode.Attributes?["comment"]?.Value ?? string.Empty;
+			_logger.LogTrace($"Found comment {comment}");
 			if ( !commentFilter(comment) ) {
 				return;
 			}
@@ -111,14 +123,16 @@ namespace InvestmentReporting.Import.AlphaDirect {
 			}
 		}
 
-		static IReadOnlyList<(string, decimal)> ParseNonZeroVolumeCodes(XmlNodeList pCodeNodes) {
+		IReadOnlyList<(string, decimal)> ParseNonZeroVolumeCodes(XmlNodeList pCodeNodes) {
 			var nonZeroVolumeCodes = new List<(string, decimal)>();
 			foreach ( XmlNode pCode in pCodeNodes ) {
 				var volumeStr = pCode.Attributes?["volume"]?.Value ?? string.Empty;
 				if ( string.IsNullOrEmpty(volumeStr) ) {
+					_logger.LogTrace("Volume is empty");
 					continue;
 				}
 				var code = pCode.Attributes?["p_code"]?.Value ?? string.Empty;
+				_logger.LogTrace($"Found volume {volumeStr} and code {code}");
 				if ( !decimal.TryParse(volumeStr, out var volume) ) {
 					throw new UnexpectedFormatException($"Failed to parse operation volume from '{volumeStr}'");
 				}
