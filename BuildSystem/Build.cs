@@ -111,6 +111,10 @@ namespace InvestmentReporting.BuildSystem {
 			.DependsOn(Compile)
 			.Executes(() =>
 			{
+				var architecture = RuntimeInformation.ProcessArchitecture;
+				if ( architecture == Architecture.Arm64 ) {
+					return;
+				}
 				DotNetTest(s => s.SetProjectFile("InvestmentReporting.UnitTests"));
 			});
 
