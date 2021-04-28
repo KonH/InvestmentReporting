@@ -107,8 +107,16 @@ namespace InvestmentReporting.BuildSystem {
 					$"--build-arg MONGO_IMAGE={mongoImage} ");
 			});
 
+		public Target Test => _ => _
+			.DependsOn(Compile)
+			.Executes(() =>
+			{
+				DotNetTest(s => s.SetProjectFile("InvestmentReporting.UnitTests"));
+			});
+
 		public Target Start => _ => _
 			.DependsOn(Compile)
+			.DependsOn(Test)
 			.Executes(() =>
 			{
 				Logger.Info("Define 'ASPNETCORE_ENVIRONMENT'");
