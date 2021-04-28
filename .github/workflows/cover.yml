@@ -23,3 +23,8 @@ jobs:
         testProject: 'InvestmentReporting.UnitTests/InvestmentReporting.UnitTests.csproj'
         output: 'lcov.info'
         outputFormat: 'lcov'
+    - name: Upload coverage report
+      uses: coverallsapp/github-action@v1.1.1
+      with:
+          github-token: ${{secrets.GITHUB_TOKEN }}
+          path-to-lcov: ${{steps.coverlet.outputs.coverageFile}}
