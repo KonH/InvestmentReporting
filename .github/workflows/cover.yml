@@ -23,7 +23,7 @@ jobs:
         testProject: 'InvestmentReporting.UnitTests/InvestmentReporting.UnitTests.csproj'
         output: 'lcov.info'
         outputFormat: 'lcov'
-        excludes: '[InvestmentReporting.Data.*]*,[*]*.Dto.*'
+        excludes: '[InvestmentReporting.Data.*]*,[*]*.Dto.*,[*]*.Entity.*,[*]*.Exceptions.*'
     - name: Upload coverage report
       uses: coverallsapp/github-action@v1.1.1
       with:
