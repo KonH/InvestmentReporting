@@ -1,3 +1,5 @@
+![github action status](https://github.com/KonH/InvestmentReporting/actions/workflows/build.yml/badge.svg?branch=master)
+
 # Summary
 
 This self-hosted service allows you to manage your long-term investments in financial instruments and see statistics. It can be especially useful in the case of different brokers' usage.
