@@ -1,0 +1,25 @@
+name: Cover
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET 5.0
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.x
+    - name: Run coverage reporting
+      uses: b3b00/coverlet-action@1.1.0
+      with:
+        testProject: 'InvestmentReporting.UnitTests/InvestmentReporting.UnitTests.csproj'
+        output: 'lcov.info'
+        outputFormat: 'lcov'
