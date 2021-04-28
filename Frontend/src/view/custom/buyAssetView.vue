@@ -52,7 +52,7 @@
 			<input ref="count" type="number" class="form-control" />
 		</label>
 	</div>
-	<button :onclick="onclick" class="btn btn-primary">Buy</button>
+	<button :onclick="onclick" :class="buttonClass">Buy</button>
 	<router-link to="/custom" class="btn btn-secondary ml-2">Back</router-link>
 </template>
 <script lang="ts">
@@ -63,6 +63,7 @@ import { Action, State } from 'vuex-class';
 import { StateDto } from '@/api/state';
 import { Ref } from 'vue-property-decorator';
 import InputUtils from '@/utils/inputUtils';
+import Progress from '@/utils/progress';
 
 @Options({
 	name: 'BuyAssetView',
@@ -98,6 +99,8 @@ export default class BuyAsset extends Vue {
 	@Action('fetchState')
 	fetchState!: () => void;
 
+	isInProgress = false;
+
 	get brokerId() {
 		return this.$route.params.broker as string;
 	}
@@ -114,7 +117,15 @@ export default class BuyAsset extends Vue {
 		InputUtils.setCurrentDate(this.dateInput);
 	}
 
+	get buttonClass() {
+		return Progress.getClass(this, 'btn btn-primary');
+	}
+
 	async onclick() {
+		await Progress.wrap(this, this.onclickApply);
+	}
+
+	async onclickApply() {
 		const result = await Backend.tryFetch(
 			Backend.state().asset.buyAssetCreate({
 				date: new Date(this.dateInput.value).toISOString(),

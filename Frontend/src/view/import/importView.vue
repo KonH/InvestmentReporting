@@ -22,7 +22,7 @@
 			<input ref="file" type="file" class="form-control-file" />
 		</label>
 	</div>
-	<button :onclick="onclick" class="btn btn-primary">Import</button>
+	<button :onclick="onclick" :class="buttonClass">Import</button>
 </template>
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
@@ -31,6 +31,7 @@ import router from '@/router';
 import { Action, State } from 'vuex-class';
 import { Ref } from 'vue-property-decorator';
 import { StateDto } from '@/api/state';
+import Progress from '@/utils/progress';
 
 @Options({
 	name: 'ImportView',
@@ -51,11 +52,21 @@ export default class ImportView extends Vue {
 	@Ref('file')
 	fileInput!: HTMLInputElement;
 
+	isInProgress = false;
+
 	get brokers() {
 		return this.activeState.brokers;
 	}
 
+	get buttonClass() {
+		return Progress.getClass(this, 'btn btn-primary');
+	}
+
 	async onclick() {
+		await Progress.wrap(this, this.onclickApply);
+	}
+
+	async onclickApply() {
 		const brokerId = this.brokerInput.value;
 		const report = this.fileInput.files != null ? this.fileInput.files[0] : null;
 		if (!report) {

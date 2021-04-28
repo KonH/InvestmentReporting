@@ -25,7 +25,7 @@
 	<div class="form-group">
 		<asset-selector :value="asset" :broker-id="brokerId" @input="onAssetSelect" />
 	</div>
-	<button :onclick="onclick" class="btn btn-primary">Add</button>
+	<button :onclick="onclick" :class="buttonClass">Add</button>
 	<router-link to="/custom" class="btn btn-secondary ml-2">Back</router-link>
 </template>
 <script lang="ts">
@@ -37,6 +37,7 @@ import { AssetDto, StateDto } from '@/api/state';
 import { Ref } from 'vue-property-decorator';
 import AssetSelector from '@/component/common/assetSelector.vue';
 import InputUtils from '@/utils/inputUtils';
+import Progress from '@/utils/progress';
 
 @Options({
 	name: 'AddIncomeView',
@@ -62,6 +63,8 @@ export default class AddIncome extends Vue {
 	@Action('fetchState')
 	fetchState!: () => void;
 
+	isInProgress = false;
+
 	get brokerId() {
 		return this.$route.params.broker as string;
 	}
@@ -85,7 +88,15 @@ export default class AddIncome extends Vue {
 		InputUtils.setCurrentDate(this.dateInput);
 	}
 
+	get buttonClass() {
+		return Progress.getClass(this, 'btn btn-primary');
+	}
+
 	async onclick() {
+		await Progress.wrap(this, this.onclickApply);
+	}
+
+	async onclickApply() {
 		const result = await Backend.tryFetch(
 			Backend.state().income.incomeCreate({
 				date: new Date(this.dateInput.value).toISOString(),

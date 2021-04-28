@@ -18,7 +18,7 @@
 			<input ref="password" type="password" class="form-control" />
 		</label>
 	</div>
-	<button :onclick="onclick" class="btn btn-primary">Register</button>
+	<button :onclick="onclick" :class="buttonClass">Register</button>
 	<router-link to="/login" class="btn btn-secondary ml-2">Login</router-link>
 </template>
 <script lang="ts">
@@ -26,6 +26,7 @@ import { Options, Vue } from 'vue-class-component';
 import Backend from '@/service/backend';
 import router from '@/router';
 import { Ref } from 'vue-property-decorator';
+import Progress from '@/utils/progress';
 
 @Options({
 	name: 'RegisterView',
@@ -40,7 +41,17 @@ export default class Register extends Vue {
 	@Ref('password')
 	passwordInput!: HTMLInputElement;
 
+	isInProgress = false;
+
+	get buttonClass() {
+		return Progress.getClass(this, 'btn btn-primary');
+	}
+
 	async onclick() {
+		await Progress.wrap(this, this.onclickApply);
+	}
+
+	async onclickApply() {
 		const inviteResult = await Backend.tryFetch(
 			Backend.invite().register.registerCreate({
 				token: this.tokenInput.value,

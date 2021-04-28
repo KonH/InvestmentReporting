@@ -14,7 +14,7 @@
 			</select>
 		</label>
 	</div>
-	<button :onclick="onclick" class="btn btn-primary">Add</button>
+	<button :onclick="onclick" :class="buttonClass">Add</button>
 	<router-link to="/config" class="btn btn-secondary ml-2">Back</router-link>
 </template>
 <script lang="ts">
@@ -24,6 +24,7 @@ import router from '@/router';
 import { Action, State } from 'vuex-class';
 import { StateDto } from '@/api/state';
 import { Ref } from 'vue-property-decorator';
+import Progress from '@/utils/progress';
 
 @Options({
 	name: 'AddAccountView',
@@ -45,7 +46,17 @@ export default class AddAccount extends Vue {
 		return this.activeState.currencies;
 	}
 
+	isInProgress = false;
+
+	get buttonClass() {
+		return Progress.getClass(this, 'btn btn-primary');
+	}
+
 	async onclick() {
+		await Progress.wrap(this, this.onclickApply);
+	}
+
+	async onclickApply() {
 		const brokerId = this.$route.params.broker as string;
 		const currencyCode = this.currencySelect.value;
 		const result = await Backend.tryFetch(
