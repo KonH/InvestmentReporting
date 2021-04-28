@@ -188,10 +188,10 @@ namespace InvestmentReporting.UnitTests {
 			var actualTrades = parser.ReadTrades(sample, assets);
 
 			var expectedTrades = new[] {
-				new Trade(DateTimeOffset.Parse("2000-02-02T01:02:03+3"), "US0000000001", "AssetName1", 2, "USD", 200, 15),
-				new Trade(DateTimeOffset.Parse("2000-02-02T01:02:03+3"), "RU0000000001", "AssetName2", 3, "RUB", 300, 18),
-				new Trade(DateTimeOffset.Parse("2000-03-03T03:04:05+3"), "US0000000001", "AssetName1", -1, "USD", 101, 15),
-				new Trade(DateTimeOffset.Parse("2000-03-03T03:04:05+3"), "RU0000000001", "AssetName2", -1, "RUB", 100, 18),
+				new Trade(DateTimeOffset.Parse("2000-02-02T01:02:03+3"), "US0000000001", "AssetName1", 2, "USD", 200, 5),
+				new Trade(DateTimeOffset.Parse("2000-02-02T01:02:03+3"), "RU0000000001", "AssetName2", 3, "RUB", 300, 6),
+				new Trade(DateTimeOffset.Parse("2000-03-03T03:04:05+3"), "US0000000001", "AssetName1", -1, "USD", 101, 5),
+				new Trade(DateTimeOffset.Parse("2000-03-03T03:04:05+3"), "RU0000000001", "AssetName2", -1, "RUB", 100, 6),
 			};
 			actualTrades.Should().Contain(expectedTrades);
 		}
@@ -230,7 +230,7 @@ namespace InvestmentReporting.UnitTests {
 			var usdAccount = broker.Accounts.First(a => a.Id == _usdAccountId);
 			usdAccount.Balance.Should().Be(-200 + 101);
 			var rubAccount = broker.Accounts.First(a => a.Id == _rubAccountId);
-			rubAccount.Balance.Should().Be(-300 + 100 - 15 - 18 - 15 - 18);
+			rubAccount.Balance.Should().Be(-300 + 100 - 5 - 6 - 5 - 6);
 		}
 
 		[Test]
