@@ -77,7 +77,7 @@ namespace InvestmentReporting.Market.UseCase {
 				_logger.LogTrace($"Last buy date for '{asset.Isin}' inside period, use real price");
 				return _priceManager.GetRealPriceSum(lastBuyDate, user, asset.Id);
 			}
-			_logger.LogTrace($"Last buy date for '{asset.Isin}' inside period, use virtual price at period start");
+			_logger.LogTrace($"Last buy date for '{asset.Isin}' in the past, use virtual price at period start");
 			var price = _priceManager.GetVirtualPricePerOne(asset.Isin, periodStart);
 			if ( price != null ) {
 				_logger.LogTrace($"Virtual price for '{asset.Isin}' at period start ('{periodStart}') is {price.Value}'");
