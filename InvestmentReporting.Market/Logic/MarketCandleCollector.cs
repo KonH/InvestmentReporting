@@ -1,8 +1,10 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using Tinkoff.Trading.OpenApi.Network;
 
 namespace InvestmentReporting.Market.Logic {
+	[ExcludeFromCodeCoverage]
 	public sealed class MarketCandleCollector {
 		readonly IApiKeyProvider _apiKeyProvider;
 

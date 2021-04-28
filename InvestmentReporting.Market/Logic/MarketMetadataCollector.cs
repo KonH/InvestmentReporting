@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,6 +8,7 @@ using Tinkoff.Trading.OpenApi.Models;
 using Tinkoff.Trading.OpenApi.Network;
 
 namespace InvestmentReporting.Market.Logic {
+	[ExcludeFromCodeCoverage]
 	public sealed class MarketMetadataCollector {
 		readonly ILogger         _logger;
 		readonly IApiKeyProvider _apiKeyProvider;

@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -5,6 +6,7 @@ using Tinkoff.Trading.OpenApi.Models;
 using Tinkoff.Trading.OpenApi.Network;
 
 namespace InvestmentReporting.Market.Logic {
+	[ExcludeFromCodeCoverage]
 	public sealed class MarkerAssetCandleCollector {
 		readonly ILogger _logger;
 

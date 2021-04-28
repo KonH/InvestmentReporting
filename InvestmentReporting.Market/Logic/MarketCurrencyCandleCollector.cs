@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using InvestmentReporting.State.Entity;
@@ -8,6 +9,7 @@ using Tinkoff.Trading.OpenApi.Models;
 using Tinkoff.Trading.OpenApi.Network;
 
 namespace InvestmentReporting.Market.Logic {
+	[ExcludeFromCodeCoverage]
 	public sealed class MarketCurrencyCandleCollector {
 		readonly ILogger _logger;
 
