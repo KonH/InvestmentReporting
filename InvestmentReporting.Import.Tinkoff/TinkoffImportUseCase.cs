@@ -89,7 +89,7 @@ namespace InvestmentReporting.Import.Tinkoff {
 				var fee        = trade.Fee;
 				var buy        = trade.Count > 0;
 				var payAccount = currencyAccounts[new(trade.Currency)];
-				var feeAccount = currencyAccounts[new("RUB")];
+				var feeAccount = currencyAccounts[new(trade.Currency)];
 				if ( buy ) {
 					if ( IsAlreadyPresent(date, isin, count, addCommands) ) {
 						continue;
