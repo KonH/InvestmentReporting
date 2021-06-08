@@ -44,10 +44,13 @@ namespace InvestmentReporting.Import.Tinkoff {
 			var expenseTransfers = _moneyMoveParser.ReadExpenseTransfers(report);
 			var assets           = _assetParser.ReadAssets(report);
 			var trades           = _tradeParser.ReadTrades(report, assets);
+			var exchanges        = _tradeParser.ReadExchanges(report);
 			var requiredCurrencyCodes = GetRequiredCurrencyCodes(
 					incomeTransfers.Select(t => t.Currency),
 					expenseTransfers.Select(t => t.Currency),
 					trades.Select(t => t.Currency),
+					exchanges.Select(e => e.FromCurrency),
+					exchanges.Select(e => e.ToCurrency),
 					new[] { "RUB" })
 				.Select(s => new CurrencyCode(s))
 				.ToArray();
@@ -61,8 +64,8 @@ namespace InvestmentReporting.Import.Tinkoff {
 			var incomeAccountCommands  = CreateAccountCommands(currencyAccounts, allIncomeCommands);
 			var allExpenseCommands     = _stateManager.ReadCommands<AddExpenseCommand>(user, brokerId);
 			var expenseAccountCommands = CreateAccountCommands(currencyAccounts, allExpenseCommands);
-			await FillIncomeTransfers(user, brokerId, incomeTransfers, currencyAccounts, incomeAccountCommands);
-			await FillExpenseTransfers(user, brokerId, expenseTransfers, currencyAccounts, expenseAccountCommands);
+			await FillIncomeTransfers(user, brokerId, incomeTransfers, exchanges, currencyAccounts, incomeAccountCommands);
+			await FillExpenseTransfers(user, brokerId, expenseTransfers, exchanges, currencyAccounts, expenseAccountCommands);
 			var addAssetCommands    = _stateManager.ReadCommands<AddAssetCommand>(user, brokerId).ToArray();
             var reduceAssetCommands = _stateManager.ReadCommands<ReduceAssetCommand>(user, brokerId).ToArray();
 			var assetIds = await FillTrades(user, brokerId, trades, currencyAccounts, addAssetCommands, reduceAssetCommands);

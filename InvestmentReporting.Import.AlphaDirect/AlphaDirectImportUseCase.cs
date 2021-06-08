@@ -69,8 +69,8 @@ namespace InvestmentReporting.Import.AlphaDirect {
 			var incomeAccountCommands  = CreateAccountCommands(currencyAccounts, allIncomeCommands);
 			var allExpenseCommands     = _stateManager.ReadCommands<AddExpenseCommand>(user, brokerId);
 			var expenseAccountCommands = CreateAccountCommands(currencyAccounts, allExpenseCommands);
-			await FillIncomeTransfers(user, brokerId, incomeTransfers, currencyAccounts, incomeAccountCommands);
-			await FillExpenseTransfers(user, brokerId, expenseTransfers, currencyAccounts, expenseAccountCommands);
+			await FillIncomeTransfers(user, brokerId, incomeTransfers, Array.Empty<Exchange>(), currencyAccounts, incomeAccountCommands);
+			await FillExpenseTransfers(user, brokerId, expenseTransfers, Array.Empty<Exchange>(), currencyAccounts, expenseAccountCommands);
 			var addAssetCommands    = _stateManager.ReadCommands<AddAssetCommand>(user, brokerId).ToArray();
 			var reduceAssetCommands = _stateManager.ReadCommands<ReduceAssetCommand>(user, brokerId).ToArray();
 			var assets              = await FillTrades(user, brokerId, trades, currencyAccounts, addAssetCommands, reduceAssetCommands);

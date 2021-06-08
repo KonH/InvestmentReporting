@@ -8,5 +8,7 @@ namespace InvestmentReporting.State.Entity {
 		public static readonly ExpenseCategory BuyAssetFee  = new("Asset Buy Broker Fee");
 		public static readonly ExpenseCategory SellAssetFee = new("Asset Sell Broker Fee");
 		public static readonly ExpenseCategory Transfer     = new("Expense Transfer");
+		public static readonly ExpenseCategory Exchange     = new("Exchange");
+		public static readonly ExpenseCategory ExchangeFee  = new("Exchange Broker Fee");
 	}
 }

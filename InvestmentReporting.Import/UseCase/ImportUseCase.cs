@@ -41,6 +41,7 @@ namespace InvestmentReporting.Import.UseCase {
 
 		protected async Task FillIncomeTransfers(
 			UserId user, BrokerId brokerId, IReadOnlyCollection<Transfer> incomeTransfers,
+			IReadOnlyCollection<Exchange> exchanges,
 			Dictionary<CurrencyCode, AccountId> currencyAccounts,
 			Dictionary<AccountId, IReadOnlyCollection<AddIncomeCommand>> incomeAccountCommands) {
 			foreach ( var incomeTransfer in incomeTransfers ) {
@@ -52,10 +53,20 @@ namespace InvestmentReporting.Import.UseCase {
 					incomeTransfer.Date, user, brokerId, accountId, incomeTransfer.Amount,
 					IncomeCategory.Transfer, asset: null);
 			}
+			foreach ( var exchange in exchanges ) {
+				var accountId = currencyAccounts[new(exchange.ToCurrency)];
+				if ( IsAlreadyPresent(exchange.Date, exchange.Amount, incomeAccountCommands[accountId]) ) {
+					continue;
+				}
+				await AddIncomeUseCase.Handle(
+					exchange.Date, user, brokerId, accountId, exchange.Amount,
+					IncomeCategory.Exchange, asset: null);
+			}
 		}
 
 		protected async Task FillExpenseTransfers(
 			UserId user, BrokerId brokerId, IReadOnlyCollection<Transfer> expenseTransfers,
+			IReadOnlyCollection<Exchange> exchanges,
 			Dictionary<CurrencyCode, AccountId> currencyAccounts,
 			Dictionary<AccountId, IReadOnlyCollection<AddExpenseCommand>> expenseAccountCommands) {
 			foreach ( var expenseTransfer in expenseTransfers ) {
@@ -67,6 +78,24 @@ namespace InvestmentReporting.Import.UseCase {
 				await AddExpenseUseCase.Handle(
 					expenseTransfer.Date, user, brokerId, accountId, amount,
 					ExpenseCategory.Transfer, asset: null);
+			}
+			foreach ( var exchange in exchanges ) {
+				var accountId = currencyAccounts[new(exchange.FromCurrency)];
+				if ( IsAlreadyPresent(exchange.Date, exchange.Sum, expenseAccountCommands[accountId]) ) {
+					continue;
+				}
+				await AddExpenseUseCase.Handle(
+					exchange.Date, user, brokerId, accountId, exchange.Sum,
+					ExpenseCategory.Exchange, asset: null);
+			}
+			foreach ( var exchange in exchanges ) {
+				var accountId = currencyAccounts[new(exchange.FromCurrency)];
+				if ( IsAlreadyPresent(exchange.Date, exchange.Fee, expenseAccountCommands[accountId]) ) {
+					continue;
+				}
+				await AddExpenseUseCase.Handle(
+					exchange.Date, user, brokerId, accountId, exchange.Fee,
+					ExpenseCategory.ExchangeFee, asset: null);
 			}
 		}
 

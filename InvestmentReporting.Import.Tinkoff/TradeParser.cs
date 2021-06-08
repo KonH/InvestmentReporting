@@ -41,5 +41,38 @@ namespace InvestmentReporting.Import.Tinkoff {
 			}
 			return result;
 		}
+
+		public IReadOnlyCollection<Exchange> ReadExchanges(IXLWorkbook report) {
+			var result       = new List<Exchange>();
+			var tradesHeader = report.Search("1.1 Информация о совершенных и исполненных сделках на конец отчетного периода").Single();
+			var nextHeader   = report.Search("1.2 Информация о неисполненных сделках на конец отчетного периода").Single();
+			var startRow     = tradesHeader.Address.RowNumber + 2;
+			var endRow       = nextHeader.Address.RowNumber - 1;
+			var rows = report.FindRows(r =>
+				(r.RowNumber() >= startRow) &&
+				(r.RowNumber() <= endRow));
+			foreach ( var row in rows ) {
+				var dateDt   = row.Cell("H").GetDateTimeExact("dd.MM.yyyy", "MM/dd/yyyy hh:mm:ss");
+				var date     = new DateTimeOffset(dateDt, TimeSpan.FromHours(3));
+				var timeDt   = row.Cell("L").GetDateTime();
+				var time     = new DateTimeOffset(timeDt, TimeSpan.FromHours(3));
+				var fullDate = new DateTimeOffset(date.Year, date.Month, date.Day, time.Hour, time.Minute, time.Second, time.Offset);
+				var type     = row.Cell("AB").GetString().Trim();
+				var buy      = (type == "Покупка");
+				var name     = row.Cell("AF").GetString().Trim();
+				if ( !name.EndsWith("_TOM") ) {
+					continue;
+				}
+				var count = (int)row.Cell("BB").GetDouble();
+				count = buy ? count : -count;
+				var fromCurrency = row.Cell("AW").GetString().Trim();
+				var toCurrency   = name[..3];
+				var sum          = row.Cell("BQ").GetDecimal();
+				var brokerFee    = row.Cell("CC").GetDecimal();
+				var fee          = brokerFee;
+				result.Add(new(fullDate, fromCurrency, toCurrency, count, sum, fee));
+			}
+			return result;
+		}
 	}
 }

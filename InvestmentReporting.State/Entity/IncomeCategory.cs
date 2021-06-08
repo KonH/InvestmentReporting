@@ -8,5 +8,6 @@ namespace InvestmentReporting.State.Entity {
 		public static readonly IncomeCategory Transfer  = new("Income Transfer");
 		public static readonly IncomeCategory Dividend  = new("Share Dividend");
 		public static readonly IncomeCategory Coupon    = new("Bond Coupon");
+		public static readonly IncomeCategory Exchange  = new("Exchange");
 	}
 }
