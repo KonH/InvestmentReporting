@@ -26,6 +26,10 @@ namespace InvestmentReporting.Import.Tinkoff {
 				var type     = row.Cell("AB").GetString().Trim();
 				var buy      = (type == "Покупка");
 				var name     = row.Cell("AF").GetString().Trim();
+				// Skip money transfer deals
+				if ( name.EndsWith("_TOM") ) {
+					continue;
+				}
 				var isin     = assets.Single(a => a.Name == name).Isin;
 				var count = (int)row.Cell("BB").GetDouble();
 				count = buy ? count : -count;
