@@ -229,9 +229,9 @@ namespace InvestmentReporting.UnitTests {
 			broker.Inventory.Should().Contain(a =>
 				(a.Isin == "RU0000000001") && (a.Count == 2));
 			var usdAccount = broker.Accounts.First(a => a.Id == _usdAccountId);
-			usdAccount.Balance.Should().Be(-200 + 101);
+			usdAccount.Balance.Should().Be(-200 + 101 - 5 - 5);
 			var rubAccount = broker.Accounts.First(a => a.Id == _rubAccountId);
-			rubAccount.Balance.Should().Be(-300 + 100 - 5 - 6 - 5 - 6);
+			rubAccount.Balance.Should().Be(-300 + 100 - 6 - 6);
 		}
 
 		[Test]
