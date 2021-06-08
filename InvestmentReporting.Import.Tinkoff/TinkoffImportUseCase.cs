@@ -19,18 +19,20 @@ namespace InvestmentReporting.Import.Tinkoff {
 		readonly BrokerMoneyMoveParser   _moneyMoveParser;
 		readonly AssetParser             _assetParser;
 		readonly TradeParser             _tradeParser;
+		readonly CouponParser            _couponParser;
 		readonly BuyAssetUseCase         _buyAssetUseCase;
 		readonly SellAssetUseCase        _sellAssetUseCase;
 
 		public TinkoffImportUseCase(
 			TransactionStateManager stateManager, BrokerMoneyMoveParser moneyMoveParser,
-			AssetParser assetParser, TradeParser tradeParser,
+			AssetParser assetParser, TradeParser tradeParser, CouponParser couponParser,
 			AddIncomeUseCase addIncomeUseCase, AddExpenseUseCase addExpenseUseCase,
 			BuyAssetUseCase buyAssetUseCase, SellAssetUseCase sellAssetUseCase) : base(addIncomeUseCase, addExpenseUseCase) {
 			_stateManager     = stateManager;
 			_moneyMoveParser  = moneyMoveParser;
 			_assetParser      = assetParser;
 			_tradeParser      = tradeParser;
+			_couponParser     = couponParser;
 			_buyAssetUseCase  = buyAssetUseCase;
 			_sellAssetUseCase = sellAssetUseCase;
 		}
@@ -63,11 +65,15 @@ namespace InvestmentReporting.Import.Tinkoff {
 			await FillExpenseTransfers(user, brokerId, expenseTransfers, currencyAccounts, expenseAccountCommands);
 			var addAssetCommands    = _stateManager.ReadCommands<AddAssetCommand>(user, brokerId).ToArray();
             var reduceAssetCommands = _stateManager.ReadCommands<ReduceAssetCommand>(user, brokerId).ToArray();
-			await FillTrades(user, brokerId, trades, currencyAccounts, addAssetCommands, reduceAssetCommands);
+			var assetIds = await FillTrades(user, brokerId, trades, currencyAccounts, addAssetCommands, reduceAssetCommands);
+			var couponTransfers = _moneyMoveParser.ReadCouponTransfers(report);
+			await FillCoupons(user, brokerId, couponTransfers, currencyAccounts, incomeAccountCommands, trades, assetIds);
+			var redemptionTransfers = _moneyMoveParser.ReadRedemptionTransfers(report);
+			await FillRedemptions(user, brokerId, redemptionTransfers, currencyAccounts, incomeAccountCommands, trades, assetIds);
 			await _stateManager.Push();
 		}
 
-		async Task FillTrades(
+		async Task<Dictionary<string, AssetId>> FillTrades(
 			UserId user, BrokerId brokerId, IReadOnlyCollection<Trade> trades,
 			Dictionary<CurrencyCode, AccountId> currencyAccounts,
 			IReadOnlyCollection<AddAssetCommand> addCommands, IReadOnlyCollection<ReduceAssetCommand> reduceCommands) {
@@ -101,6 +107,41 @@ namespace InvestmentReporting.Import.Tinkoff {
 					var assetId = assetIds[isin];
 					await _sellAssetUseCase.Handle(date, user, brokerId, payAccount, feeAccount, assetId, price, fee, reduceCount);
 				}
+			}
+			return assetIds;
+		}
+
+		async Task FillCoupons(
+			UserId user, BrokerId brokerId, IReadOnlyCollection<Transfer> couponTransfers,
+			Dictionary<CurrencyCode, AccountId> currencyAccounts,
+			Dictionary<AccountId, IReadOnlyCollection<AddIncomeCommand>> incomeAccountCommands,
+			IReadOnlyCollection<Trade> trades, IReadOnlyDictionary<string, AssetId> assets) {
+			foreach ( var couponTransfer in couponTransfers ) {
+				var accountId = currencyAccounts[new(couponTransfer.Currency)];
+				if ( IsAlreadyPresent(couponTransfer.Date, couponTransfer.Amount, incomeAccountCommands[accountId]) ) {
+					continue;
+				}
+				var asset = _couponParser.DetectAssetFromTransfer(couponTransfer.Comment, trades, assets);
+				await AddIncomeUseCase.Handle(
+					couponTransfer.Date, user, brokerId, accountId, couponTransfer.Amount,
+					IncomeCategory.Coupon, asset);
+			}
+		}
+
+		async Task FillRedemptions(
+			UserId user, BrokerId brokerId, IReadOnlyCollection<Transfer> redemptionTransfers,
+			Dictionary<CurrencyCode, AccountId> currencyAccounts,
+			Dictionary<AccountId, IReadOnlyCollection<AddIncomeCommand>> incomeAccountCommands,
+			IReadOnlyCollection<Trade> trades, Dictionary<string, AssetId> assets) {
+			foreach ( var couponTransfer in redemptionTransfers ) {
+				var accountId = currencyAccounts[new(couponTransfer.Currency)];
+				if ( IsAlreadyPresent(couponTransfer.Date, couponTransfer.Amount, incomeAccountCommands[accountId]) ) {
+					continue;
+				}
+				var asset = _couponParser.DetectAssetFromTransfer(couponTransfer.Comment, trades, assets);
+				await AddIncomeUseCase.Handle(
+					couponTransfer.Date, user, brokerId, accountId, couponTransfer.Amount,
+					IncomeCategory.Coupon, asset);
 			}
 		}
 	}

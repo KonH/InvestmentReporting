@@ -16,8 +16,10 @@ using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
 using AlphaBrokerMoneyMoveParser = InvestmentReporting.Import.AlphaDirect.BrokerMoneyMoveParser;
 using AlphaTradeParser = InvestmentReporting.Import.AlphaDirect.TradeParser;
+using AlphaDirectCouponParser = InvestmentReporting.Import.AlphaDirect.CouponParser;
 using TinkoffBrokerMoneyMoveParser = InvestmentReporting.Import.Tinkoff.BrokerMoneyMoveParser;
 using TinkoffTradeParser = InvestmentReporting.Import.Tinkoff.TradeParser;
+using TinkoffCouponParser = InvestmentReporting.Import.Tinkoff.CouponParser;
 
 namespace InvestmentReporting.ImportService {
 	public class Startup {
@@ -61,7 +63,8 @@ namespace InvestmentReporting.ImportService {
 			services.AddScoped<TinkoffBrokerMoneyMoveParser>();
 			services.AddScoped<AssetParser>();
 			services.AddScoped<TinkoffTradeParser>();
-			services.AddScoped<CouponParser>();
+			services.AddScoped<AlphaDirectCouponParser>();
+			services.AddScoped<TinkoffCouponParser>();
 			services.AddScoped<TransferParser>();
 			services.AddScoped<AddIncomeUseCase>();
 			services.AddScoped<AddExpenseUseCase>();

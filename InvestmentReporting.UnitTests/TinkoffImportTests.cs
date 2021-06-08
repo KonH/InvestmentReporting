@@ -12,6 +12,7 @@ using InvestmentReporting.State.UseCase.Exceptions;
 using InvestmentReporting.Import.Tinkoff;
 using InvestmentReporting.Import.Dto;
 using InvestmentReporting.Import.Logic;
+using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 
 namespace InvestmentReporting.UnitTests {
@@ -281,7 +282,6 @@ namespace InvestmentReporting.UnitTests {
 		}
 
 		[Test]
-		[Ignore("Not yet implemented")]
 		public void IsCouponTransfersRead() {
 			var sample = LoadDocument("Tinkoff_BrokerMoneyMove_CouponSample.xlsx");
 			var parser = new BrokerMoneyMoveParser();
@@ -289,13 +289,12 @@ namespace InvestmentReporting.UnitTests {
 			var actualTransfers = parser.ReadCouponTransfers(sample);
 
 			var expectedTransfers = new[] {
-				new Transfer(DateTimeOffset.Parse("2020-01-01T01:02:03+3"), "Перевод погашение купона 0000-00-00000-0-0000 (Облигации ООО \"Организация\"  серии 0000-00) д.ф.22.03.21.(Удержан налог 16 руб.)", "RUB", 100),
+				new Transfer(DateTimeOffset.Parse("2000-01-02T16:00:00+3"), "Выплата купонов ОблигацияN/ 1 шт.", "RUB", 150),
 			};
 			actualTransfers.Should().Contain(expectedTransfers);
 		}
 
 		[Test]
-		[Ignore("Not yet implemented")]
 		public async Task IsCouponTransfersImported() {
 			var stateManager = GetStateManager();
 			await using var sample = LoadStream("Tinkoff_BrokerMoneyMove_CouponSample.xlsx");
@@ -307,7 +306,6 @@ namespace InvestmentReporting.UnitTests {
 		}
 
 		[Test]
-		[Ignore("Not yet implemented")]
 		public async Task IsCouponTransfersNotDuplicated() {
 			var stateManager = GetStateManager();
 			await using var sample = LoadStream("Tinkoff_BrokerMoneyMove_CouponSample.xlsx");
@@ -324,7 +322,7 @@ namespace InvestmentReporting.UnitTests {
 			var state      = stateManager.ReadState(DateTimeOffset.MaxValue, _userId);
 			var broker     = state.Brokers.First(b => b.Id == _brokerId);
 			var rubAccount = broker.Accounts.First(a => a.Id == _rubAccountId);
-			rubAccount.Balance.Should().Be(-100 - 10 + 100);
+			rubAccount.Balance.Should().Be((1010 + 150 + 1000) - (1000 + 50));
 		}
 
 		Stream LoadStream(string name) => File.OpenRead(Path.Combine("Samples", name));
@@ -350,11 +348,12 @@ namespace InvestmentReporting.UnitTests {
 			var moneyMoveParser   = new BrokerMoneyMoveParser();
 			var assetParser       = new AssetParser();
 			var tradeParser       = new TradeParser();
+			var couponParser      = new CouponParser(loggerFactory.CreateLogger<CouponParser>());
 			var idGenerator       = new GuidIdGenerator();
 			var addIncomeUseCase  = new AddIncomeUseCase(stateManager, idGenerator);
 			var addExpenseUseCase = new AddExpenseUseCase(stateManager, idGenerator);
 			return new TinkoffImportUseCase(
-				transStateManager, moneyMoveParser, assetParser, tradeParser,
+				transStateManager, moneyMoveParser, assetParser, tradeParser, couponParser,
 				addIncomeUseCase,
 				addExpenseUseCase,
 				new BuyAssetUseCase(stateManager, idGenerator, addExpenseUseCase),

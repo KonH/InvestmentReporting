@@ -11,21 +11,35 @@ namespace InvestmentReporting.Import.Tinkoff {
 			ReadTransfers(
 				report,
 				operation => operation == "Пополнение счета",
+				(t, _) => t,
 				income: true);
 
 		public IReadOnlyCollection<Transfer> ReadDividendTransfers(IXLWorkbook report) =>
 			throw new NotImplementedException();
 
 		public IReadOnlyCollection<Transfer> ReadCouponTransfers(IXLWorkbook report) =>
-			throw new NotImplementedException();
+			ReadTransfers(
+				report,
+				operation => operation == "Выплата купонов",
+				(t, c) => $"{t} {c}",
+				income: true);
+
+		public IReadOnlyCollection<Transfer> ReadRedemptionTransfers(IXLWorkbook report) =>
+			ReadTransfers(
+				report,
+				operation => operation == "Погашение облигации",
+				(t, c) => $"{t} {c}",
+				income: true);
 
 		public IReadOnlyCollection<Transfer> ReadExpenseTransfers(IXLWorkbook report) =>
 			ReadTransfers(
 				report,
 				operation => operation == "Вывод средств",
+				(t, _) => t,
 				income: false);
 
-		IReadOnlyCollection<Transfer> ReadTransfers(IXLWorkbook report, Func<string, bool> filter, bool income) {
+		IReadOnlyCollection<Transfer> ReadTransfers(
+			IXLWorkbook report, Func<string, bool> filter, Func<string, string, string> commentFactory, bool income) {
 			var result           = new List<Transfer>();
 			var operationsHeader = report.Search("2. Операции с денежными средствами").Single();
 			var nextCatHeader    = report.Search("3.1 Движение по ценным бумагам инвестора").Single();
@@ -60,6 +74,8 @@ namespace InvestmentReporting.Import.Tinkoff {
 					if ( !filter(operation) ) {
 						continue;
 					}
+					var comment = row.Cell("DQ").GetString().Trim();
+					operation = commentFactory(operation, comment);
 					var sumLetter = income ? "BV" : "CS";
 					var sum    = row.Cell(sumLetter).GetDecimal();
 					// We expect that it's Moscow time, but no timezone provided
