@@ -16,6 +16,9 @@ namespace InvestmentReporting.Import.Tinkoff {
 				(r.RowNumber() >= startRow) &&
 				(r.RowNumber() <= endRow));
 			foreach ( var row in rows ) {
+				if ( IsPageSeparator(row.Cell("H").GetString()) ) {
+					continue;
+				}
 				// We expect that it's Moscow time, but no timezone provided
 				// and for backward-compatibility we should use fixed value
 				var dateDt   = row.Cell("H").GetDateTimeExact("dd.MM.yyyy", "MM/dd/yyyy hh:mm:ss");
@@ -52,6 +55,9 @@ namespace InvestmentReporting.Import.Tinkoff {
 				(r.RowNumber() >= startRow) &&
 				(r.RowNumber() <= endRow));
 			foreach ( var row in rows ) {
+				if ( IsPageSeparator(row.Cell("H").GetString()) ) {
+					continue;
+				}
 				var dateDt   = row.Cell("H").GetDateTimeExact("dd.MM.yyyy", "MM/dd/yyyy hh:mm:ss");
 				var date     = new DateTimeOffset(dateDt, TimeSpan.FromHours(3));
 				var timeDt   = row.Cell("L").GetDateTime();
@@ -73,6 +79,10 @@ namespace InvestmentReporting.Import.Tinkoff {
 				result.Add(new(fullDate, fromCurrency, toCurrency, count, sum, fee));
 			}
 			return result;
+		}
+
+		bool IsPageSeparator(string checkValue) {
+			return string.IsNullOrWhiteSpace(checkValue) || checkValue.StartsWith("Дата");
 		}
 	}
 }
