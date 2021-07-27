@@ -27,8 +27,11 @@ namespace InvestmentReporting.Import.Tinkoff {
 				var time     = new DateTimeOffset(timeDt, TimeSpan.FromHours(3));
 				var fullDate = new DateTimeOffset(date.Year, date.Month, date.Day, time.Hour, time.Minute, time.Second, time.Offset);
 				var type     = row.Cell("AB").GetString().Trim();
-				var buy      = (type == "Покупка");
-				var name     = row.Cell("AF").GetString().Trim();
+				if ( IsTemporaryType(type) ) {
+					continue;
+				}
+				var buy = (type == "Покупка");
+				var name = row.Cell("AF").GetString().Trim();
 				// Skip money transfer deals
 				if ( name.EndsWith("_TOM") ) {
 					continue;
@@ -64,8 +67,11 @@ namespace InvestmentReporting.Import.Tinkoff {
 				var time     = new DateTimeOffset(timeDt, TimeSpan.FromHours(3));
 				var fullDate = new DateTimeOffset(date.Year, date.Month, date.Day, time.Hour, time.Minute, time.Second, time.Offset);
 				var type     = row.Cell("AB").GetString().Trim();
-				var buy      = (type == "Покупка");
-				var name     = row.Cell("AF").GetString().Trim();
+				if ( IsTemporaryType(type) ) {
+					continue;
+				}
+				var buy  = (type == "Покупка");
+				var name = row.Cell("AF").GetString().Trim();
 				if ( !name.EndsWith("_TOM") ) {
 					continue;
 				}
@@ -84,5 +90,9 @@ namespace InvestmentReporting.Import.Tinkoff {
 		bool IsPageSeparator(string checkValue) {
 			return string.IsNullOrWhiteSpace(checkValue) || checkValue.StartsWith("Дата");
 		}
+
+		// Potential temporary operations, which can be skipped (?)
+		bool IsTemporaryType(string type) =>
+			type.StartsWith("РЕПО ");
 	}
 }
