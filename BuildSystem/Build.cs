@@ -33,10 +33,6 @@ namespace InvestmentReporting.BuildSystem {
 		Target Restore => _ => _
 			.Executes(() =>
 			{
-				Run("Install api generator tool",
-					RootDirectory,
-					"dotnet", "tool install --global Swashbuckle.AspNetCore.Cli --version 5.4.1",
-					ignoreExitCode: true);
 				foreach ( var (project, _) in _dotNetProjects ) {
 					DotNetRestore(s => s.SetProjectFile(RootDirectory / project));
 				}
@@ -70,7 +66,7 @@ namespace InvestmentReporting.BuildSystem {
 							var dllPath     = RootDirectory / project / "bin" / DotNetConfiguration / "net5.0" / $"{project}.dll";
 							Run("Generate swagger api file",
 								RootDirectory / project,
-								"swagger", $"tofile --output {swaggerPath} {dllPath} v1");
+								"dotnet", $"swagger tofile --output {swaggerPath} {dllPath} v1");
 							Run("Generate api client from swagger file",
 								RootDirectory / "Frontend",
 								"npm", $"run generate-api -- --path ../api/{project}.swagger.json --output src/api --name \"{api}\"");

@@ -76,7 +76,6 @@ Supports both x86_64 and ARM processors
 - Docker - https://docs.docker.com/get-docker/
 - Docker Compose - https://docs.docker.com/compose/install/
 - .NET 5 - https://dotnet.microsoft.com/download/dotnet/5.0
-- Nuke - https://nuke.build/
 
 ## Recommendations
 
@@ -85,6 +84,7 @@ HTTPS is not provided by this service, but it's strongly recommended for securit
 ## Getting started
 
 - Clone repository - `git clone https://github.com/KonH/InvestmentReporting.git`
+- Install project .NET tools: `dotnet tool restore`
 - Create Production.env file:
 ```
 MONGO_INITDB_ROOT_USERNAME=%MONGO_USERNAME%
@@ -93,7 +93,7 @@ TINKOFF_API_SANDBOX_KEY=%TINKOFF_API_KEY%
 ```
 - Mongo credentials related to embedded mongo database, which will be created at start
 - Tinkoff API key described here - https://tinkoffcreditsystems.github.io/invest-openapi/auth/
-- Start services: `nuke --target Start --configuration Production`
+- Start services: `dotnet nuke --target Start --configuration Production`
 - Navigate to http://localhost:8082
 
 ## Register
