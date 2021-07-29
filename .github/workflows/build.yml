@@ -21,5 +21,7 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 2.1.x
+    - name: Install tools
+      run: dotnet tool restore
     - name: Run compile task
-      run: ./build.sh --target Compile
+      run: dotnet nuke --target Compile
