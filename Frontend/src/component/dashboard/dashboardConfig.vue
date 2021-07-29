@@ -17,8 +17,24 @@
 			<label>
 				<b>Tags:</b>
 			</label>
-			<div v-for="tag in dashboard.tags" :key="tag">
-				<dashboard-tag-card :dashboard="dashboard" :tag="tag" class="mb-2" @remove="onRemoveTag(tag.tag)" />
+			<div v-for="(tag, index) in dashboard.tags" :key="tag">
+				<dashboard-tag-card
+					v-if="index !== editIndex"
+					:dashboard="dashboard"
+					:tag="tag"
+					class="mb-2"
+					@remove="onRemoveTag(tag.tag)"
+					@edit="onEditTagStarted(index)"
+				/>
+				<edit-dashboard-tag-card
+					v-if="index === editIndex"
+					:dashboard="dashboard"
+					:index="index"
+					:tag="tag"
+					:tags="availableTags.concat([tag.tag])"
+					@edit="onEditTagComplete"
+					@cancel="onEditTagCancel"
+				/>
 			</div>
 			<div>
 				<add-dashboard-tag-card v-if="canAddTag" :dashboard="dashboard" :tags="availableTags" @add="onAddTag" />
@@ -34,6 +50,7 @@ import Backend from '@/service/backend';
 import DashboardTagCard from '@/component/dashboard/dashboardTagCard.vue';
 import AddDashboardTagCard from '@/component/dashboard/addDashboardTagCard.vue';
 import { State } from 'vuex-class';
+import EditDashboardTagCard from '@/component/dashboard/editDashboardTagCard.vue';
 
 @Options({
 	name: 'DashboardConfig',
@@ -41,6 +58,7 @@ import { State } from 'vuex-class';
 	components: {
 		DashboardTagCard,
 		AddDashboardTagCard,
+		EditDashboardTagCard,
 	},
 })
 export default class DashboardConfig extends Vue {
@@ -49,6 +67,8 @@ export default class DashboardConfig extends Vue {
 
 	@Prop()
 	dashboard!: DashboardConfigDto;
+
+	editIndex = Number.NaN;
 
 	async save() {
 		await Backend.meta().dashboardConfig.dashboardConfigCreate(this.dashboard);
@@ -70,6 +90,27 @@ export default class DashboardConfig extends Vue {
 	async onAddTag(tag: DashboardConfigTagDto) {
 		this.dashboard.tags?.push(tag);
 		await this.save();
+	}
+
+	async onEditTagStarted(index: number) {
+		this.editIndex = index;
+	}
+
+	async onEditTagComplete(index: number, tag: DashboardConfigTagDto) {
+		const tags = this.dashboard.tags;
+		if (tags) {
+			tags[index] = tag;
+		}
+		await this.save();
+		this.resetEdit();
+	}
+
+	onEditTagCancel() {
+		this.resetEdit();
+	}
+
+	resetEdit() {
+		this.editIndex = Number.NaN;
 	}
 
 	get availableTags() {
