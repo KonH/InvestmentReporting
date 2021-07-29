@@ -9,7 +9,7 @@
 		</thead>
 		<tbody>
 			<tr v-for="asset in assets" :key="asset.isin">
-				<tag-asset :asset="asset" />
+				<tag-asset :asset="asset" :tags="tags" />
 			</tr>
 		</tbody>
 	</table>
@@ -35,6 +35,10 @@ export default class TagsView extends Vue {
 
 	get assets() {
 		return this.tagState.assets;
+	}
+
+	get tags() {
+		return this.tagState.tags;
 	}
 }
 </script>

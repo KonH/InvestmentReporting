@@ -8,7 +8,7 @@
 		<span v-for="tag in asset.tags" :key="tag">
 			<tag-card :asset="asset" :tag="tag" class="mr-2" />
 		</span>
-		<add-tag-card :asset="asset" />
+		<add-tag-card :asset="asset" :tags="tags" />
 	</td>
 </template>
 <script lang="ts">
@@ -28,5 +28,8 @@ import AddTagCard from '@/component/tag/addTagCard.vue';
 export default class TagAsset extends Vue {
 	@Prop()
 	asset!: AssetTagSetDto;
+
+	@Prop()
+	tags!: string[];
 }
 </script>
