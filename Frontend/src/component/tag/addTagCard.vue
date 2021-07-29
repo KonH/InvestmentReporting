@@ -35,7 +35,7 @@ export default class AddTagCard extends Vue {
 		this.isExpanded = true;
 	}
 
-	buttonClass() {
+	get buttonClass() {
 		return Progress.getClass(this, 'btn btn-sm btn-primary mr-1');
 	}
 
