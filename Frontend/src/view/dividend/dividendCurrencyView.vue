@@ -100,14 +100,18 @@ export default class DividendCurrencyView extends Vue {
 		});
 		const result = new Map<string, { period: string; value: number }[]>();
 		this.targetAssets.forEach((asset) => {
+			const assetId = asset.id;
+			if (!assetId) {
+				return;
+			}
 			const assetDivs: { period: string; value: number }[] = [];
 			this.periods.map((p) => {
 				const periodOperations = operationsByPeriod.get(p);
-				const assetPeriodDivs = periodOperations?.filter((o) => o.asset == asset.id) ?? [];
+				const assetPeriodDivs = periodOperations?.filter((o) => o.asset == assetId) ?? [];
 				const sum = assetPeriodDivs.map((o) => o.amount ?? 0).reduce((p, c) => p + c, 0);
 				assetDivs.push({ period: p, value: sum });
 			});
-			result.set(asset.id, assetDivs);
+			result.set(assetId, assetDivs);
 		});
 		return result;
 	}
