@@ -6,6 +6,7 @@
 			<router-link to="/operations" :class="navClass('/operations')">Operations</router-link>
 			<router-link to="/portfolio" :class="navClass(['/portfolio', '/'])">Portfolio</router-link>
 			<router-link to="/dividends" :class="navClass('/dividends')">Dividends</router-link>
+			<router-link to="/coupons" :class="navClass('/coupons')">Coupons</router-link>
 			<router-link to="/tags" :class="navClass('/tags')">Tags</router-link>
 			<router-link to="/dashboards" :class="navClass('/dashboards')">Dashboards</router-link>
 			<router-link to="/custom" :class="navClass('/custom')">Custom</router-link>

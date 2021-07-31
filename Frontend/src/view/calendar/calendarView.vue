@@ -1,5 +1,5 @@
 <template>
-	<dividend-currency-view
+	<calendar-currency-view
 		v-for="currency in currencies"
 		:key="currency"
 		:currency-code="currency"
@@ -13,15 +13,19 @@ import { State } from 'vuex-class';
 import Backend from '@/service/backend';
 import { OperationDto } from '@/api/state';
 import { VirtualStateDto } from '@/api/market';
-import DividendCurrencyView from '@/view/dividend/dividendCurrencyView.vue';
+import CalendarCurrencyView from '@/view/calendar/calendarCurrencyView.vue';
+import { Prop } from 'vue-property-decorator';
 
 @Options({
-	name: 'DividendsView',
+	name: 'CalendarView',
 	components: {
-		DividendCurrencyView,
+		CalendarCurrencyView,
 	},
 })
-export default class DividendsView extends Vue {
+export default class CalendarView extends Vue {
+	@Prop()
+	targetCategory!: string;
+
 	@State('virtualState')
 	virtualState!: VirtualStateDto;
 
@@ -38,7 +42,7 @@ export default class DividendsView extends Vue {
 	}
 
 	get dividendOperations() {
-		return this.allOperations.filter((o) => o.category == 'Share Dividend');
+		return this.allOperations.filter((o) => o.category == this.targetCategory);
 	}
 
 	get currencies() {

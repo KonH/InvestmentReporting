@@ -37,12 +37,12 @@ import Money from '@/component/common/money.vue';
 import { VirtualAssetDto } from '@/api/market';
 
 @Options({
-	name: 'DividendCurrencyView',
+	name: 'CalendarCurrencyView',
 	components: {
 		Money,
 	},
 })
-export default class DividendCurrencyView extends Vue {
+export default class CalendarCurrencyView extends Vue {
 	@Prop()
 	currencyCode!: string;
 
