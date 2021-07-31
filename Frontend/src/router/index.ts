@@ -9,6 +9,7 @@ import ImportView from '@/view/import/importView.vue';
 import OperationsView from '@/view/operation/operationsView.vue';
 import TagsView from '@/view/tag/tagsView.vue';
 import PortfolioView from '@/view/portfolio/portfolioView.vue';
+import DividendsView from '@/view/dividend/dividendsView.vue';
 import DashboardsView from '@/view/dashboard/dashboardsView.vue';
 import AddIncomeView from '@/view/custom/addIncomeView.vue';
 import AddExpenseView from '@/view/custom/addExpenseView.vue';
@@ -63,6 +64,12 @@ const routes: Array<RouteRecordRaw> = [
 		alias: '/',
 		name: 'Portfolio',
 		component: PortfolioView,
+	},
+	{
+		path: '/dividends',
+		alias: '/',
+		name: 'Dividends',
+		component: DividendsView,
 	},
 	{
 		path: '/tags',
