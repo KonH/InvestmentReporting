@@ -15,33 +15,43 @@ namespace InvestmentReporting.Import.Tinkoff {
 			var rows = report.FindRows(r =>
 				(r.RowNumber() >= startRow) &&
 				(r.RowNumber() <= endRow));
+			var labelRow = report.FindRows(r => r.RowNumber() == tradesHeader.Address.RowNumber + 1).First();
+			var dateColumn = TableHelper.LookupColumnLetter(labelRow, "Дата заключения");
+			var timeColumn = TableHelper.LookupColumnLetter(labelRow, "Время");
+			var typeColumn = TableHelper.LookupColumnLetter(labelRow, "Вид сделки");
+			var nameColumn = TableHelper.LookupColumnLetter(labelRow, "Сокращенное наименование актива");
+			var currencyColumn = TableHelper.LookupColumnLetter(labelRow, "Валюта цены");
+			var countColumn = TableHelper.LookupColumnLetter(labelRow, "Количество");
+			var sumColumn = TableHelper.LookupColumnLetter(labelRow, "Сумма сделки");
+			var feeColumn = TableHelper.LookupColumnLetter(labelRow, "Комиссия брокера");
 			foreach ( var row in rows ) {
-				if ( IsPageSeparator(row.Cell("H").GetString()) ) {
+				var dateCell = row.Cell(dateColumn);
+				if ( IsPageSeparator(dateCell.GetString()) ) {
 					continue;
 				}
 				// We expect that it's Moscow time, but no timezone provided
 				// and for backward-compatibility we should use fixed value
-				var dateDt   = row.Cell("H").GetDateTimeExact("dd.MM.yyyy", "MM/dd/yyyy hh:mm:ss");
+				var dateDt   = dateCell.GetDateTimeExact("dd.MM.yyyy", "MM/dd/yyyy hh:mm:ss");
 				var date     = new DateTimeOffset(dateDt, TimeSpan.FromHours(3));
-				var timeDt   = row.Cell("L").GetDateTime();
+				var timeDt   = row.Cell(timeColumn).GetDateTime();
 				var time     = new DateTimeOffset(timeDt, TimeSpan.FromHours(3));
 				var fullDate = new DateTimeOffset(date.Year, date.Month, date.Day, time.Hour, time.Minute, time.Second, time.Offset);
-				var type     = row.Cell("AB").GetString().Trim();
+				var type     = row.Cell(typeColumn).GetString().Trim();
 				if ( IsTemporaryType(type) ) {
 					continue;
 				}
 				var buy = (type == "Покупка");
-				var name = row.Cell("AF").GetString().Trim();
+				var name = row.Cell(nameColumn).GetString().Trim();
 				// Skip money transfer deals
 				if ( name.EndsWith("_TOM") ) {
 					continue;
 				}
 				var isin     = assets.Single(a => a.Name == name).Isin;
-				var count = (int)row.Cell("BB").GetDouble();
+				var count = (int)row.Cell(countColumn).GetDouble();
 				count = buy ? count : -count;
-				var currency  = row.Cell("AW").GetString().Trim();
-				var sum       = row.Cell("BQ").GetDecimal();
-				var brokerFee = row.Cell("CC").GetDecimal();
+				var currency  = row.Cell(currencyColumn).GetString().Trim();
+				var sum       = row.Cell(sumColumn).GetDecimal();
+				var brokerFee = row.Cell(feeColumn).GetDecimal();
 				var fee       = brokerFee;
 				result.Add(new(fullDate, isin, name, count, currency, sum, fee));
 			}
@@ -57,30 +67,40 @@ namespace InvestmentReporting.Import.Tinkoff {
 			var rows = report.FindRows(r =>
 				(r.RowNumber() >= startRow) &&
 				(r.RowNumber() <= endRow));
+			var labelRow = report.FindRows(r => r.RowNumber() == tradesHeader.Address.RowNumber + 1).First();
+			var dateColumn = TableHelper.LookupColumnLetter(labelRow, "Дата заключения");
+			var timeColumn = TableHelper.LookupColumnLetter(labelRow, "Время");
+			var typeColumn = TableHelper.LookupColumnLetter(labelRow, "Вид сделки");
+			var nameColumn = TableHelper.LookupColumnLetter(labelRow, "Сокращенное наименование актива");
+			var currencyColumn = TableHelper.LookupColumnLetter(labelRow, "Валюта цены");
+			var countColumn = TableHelper.LookupColumnLetter(labelRow, "Количество");
+			var sumColumn = TableHelper.LookupColumnLetter(labelRow, "Сумма сделки");
+			var feeColumn = TableHelper.LookupColumnLetter(labelRow, "Комиссия брокера");
 			foreach ( var row in rows ) {
-				if ( IsPageSeparator(row.Cell("H").GetString()) ) {
+				var dateCell = row.Cell(dateColumn);
+				if ( IsPageSeparator(dateCell.GetString()) ) {
 					continue;
 				}
-				var dateDt   = row.Cell("H").GetDateTimeExact("dd.MM.yyyy", "MM/dd/yyyy hh:mm:ss");
+				var dateDt   = dateCell.GetDateTimeExact("dd.MM.yyyy", "MM/dd/yyyy hh:mm:ss");
 				var date     = new DateTimeOffset(dateDt, TimeSpan.FromHours(3));
-				var timeDt   = row.Cell("L").GetDateTime();
+				var timeDt   = row.Cell(timeColumn).GetDateTime();
 				var time     = new DateTimeOffset(timeDt, TimeSpan.FromHours(3));
 				var fullDate = new DateTimeOffset(date.Year, date.Month, date.Day, time.Hour, time.Minute, time.Second, time.Offset);
-				var type     = row.Cell("AB").GetString().Trim();
+				var type     = row.Cell(typeColumn).GetString().Trim();
 				if ( IsTemporaryType(type) ) {
 					continue;
 				}
 				var buy  = (type == "Покупка");
-				var name = row.Cell("AF").GetString().Trim();
+				var name = row.Cell(nameColumn).GetString().Trim();
 				if ( !name.EndsWith("_TOM") ) {
 					continue;
 				}
-				var count = (int)row.Cell("BB").GetDouble();
+				var count = (int)row.Cell(countColumn).GetDouble();
 				count = buy ? count : -count;
-				var fromCurrency = row.Cell("AW").GetString().Trim();
+				var fromCurrency = row.Cell(currencyColumn).GetString().Trim();
 				var toCurrency   = name[..3];
-				var sum          = row.Cell("BQ").GetDecimal();
-				var brokerFee    = row.Cell("CC").GetDecimal();
+				var sum          = row.Cell(sumColumn).GetDecimal();
+				var brokerFee    = row.Cell(feeColumn).GetDecimal();
 				var fee          = brokerFee;
 				result.Add(new(fullDate, fromCurrency, toCurrency, count, sum, fee));
 			}

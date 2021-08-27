@@ -67,16 +67,23 @@ namespace InvestmentReporting.Import.Tinkoff {
 					(r.RowNumber() >= startRow) &&
 					(r.RowNumber() <= endRow));
 				var currency = header.Value.ToString()?.Trim() ?? string.Empty;
+				var labelRow = report.FindRows(r => r.RowNumber() == header.Address.RowNumber + 1).First();
+				var dateColumn = "A";
+				var timeColumn = TableHelper.LookupColumnLetter(labelRow, "Время совершения");
+				var operationColumn = TableHelper.LookupColumnLetter(labelRow, "Операция");
+				var commentColumn = TableHelper.LookupColumnLetter(labelRow, "Примечание");
+				var incomeColumn = TableHelper.LookupColumnLetter(labelRow, "Сумма зачисления");
+				var expenseColumn = TableHelper.LookupColumnLetter(labelRow, "Сумма списания");
 				foreach ( var row in rows ) {
-					var rawDateCell = GetCellAtRowOrAbove(report, row.RowNumber(), "A");
-					var rawTimeCell = GetCellAtRowOrAbove(report, row.RowNumber(), "N");
-					var operation  = row.Cell("AZ").GetString().Trim();
+					var rawDateCell = GetCellAtRowOrAbove(report, row.RowNumber(), dateColumn);
+					var rawTimeCell = GetCellAtRowOrAbove(report, row.RowNumber(), timeColumn);
+					var operation  = row.Cell(operationColumn).GetString().Trim();
 					if ( !filter(operation) ) {
 						continue;
 					}
-					var comment = row.Cell("DQ").GetString().Trim();
+					var comment = row.Cell(commentColumn).GetString().Trim();
 					operation = commentFactory(operation, comment);
-					var sumLetter = income ? "BV" : "CS";
+					var sumLetter = income ? incomeColumn : expenseColumn;
 					var sum    = row.Cell(sumLetter).GetDecimal();
 					// We expect that it's Moscow time, but no timezone provided
 					// and for backward-compatibility we should use fixed value
