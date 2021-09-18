@@ -59,7 +59,6 @@ namespace InvestmentReporting.UnitTests {
 		}
 
 		[Test]
-		[Ignore("Not yet implemented")]
 		public void IsIncomeTransfersSkipDividend() {
 			var sample = LoadDocument("Tinkoff_BrokerMoneyMove_DividendSample.xlsx");
 			var parser = new BrokerMoneyMoveParser();
@@ -127,7 +126,6 @@ namespace InvestmentReporting.UnitTests {
 		}
 
 		[Test]
-		[Ignore("Not yet implemented")]
 		public void IsExpenseTransfersSkipDividend() {
 			var sample = LoadDocument("Tinkoff_BrokerMoneyMove_DividendSample.xlsx");
 			var parser = new BrokerMoneyMoveParser();
@@ -235,7 +233,6 @@ namespace InvestmentReporting.UnitTests {
 		}
 
 		[Test]
-		[Ignore("Not yet implemented")]
 		public void IsDividendTransfersRead() {
 			var sample = LoadDocument("Tinkoff_BrokerMoneyMove_DividendSample.xlsx");
 			var parser = new BrokerMoneyMoveParser();
@@ -243,13 +240,12 @@ namespace InvestmentReporting.UnitTests {
 			var actualTransfers = parser.ReadDividendTransfers(sample);
 
 			var expectedTransfers = new[] {
-				new Transfer(DateTimeOffset.Parse("2020-01-01T01:02:03+3"), "Перевод {VO00001} Cash Dividend US0000000001 (NAME - XXX YYY) TAX 0.1 USD", "USD", 0.3m),
+				new Transfer(DateTimeOffset.Parse("2021-01-01T01:02:03+3"), "Выплата дивидендов Name/ 1 шт.", "USD", 0.3m),
 			};
 			actualTransfers.Should().Contain(expectedTransfers);
 		}
 
 		[Test]
-		[Ignore("Not yet implemented")]
 		public async Task IsDividendTransfersImported() {
 			var stateManager = GetStateManager();
 			await using var sample = LoadStream("Tinkoff_BrokerMoneyMove_DividendSample.xlsx");
@@ -261,7 +257,6 @@ namespace InvestmentReporting.UnitTests {
 		}
 
 		[Test]
-		[Ignore("Not yet implemented")]
 		public async Task IsDividendTransfersNotDuplicated() {
 			var stateManager = GetStateManager();
 			await using var sample = LoadStream("Tinkoff_BrokerMoneyMove_DividendSample.xlsx");
@@ -349,11 +344,12 @@ namespace InvestmentReporting.UnitTests {
 			var assetParser       = new AssetParser();
 			var tradeParser       = new TradeParser();
 			var couponParser      = new CouponParser(loggerFactory.CreateLogger<CouponParser>());
+			var dividendParser    = new DividendParser(loggerFactory.CreateLogger<CouponParser>());
 			var idGenerator       = new GuidIdGenerator();
 			var addIncomeUseCase  = new AddIncomeUseCase(stateManager, idGenerator);
 			var addExpenseUseCase = new AddExpenseUseCase(stateManager, idGenerator);
 			return new TinkoffImportUseCase(
-				transStateManager, moneyMoveParser, assetParser, tradeParser, couponParser,
+				transStateManager, moneyMoveParser, assetParser, tradeParser, couponParser, dividendParser,
 				addIncomeUseCase,
 				addExpenseUseCase,
 				new BuyAssetUseCase(stateManager, idGenerator, addExpenseUseCase),

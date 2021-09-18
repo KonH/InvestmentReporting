@@ -41,6 +41,7 @@
       <Content Include="Samples\Tinkoff_BrokerMoneyMove_ExpenseSample.xlsx" CopyToOutputDirectory="Always" />
       <Content Include="Samples\Tinkoff_BrokerMoneyMove_BuySellAssetSample.xlsx" CopyToOutputDirectory="Always" />
       <Content Include="Samples\Tinkoff_BrokerMoneyMove_CouponSample.xlsx" CopyToOutputDirectory="Always" />
+      <Content Include="Samples\Tinkoff_BrokerMoneyMove_DividendSample.xlsx" CopyToOutputDirectory="Always" />
     </ItemGroup>
 
 </Project>

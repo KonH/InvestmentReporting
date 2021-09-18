@@ -46,7 +46,7 @@ Import supported for different brokers:
 | Broker      | Transfers | Share | ETF | Bond | Dividends | Coupons |
 |-------------|:---------:|:-----:|:---:|:----:|:---------:|:-------:|
 | AlphaDirect | +         | +     | +   | +    | +         | +       |
-| Tinkoff     | +         | +     | +   | +    | -         | +       |
+| Tinkoff     | +         | +     | +   | +    | +         | +       |
 
 # Custom
 

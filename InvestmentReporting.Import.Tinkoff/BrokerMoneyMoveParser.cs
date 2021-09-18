@@ -15,7 +15,11 @@ namespace InvestmentReporting.Import.Tinkoff {
 				income: true);
 
 		public IReadOnlyCollection<Transfer> ReadDividendTransfers(IXLWorkbook report) =>
-			throw new NotImplementedException();
+			ReadTransfers(
+				report,
+				operation => operation == "Выплата дивидендов",
+				(t, с) => $"{t} {с}",
+				income: true);
 
 		public IReadOnlyCollection<Transfer> ReadCouponTransfers(IXLWorkbook report) =>
 			ReadTransfers(

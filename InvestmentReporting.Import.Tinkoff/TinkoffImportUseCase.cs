@@ -12,6 +12,7 @@ using InvestmentReporting.State.UseCase.Exceptions;
 using InvestmentReporting.Import.Dto;
 using InvestmentReporting.Import.Logic;
 using InvestmentReporting.Import.UseCase;
+using Asset = InvestmentReporting.Import.Dto.Asset;
 
 namespace InvestmentReporting.Import.Tinkoff {
 	public sealed class TinkoffImportUseCase : ImportUseCase, IImportUseCase {
@@ -20,12 +21,13 @@ namespace InvestmentReporting.Import.Tinkoff {
 		readonly AssetParser             _assetParser;
 		readonly TradeParser             _tradeParser;
 		readonly CouponParser            _couponParser;
+		readonly DividendParser          _dividendParser;
 		readonly BuyAssetUseCase         _buyAssetUseCase;
 		readonly SellAssetUseCase        _sellAssetUseCase;
 
 		public TinkoffImportUseCase(
 			TransactionStateManager stateManager, BrokerMoneyMoveParser moneyMoveParser,
-			AssetParser assetParser, TradeParser tradeParser, CouponParser couponParser,
+			AssetParser assetParser, TradeParser tradeParser, CouponParser couponParser, DividendParser dividendParser,
 			AddIncomeUseCase addIncomeUseCase, AddExpenseUseCase addExpenseUseCase,
 			BuyAssetUseCase buyAssetUseCase, SellAssetUseCase sellAssetUseCase) : base(addIncomeUseCase, addExpenseUseCase) {
 			_stateManager     = stateManager;
@@ -33,6 +35,7 @@ namespace InvestmentReporting.Import.Tinkoff {
 			_assetParser      = assetParser;
 			_tradeParser      = tradeParser;
 			_couponParser     = couponParser;
+			_dividendParser   = dividendParser;
 			_buyAssetUseCase  = buyAssetUseCase;
 			_sellAssetUseCase = sellAssetUseCase;
 		}
@@ -69,6 +72,8 @@ namespace InvestmentReporting.Import.Tinkoff {
 			var addAssetCommands    = _stateManager.ReadCommands<AddAssetCommand>(user, brokerId).ToArray();
             var reduceAssetCommands = _stateManager.ReadCommands<ReduceAssetCommand>(user, brokerId).ToArray();
 			var assetIds = await FillTrades(user, brokerId, trades, currencyAccounts, addAssetCommands, reduceAssetCommands);
+			var dividendTransfers = _moneyMoveParser.ReadDividendTransfers(report);
+			await FillDividends(user, brokerId, dividendTransfers, currencyAccounts, incomeAccountCommands, assets, assetIds);
 			var couponTransfers = _moneyMoveParser.ReadCouponTransfers(report);
 			await FillCoupons(user, brokerId, couponTransfers, currencyAccounts, incomeAccountCommands, trades, assetIds);
 			var redemptionTransfers = _moneyMoveParser.ReadRedemptionTransfers(report);
@@ -112,6 +117,23 @@ namespace InvestmentReporting.Import.Tinkoff {
 				}
 			}
 			return assetIds;
+		}
+
+		async Task FillDividends(
+			UserId user, BrokerId brokerId, IReadOnlyCollection<Transfer> dividendTransfers,
+			Dictionary<CurrencyCode, AccountId> currencyAccounts,
+			Dictionary<AccountId, IReadOnlyCollection<AddIncomeCommand>> incomeAccountCommands,
+			IReadOnlyCollection<Asset> assets, IReadOnlyDictionary<string, AssetId> assetIds) {
+			foreach ( var couponTransfer in dividendTransfers ) {
+				var accountId = currencyAccounts[new(couponTransfer.Currency)];
+				if ( IsAlreadyPresent(couponTransfer.Date, couponTransfer.Amount, incomeAccountCommands[accountId]) ) {
+					continue;
+				}
+				var asset = _dividendParser.DetectAssetFromTransfer(couponTransfer.Comment, assets, assetIds);
+				await AddIncomeUseCase.Handle(
+					couponTransfer.Date, user, brokerId, accountId, couponTransfer.Amount,
+					IncomeCategory.Dividend, asset);
+			}
 		}
 
 		async Task FillCoupons(
