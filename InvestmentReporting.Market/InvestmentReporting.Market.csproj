@@ -11,7 +11,7 @@
 
     <ItemGroup>
       <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
-      <PackageReference Include="Tinkoff.Trading.OpenApi" Version="1.7.3" />
+      <PackageReference Include="Tinkoff.Trading.OpenApi" Version="1.7.4" />
     </ItemGroup>
 
 </Project>

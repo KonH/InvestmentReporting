@@ -10,8 +10,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="AspNetCore.Identity.Mongo" Version="8.0.0" />
-      <PackageReference Include="MongoDB.Driver" Version="2.12.0" />
+      <PackageReference Include="AspNetCore.Identity.Mongo" Version="8.2.0" />
+      <PackageReference Include="MongoDB.Driver" Version="2.13.1" />
     </ItemGroup>
 
 </Project>
