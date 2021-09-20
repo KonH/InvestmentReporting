@@ -345,11 +345,14 @@ namespace InvestmentReporting.UnitTests {
 			var tradeParser       = new TradeParser();
 			var couponParser      = new CouponParser(loggerFactory.CreateLogger<CouponParser>());
 			var dividendParser    = new DividendParser(loggerFactory.CreateLogger<CouponParser>());
+			var assetMoveParser   = new AssetMoveParser();
+			var splitDetector     = new SplitDetector();
 			var idGenerator       = new GuidIdGenerator();
 			var addIncomeUseCase  = new AddIncomeUseCase(stateManager, idGenerator);
 			var addExpenseUseCase = new AddExpenseUseCase(stateManager, idGenerator);
 			return new TinkoffImportUseCase(
 				transStateManager, moneyMoveParser, assetParser, tradeParser, couponParser, dividendParser,
+				assetMoveParser, splitDetector,
 				addIncomeUseCase,
 				addExpenseUseCase,
 				new BuyAssetUseCase(stateManager, idGenerator, addExpenseUseCase),

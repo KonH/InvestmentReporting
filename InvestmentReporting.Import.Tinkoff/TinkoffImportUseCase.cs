@@ -24,10 +24,13 @@ namespace InvestmentReporting.Import.Tinkoff {
 		readonly DividendParser          _dividendParser;
 		readonly BuyAssetUseCase         _buyAssetUseCase;
 		readonly SellAssetUseCase        _sellAssetUseCase;
+		readonly AssetMoveParser         _assetMoveParser;
+		readonly SplitDetector           _splitDetector;
 
 		public TinkoffImportUseCase(
 			TransactionStateManager stateManager, BrokerMoneyMoveParser moneyMoveParser,
 			AssetParser assetParser, TradeParser tradeParser, CouponParser couponParser, DividendParser dividendParser,
+			AssetMoveParser assetMoveParser, SplitDetector splitDetector,
 			AddIncomeUseCase addIncomeUseCase, AddExpenseUseCase addExpenseUseCase,
 			BuyAssetUseCase buyAssetUseCase, SellAssetUseCase sellAssetUseCase) : base(addIncomeUseCase, addExpenseUseCase) {
 			_stateManager     = stateManager;
@@ -36,6 +39,8 @@ namespace InvestmentReporting.Import.Tinkoff {
 			_tradeParser      = tradeParser;
 			_couponParser     = couponParser;
 			_dividendParser   = dividendParser;
+			_assetMoveParser  = assetMoveParser;
+			_splitDetector    = splitDetector;
 			_buyAssetUseCase  = buyAssetUseCase;
 			_sellAssetUseCase = sellAssetUseCase;
 		}
@@ -43,11 +48,13 @@ namespace InvestmentReporting.Import.Tinkoff {
 		public async Task Handle(DateTimeOffset date, UserId user, BrokerId brokerId, Stream stream) {
 			_stateManager.Prepare(user);
 			var report           = new XLWorkbook(stream);
-			var incomeTransfers  = _moneyMoveParser.ReadIncomeTransfers(report);
+			var incomeTransfers = _moneyMoveParser.ReadIncomeTransfers(report);
 			var expenseTransfers = _moneyMoveParser.ReadExpenseTransfers(report);
-			var assets           = _assetParser.ReadAssets(report);
-			var trades           = _tradeParser.ReadTrades(report, assets);
-			var exchanges        = _tradeParser.ReadExchanges(report);
+			var assets = _assetParser.ReadAssets(report);
+			var trades = _tradeParser.ReadTrades(report, assets);
+			var assetStates = _assetMoveParser.ReadAssetStates(report);
+			var splits = _splitDetector.DetectSplitCases(trades, assetStates);
+			var exchanges = _tradeParser.ReadExchanges(report);
 			var requiredCurrencyCodes = GetRequiredCurrencyCodes(
 					incomeTransfers.Select(t => t.Currency),
 					expenseTransfers.Select(t => t.Currency),
@@ -71,7 +78,7 @@ namespace InvestmentReporting.Import.Tinkoff {
 			await FillExpenseTransfers(user, brokerId, expenseTransfers, exchanges, currencyAccounts, expenseAccountCommands);
 			var addAssetCommands    = _stateManager.ReadCommands<AddAssetCommand>(user, brokerId).ToArray();
             var reduceAssetCommands = _stateManager.ReadCommands<ReduceAssetCommand>(user, brokerId).ToArray();
-			var assetIds = await FillTrades(user, brokerId, trades, currencyAccounts, addAssetCommands, reduceAssetCommands);
+			var assetIds = await FillTrades(user, brokerId, trades, currencyAccounts, addAssetCommands, reduceAssetCommands, splits);
 			var dividendTransfers = _moneyMoveParser.ReadDividendTransfers(report);
 			await FillDividends(user, brokerId, dividendTransfers, currencyAccounts, incomeAccountCommands, assets, assetIds);
 			var couponTransfers = _moneyMoveParser.ReadCouponTransfers(report);
@@ -84,8 +91,9 @@ namespace InvestmentReporting.Import.Tinkoff {
 		async Task<Dictionary<string, AssetId>> FillTrades(
 			UserId user, BrokerId brokerId, IReadOnlyCollection<Trade> trades,
 			Dictionary<CurrencyCode, AccountId> currencyAccounts,
-			IReadOnlyCollection<AddAssetCommand> addCommands, IReadOnlyCollection<ReduceAssetCommand> reduceCommands) {
+			IReadOnlyCollection<AddAssetCommand> addCommands, IReadOnlyCollection<ReduceAssetCommand> reduceCommands, IReadOnlyCollection<SplitCase> splits) {
 			var assetIds = new Dictionary<string, AssetId>();
+			var splitsToUse = splits.ToList();
 			foreach ( var trade in trades ) {
 				var date       = trade.Date;
 				var isin       = trade.Isin;
@@ -102,6 +110,17 @@ namespace InvestmentReporting.Import.Tinkoff {
 					var assetId = await _buyAssetUseCase.Handle(
 						date, user, brokerId, payAccount, feeAccount, new(isin), price, fee, trade.Name, count);
 					assetIds[isin] = assetId;
+					SplitCase? usedSplit = null;
+					foreach ( var split in splitsToUse ) {
+						if ( trade.Name == split.Name ) {
+							usedSplit = split;
+						}
+					}
+					if ( usedSplit != null ) {
+						splitsToUse.Remove(usedSplit);
+						await _buyAssetUseCase.Handle(
+							date, user, brokerId, payAccount, feeAccount, new(isin), 0, 0, trade.Name, usedSplit.Diff);
+					}
 				} else {
 					var allAssetIds = addCommands
 						.Where(add => (add.Isin == isin) && (add.Date <= date))
