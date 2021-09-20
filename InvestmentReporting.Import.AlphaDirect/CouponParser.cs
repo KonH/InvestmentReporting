@@ -14,7 +14,10 @@ namespace InvestmentReporting.Import.AlphaDirect {
 
 		// To receive organization name and series from asset name
 		readonly Regex _bondCommonRegex = new("(.*) сери.*(\\w{4}-\\w{2})");
-		readonly Regex _bondOfzRegex    = new("ОФЗ ПД (\\w{5}) в.");
+		readonly Regex[] _bondOfzRegexes  = {
+			new("ОФЗ ПД (\\w{5}) в."),
+			new("ОФЗ (\\w{5})")
+		};
 
 		readonly ILogger _logger;
 
@@ -83,17 +86,28 @@ namespace InvestmentReporting.Import.AlphaDirect {
 				}
 
 				case CouponType.Ofz: {
-					var tradeOfzMatch = _bondOfzRegex.Match(trade.Name);
-					if ( !tradeOfzMatch.Success ) {
-						_logger.LogTrace($"Trade is not matched by {nameof(_bondOfzRegex)}");
+					var tradeOfzMatch = TryFirstMatch(trade.Name, _bondOfzRegexes);
+					var success = tradeOfzMatch?.Success ?? false;
+					if ( !success ) {
+						_logger.LogTrace($"Trade is not matched by {nameof(_bondOfzRegexes)}");
 						return null;
 					}
-					var tradeSeries = tradeOfzMatch.Groups[1].Value;
+					var tradeSeries = tradeOfzMatch?.Groups[1].Value;
 					if ( holder.Series != tradeSeries ) {
 						_logger.LogTrace($"Trade series doesn't match ({holder.Series}, {tradeSeries})");
 						return null;
 					}
 					return trade.Isin;
+				}
+			}
+			return null;
+		}
+
+		Match? TryFirstMatch(string value, IReadOnlyCollection<Regex> regexes) {
+			foreach ( var regex in regexes ) {
+				var match = regex.Match(value);
+				if ( match.Success ) {
+					return match;
 				}
 			}
 			return null;
