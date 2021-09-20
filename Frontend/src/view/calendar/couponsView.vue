@@ -1,5 +1,5 @@
 <template>
-	<calendar-view target-category="Bond Coupon"/>
+	<calendar-view target-category="Bond Coupon" />
 </template>
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';

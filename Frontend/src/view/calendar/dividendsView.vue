@@ -1,5 +1,5 @@
 <template>
-	<calendar-view target-category="Share Dividend"/>
+	<calendar-view target-category="Share Dividend" />
 </template>
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
