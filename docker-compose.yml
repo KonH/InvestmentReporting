@@ -4,7 +4,7 @@ services:
     build: ./Frontend
     container_name: frontend
     ports:
-      - 8082:8082
+      - "8082:8082"
     depends_on:
       - auth-service
       - invite-service
@@ -37,7 +37,7 @@ services:
         - DOTNET_IMAGE_SUFFIX
     container_name: auth-service
     ports:
-      - 8083:8083
+      - "8083:8083"
     environment:
       ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
@@ -56,7 +56,7 @@ services:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
     ports:
-      - 8084:8084
+      - "8084:8084"
     volumes:
        - key_ring_storage:/publish/key_ring_storage
     restart: unless-stopped
@@ -71,7 +71,7 @@ services:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
     ports:
-      - 8085:8085
+      - "8085:8085"
     volumes:
       - key_ring_storage:/publish/key_ring_storage
     restart: unless-stopped
@@ -86,7 +86,7 @@ services:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
     ports:
-      - 8086:8086
+      - "8086:8086"
     depends_on:
       - state-service
     links:
@@ -106,7 +106,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
       TINKOFF_API_SANDBOX_KEY: ${TINKOFF_API_SANDBOX_KEY}
     ports:
-      - 8087:8087
+      - "8087:8087"
     volumes:
       - key_ring_storage:/publish/key_ring_storage
     restart: unless-stopped
@@ -121,7 +121,7 @@ services:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
     ports:
-      - 8088:8088
+      - "8088:8088"
     volumes:
       - key_ring_storage:/publish/key_ring_storage
     restart: unless-stopped
