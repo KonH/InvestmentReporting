@@ -6,6 +6,7 @@ using InvestmentReporting.State.UseCase;
 using InvestmentReporting.Import.Logic;
 using InvestmentReporting.Import.Tinkoff;
 using InvestmentReporting.Import.UseCase;
+using InvestmentReporting.ImportService.Services;
 using InvestmentReporting.Shared.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -74,6 +75,7 @@ namespace InvestmentReporting.ImportService {
 			services.AddScoped<BuyAssetUseCase>();
 			services.AddScoped<SellAssetUseCase>();
 			services.AddScoped<ReduceAssetUseCase>();
+			services.AddSingleton<BackgroundImportService>();
 		}
 
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {

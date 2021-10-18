@@ -1,8 +1,9 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Threading.Tasks;
 using InvestmentReporting.State.Entity;
-using InvestmentReporting.Import.UseCase;
+using InvestmentReporting.ImportService.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,12 +14,12 @@ namespace InvestmentReporting.ImportService.Controllers {
 	[ApiController]
 	[Route("[controller]")]
 	public class ImportController : ControllerBase {
-		readonly ILogger              _logger;
-		readonly ImportUseCaseFactory _useCaseFactory;
+		readonly ILogger                 _logger;
+		readonly BackgroundImportService _service;
 
-		public ImportController(ILogger<ImportController> logger, ImportUseCaseFactory useCaseFactory) {
-			_logger         = logger;
-			_useCaseFactory = useCaseFactory;
+		public ImportController(ILogger<ImportController> logger, BackgroundImportService service) {
+			_logger  = logger;
+			_service = service;
 		}
 
 		[HttpPost]
@@ -27,11 +28,13 @@ namespace InvestmentReporting.ImportService.Controllers {
 		public async Task<IActionResult> Post(
 			[Required] DateTimeOffset date, [Required] string broker, [Required] string importer, [Required] IFormFile report) {
 			_logger.LogInformation($"Import '{importer}' for broker '{broker}' started");
-			var useCase = _useCaseFactory.Create(importer);
-			await using var stream  = report.OpenReadStream();
-			var userId  = new UserId(User.Identity?.Name ?? string.Empty);
-			await useCase.Handle(date, userId, new(broker), stream);
-			_logger.LogInformation($"Import '{importer}' for broker '{broker}' finished");
+			await using var stream       = report.OpenReadStream();
+			var             userId       = new UserId(User.Identity?.Name ?? string.Empty);
+			var             memoryStream = new MemoryStream();
+			await stream.CopyToAsync(memoryStream);
+			var reportBytes = memoryStream.ToArray();
+			_service.Schedule(new(date, userId, new(broker), importer, reportBytes));
+			_logger.LogInformation($"Import '{importer}' for broker '{broker}' scheduled");
 			return Ok();
 		}
 	}
