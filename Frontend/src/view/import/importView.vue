@@ -23,6 +23,8 @@
 		</label>
 	</div>
 	<button :onclick="onclick" :class="buttonClass">Import</button>
+	<br />
+	<label>{{ importText }}</label>
 </template>
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
@@ -53,6 +55,8 @@ export default class ImportView extends Vue {
 	fileInput!: HTMLInputElement;
 
 	isInProgress = false;
+
+	importText = '';
 
 	get brokers() {
 		return this.activeState.brokers;
@@ -86,12 +90,46 @@ export default class ImportView extends Vue {
 			)
 		);
 		if (result.ok) {
-			await Backend.tryFetch(Backend.market().sync.syncCreate());
-			this.fetchState();
-			await router.push('/');
+			await this.handleImportProcess();
 		} else {
 			alert(`Failed: ${result.statusText}`);
 		}
+	}
+
+	async handleImportProcess() {
+		let curDots = 0;
+		const maxDots = 3;
+		let isCompleted = false;
+		while (!isCompleted) {
+			this.importText = 'Importing' + '.'.repeat(curDots);
+			curDots++;
+			if (curDots > maxDots) {
+				curDots = 0;
+			}
+			await this.delay(1000);
+			const status = await Backend.import().importStatus.importStatusList();
+			if (status.ok) {
+				isCompleted = true;
+				this.importText = '';
+				if (status.data.error) {
+					alert(status.data.error);
+				} else {
+					await this.onImportCompleted();
+				}
+			}
+		}
+	}
+
+	async onImportCompleted() {
+		await Backend.tryFetch(Backend.market().sync.syncCreate());
+		this.fetchState();
+		await router.push('/');
+	}
+
+	async delay(ms: number) {
+		return new Promise((resolve) => {
+			setTimeout(resolve, ms);
+		});
 	}
 }
 </script>

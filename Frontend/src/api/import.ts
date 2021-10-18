@@ -9,6 +9,12 @@
  * ---------------------------------------------------------------
  */
 
+export interface ImportStatus {
+  id?: string | null;
+  completed?: boolean;
+  error?: string | null;
+}
+
 export type QueryParamsType = Record<string | number, any>;
 export type ResponseFormat = keyof Omit<Body, "body" | "bodyUsed">;
 
@@ -230,6 +236,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         query: query,
         body: data,
         type: ContentType.FormData,
+        ...params,
+      }),
+  };
+  importStatus = {
+    /**
+     * No description
+     *
+     * @tags ImportStatus
+     * @name ImportStatusList
+     * @request GET:/ImportStatus
+     */
+    importStatusList: (params: RequestParams = {}) =>
+      this.request<ImportStatus, any>({
+        path: `/ImportStatus`,
+        method: "GET",
+        format: "json",
         ...params,
       }),
   };
