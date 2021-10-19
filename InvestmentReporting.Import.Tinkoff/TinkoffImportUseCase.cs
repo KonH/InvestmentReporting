@@ -47,17 +47,23 @@ namespace InvestmentReporting.Import.Tinkoff {
 
 		public async Task Handle(DateTimeOffset date, UserId user, BrokerId brokerId, Stream stream) {
 			_stateManager.Prepare(user);
-			var report           = new XLWorkbook(stream);
-			var incomeTransfers = _moneyMoveParser.ReadIncomeTransfers(report);
-			var expenseTransfers = _moneyMoveParser.ReadExpenseTransfers(report);
-			var assets = _assetParser.ReadAssets(report);
-			var trades = _tradeParser.ReadTrades(report, assets);
-			var assetStates = _assetMoveParser.ReadAssetStates(report);
-			var splits = _splitDetector.DetectSplitCases(trades, assetStates);
-			var exchanges = _tradeParser.ReadExchanges(report);
+			var report              = new XLWorkbook(stream);
+			var incomeTransfers     = _moneyMoveParser.ReadIncomeTransfers(report);
+			var expenseTransfers    = _moneyMoveParser.ReadExpenseTransfers(report);
+			var dividendTransfers   = _moneyMoveParser.ReadDividendTransfers(report);
+			var couponTransfers     = _moneyMoveParser.ReadCouponTransfers(report);
+			var redemptionTransfers = _moneyMoveParser.ReadRedemptionTransfers(report);
+			var assets              = _assetParser.ReadAssets(report);
+			var trades              = _tradeParser.ReadTrades(report, assets);
+			var assetStates         = _assetMoveParser.ReadAssetStates(report);
+			var splits              = _splitDetector.DetectSplitCases(trades, assetStates);
+			var exchanges           = _tradeParser.ReadExchanges(report);
 			var requiredCurrencyCodes = GetRequiredCurrencyCodes(
 					incomeTransfers.Select(t => t.Currency),
 					expenseTransfers.Select(t => t.Currency),
+					dividendTransfers.Select(t => t.Currency),
+					couponTransfers.Select(t => t.Currency),
+					redemptionTransfers.Select(t => t.Currency),
 					trades.Select(t => t.Currency),
 					exchanges.Select(e => e.FromCurrency),
 					exchanges.Select(e => e.ToCurrency),
@@ -79,11 +85,8 @@ namespace InvestmentReporting.Import.Tinkoff {
 			var addAssetCommands    = _stateManager.ReadCommands<AddAssetCommand>(user, brokerId).ToArray();
             var reduceAssetCommands = _stateManager.ReadCommands<ReduceAssetCommand>(user, brokerId).ToArray();
 			var assetIds = await FillTrades(user, brokerId, trades, currencyAccounts, addAssetCommands, reduceAssetCommands, splits);
-			var dividendTransfers = _moneyMoveParser.ReadDividendTransfers(report);
 			await FillDividends(user, brokerId, dividendTransfers, currencyAccounts, incomeAccountCommands, assets, assetIds);
-			var couponTransfers = _moneyMoveParser.ReadCouponTransfers(report);
 			await FillCoupons(user, brokerId, couponTransfers, currencyAccounts, incomeAccountCommands, trades, assetIds);
-			var redemptionTransfers = _moneyMoveParser.ReadRedemptionTransfers(report);
 			await FillRedemptions(user, brokerId, redemptionTransfers, currencyAccounts, incomeAccountCommands, trades, assetIds);
 			await _stateManager.Push();
 		}

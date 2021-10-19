@@ -56,12 +56,22 @@ namespace InvestmentReporting.Import.AlphaDirect {
 			if ( broker == null ) {
 				throw new BrokerNotFoundException();
 			}
-			var incomeTransfers  = _moneyMoveParser.ReadIncomeTransfers(report);
-			var expenseTransfers = _moneyMoveParser.ReadExpenseTransfers(report);
-			var trades            = _tradeParser.ReadTrades(report);
+			var incomeTransfers     = _moneyMoveParser.ReadIncomeTransfers(report);
+			var expenseTransfers    = _moneyMoveParser.ReadExpenseTransfers(report);
+			var dividendTransfers   = _moneyMoveParser.ReadDividendTransfers(report);
+			var couponTransfers     = _moneyMoveParser.ReadCouponTransfers(report);
+			var redemptionTransfers = _moneyMoveParser.ReadRedemptionTransfers(report);
+			var trades              = _tradeParser.ReadTrades(report);
 			var requiredCurrencyCodes = GetRequiredCurrencyCodes(
-					incomeTransfers.Select(t => t.Currency), expenseTransfers.Select(t => t.Currency),
-					trades.Select(t => t.Currency), new[] { "RUB" })
+					incomeTransfers.Select(t => t.Currency),
+					expenseTransfers.Select(t => t.Currency),
+					dividendTransfers.Select(t => t.Currency),
+					couponTransfers.Select(t => t.Currency),
+					redemptionTransfers.Select(t => t.Currency),
+					trades.Select(t => t.Currency),
+					new[] {
+						"RUB"
+					})
 				.Select(s => new CurrencyCode(s))
 				.ToArray();
 			var currencyAccounts       = CreateCurrencyAccounts(requiredCurrencyCodes, broker.Accounts);
@@ -74,11 +84,8 @@ namespace InvestmentReporting.Import.AlphaDirect {
 			var addAssetCommands    = _stateManager.ReadCommands<AddAssetCommand>(user, brokerId).ToArray();
 			var reduceAssetCommands = _stateManager.ReadCommands<ReduceAssetCommand>(user, brokerId).ToArray();
 			var assets              = await FillTrades(user, brokerId, trades, currencyAccounts, addAssetCommands, reduceAssetCommands);
-			var dividendTransfers   = _moneyMoveParser.ReadDividendTransfers(report);
 			await FillDividends(user, brokerId, dividendTransfers, currencyAccounts, incomeAccountCommands, assets);
-			var couponTransfers = _moneyMoveParser.ReadCouponTransfers(report);
 			await FillCoupons(user, brokerId, couponTransfers, currencyAccounts, incomeAccountCommands, trades, assets);
-			var redemptionTransfers = _moneyMoveParser.ReadRedemptionTransfers(report);
 			await FillRedemptions(user, brokerId, redemptionTransfers, currencyAccounts, incomeAccountCommands, trades, assets);
 			var assetTransfers = _transferParser.ReadAssetTransfers(report);
 			await FillAssetTransfers(user, brokerId, assetTransfers, assets, addAssetCommands, reduceAssetCommands);
