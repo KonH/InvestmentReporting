@@ -123,5 +123,14 @@ namespace InvestmentReporting.Import.UseCase {
 				accountId => (IReadOnlyCollection<TCommand>)accountCommands
 					.Where(m => m.Account == accountId)
 					.ToArray());
+
+		protected void EnrichAssetsFromState(IReadOnlyCollection<ReadOnlyAsset> inventory, Dictionary<string, AssetId> result) {
+			foreach ( var asset in inventory ) {
+				var isin = asset.Isin.ToString();
+				if ( !result.ContainsKey(isin) ) {
+					result[isin] = asset.Id;
+				}
+			}
+		}
 	}
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using InvestmentReporting.Import.Dto;
 using InvestmentReporting.State.Entity;
@@ -15,7 +16,8 @@ namespace InvestmentReporting.Import.Tinkoff {
 			_logger = logger;
 		}
 
-		public AssetId DetectAssetFromTransfer(string comment, IReadOnlyCollection<Trade> trades, IReadOnlyDictionary<string, AssetId> assets) {
+		public AssetId DetectAssetFromTransfer(
+			string comment, IReadOnlyCollection<Trade> trades, IReadOnlyDictionary<string, AssetId> assetIds, IReadOnlyCollection<ReadOnlyAsset> assets) {
 			var targetName = _targetNameRegex.Match(comment).Groups[2].Value;
 			foreach ( var trade in trades ) {
 				_logger.LogTrace($"Process trade: {trade}");
@@ -23,11 +25,15 @@ namespace InvestmentReporting.Import.Tinkoff {
 					continue;
 				}
 				var isin = trade.Isin;
-				if ( assets.TryGetValue(isin, out var assetId) ) {
+				if ( assetIds.TryGetValue(isin, out var assetId) ) {
 					_logger.LogTrace($"Asset Id {assetId} found for ISIN {isin}");
 					return assetId;
 				}
 				throw new InvalidOperationException($"Failed to find asset for ISIN '{isin}'");
+			}
+			var asset = assets.FirstOrDefault(a => a.RawName == targetName);
+			if ( asset != null ) {
+				return asset.Id;
 			}
 			throw new InvalidOperationException($"Failed to find asset for {targetName}");
 		}

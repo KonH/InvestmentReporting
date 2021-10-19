@@ -85,9 +85,10 @@ namespace InvestmentReporting.Import.Tinkoff {
 			var addAssetCommands    = _stateManager.ReadCommands<AddAssetCommand>(user, brokerId).ToArray();
             var reduceAssetCommands = _stateManager.ReadCommands<ReduceAssetCommand>(user, brokerId).ToArray();
 			var assetIds = await FillTrades(user, brokerId, trades, currencyAccounts, addAssetCommands, reduceAssetCommands, splits);
+			EnrichAssetsFromState(broker.Inventory, assetIds);
 			await FillDividends(user, brokerId, dividendTransfers, currencyAccounts, incomeAccountCommands, assets, assetIds);
-			await FillCoupons(user, brokerId, couponTransfers, currencyAccounts, incomeAccountCommands, trades, assetIds);
-			await FillRedemptions(user, brokerId, redemptionTransfers, currencyAccounts, incomeAccountCommands, trades, assetIds);
+			await FillCoupons(user, brokerId, couponTransfers, currencyAccounts, incomeAccountCommands, trades, assetIds, broker.Inventory);
+			await FillRedemptions(user, brokerId, redemptionTransfers, currencyAccounts, incomeAccountCommands, trades, assetIds, broker.Inventory);
 			await _stateManager.Push();
 		}
 
@@ -162,13 +163,13 @@ namespace InvestmentReporting.Import.Tinkoff {
 			UserId user, BrokerId brokerId, IReadOnlyCollection<Transfer> couponTransfers,
 			Dictionary<CurrencyCode, AccountId> currencyAccounts,
 			Dictionary<AccountId, IReadOnlyCollection<AddIncomeCommand>> incomeAccountCommands,
-			IReadOnlyCollection<Trade> trades, IReadOnlyDictionary<string, AssetId> assets) {
+			IReadOnlyCollection<Trade> trades, IReadOnlyDictionary<string, AssetId> assetIds, IReadOnlyCollection<ReadOnlyAsset> assets) {
 			foreach ( var couponTransfer in couponTransfers ) {
 				var accountId = currencyAccounts[new(couponTransfer.Currency)];
 				if ( IsAlreadyPresent(couponTransfer.Date, couponTransfer.Amount, incomeAccountCommands[accountId]) ) {
 					continue;
 				}
-				var asset = _couponParser.DetectAssetFromTransfer(couponTransfer.Comment, trades, assets);
+				var asset = _couponParser.DetectAssetFromTransfer(couponTransfer.Comment, trades, assetIds, assets);
 				await AddIncomeUseCase.Handle(
 					couponTransfer.Date, user, brokerId, accountId, couponTransfer.Amount,
 					IncomeCategory.Coupon, asset);
@@ -179,13 +180,13 @@ namespace InvestmentReporting.Import.Tinkoff {
 			UserId user, BrokerId brokerId, IReadOnlyCollection<Transfer> redemptionTransfers,
 			Dictionary<CurrencyCode, AccountId> currencyAccounts,
 			Dictionary<AccountId, IReadOnlyCollection<AddIncomeCommand>> incomeAccountCommands,
-			IReadOnlyCollection<Trade> trades, Dictionary<string, AssetId> assets) {
+			IReadOnlyCollection<Trade> trades, Dictionary<string, AssetId> assetIds, IReadOnlyCollection<ReadOnlyAsset> assets) {
 			foreach ( var couponTransfer in redemptionTransfers ) {
 				var accountId = currencyAccounts[new(couponTransfer.Currency)];
 				if ( IsAlreadyPresent(couponTransfer.Date, couponTransfer.Amount, incomeAccountCommands[accountId]) ) {
 					continue;
 				}
-				var asset = _couponParser.DetectAssetFromTransfer(couponTransfer.Comment, trades, assets);
+				var asset = _couponParser.DetectAssetFromTransfer(couponTransfer.Comment, trades, assetIds, assets);
 				await AddIncomeUseCase.Handle(
 					couponTransfer.Date, user, brokerId, accountId, couponTransfer.Amount,
 					IncomeCategory.Coupon, asset);
