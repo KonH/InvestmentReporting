@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using InvestmentReporting.Import.Dto;
 using InvestmentReporting.Import.Exceptions;
@@ -25,7 +26,8 @@ namespace InvestmentReporting.Import.AlphaDirect {
 			_logger = logger;
 		}
 
-		public AssetId DetectAssetFromTransfer(string comment, IReadOnlyCollection<Trade> trades, Dictionary<string, AssetId> assets) {
+		public AssetId DetectAssetFromTransfer(
+			string comment, IReadOnlyCollection<Trade> trades, Dictionary<string, AssetId> assetIds, IReadOnlyCollection<ReadOnlyAsset> assets) {
 			var holder = DetectCouponHolder(comment);
 			foreach ( var trade in trades ) {
 				_logger.LogTrace($"Process trade: {trade}");
@@ -34,11 +36,27 @@ namespace InvestmentReporting.Import.AlphaDirect {
 					_logger.LogTrace("Isin not found");
 					continue;
 				}
-				if ( assets.TryGetValue(isin, out var assetId) ) {
+				if ( assetIds.TryGetValue(isin, out var assetId) ) {
 					_logger.LogTrace($"Asset Id {assetId} found for ISIN {isin}");
 					return assetId;
 				}
 				throw new InvalidOperationException($"Failed to find asset for ISIN '{isin}'");
+			}
+			var potentialMatches = assets
+				.Select(a => (asset: a, holder: TryDetectCouponHolderFromAssetName(a.RawName)))
+				.ToArray();
+			foreach ( var (asset, matchedHolder) in potentialMatches ) {
+				if ( matchedHolder == null ) {
+					continue;
+				}
+				if ( (holder.Type != CouponType.Ofz) && (holder.ShortOrganization != matchedHolder.ShortOrganization) ) {
+					continue;
+				}
+				if ( holder.Series != matchedHolder.Series ) {
+					continue;
+				}
+				_logger.LogTrace($"Asset Id {asset.Id} found for {holder}");
+				return asset.Id;
 			}
 			throw new InvalidOperationException($"Failed to find asset for {holder}");
 		}
@@ -60,6 +78,21 @@ namespace InvestmentReporting.Import.AlphaDirect {
 				return CreateCouponHolder(CouponType.Ofz, couponMatch);
 			}
 			throw new UnexpectedFormatException($"Failed to detect organization and/or series from comment '{comment}'");
+		}
+
+		CouponHolder? TryDetectCouponHolderFromAssetName(string name) {
+			var couponMatch = _bondCommonRegex.Match(name);
+			if ( couponMatch.Success ) {
+				return CreateCouponHolder(CouponType.Common, couponMatch);
+			}
+			var ofzMatch = TryFirstMatch(name, _bondOfzRegexes);
+			if ( ofzMatch?.Success ?? false ) {
+				var series = ofzMatch.Groups[1].Value.Trim();
+				var holder = new CouponHolder(CouponType.Ofz, string.Empty, string.Empty, series);
+				_logger.LogTrace($"Create holder from OFZ asset: {holder}");
+				return holder;
+			}
+			return null;
 		}
 
 		string? TryGetIsinForHolder(CouponHolder holder, Trade trade) {

@@ -83,13 +83,13 @@ namespace InvestmentReporting.Import.AlphaDirect {
 			await FillExpenseTransfers(user, brokerId, expenseTransfers, Array.Empty<Exchange>(), currencyAccounts, expenseAccountCommands);
 			var addAssetCommands    = _stateManager.ReadCommands<AddAssetCommand>(user, brokerId).ToArray();
 			var reduceAssetCommands = _stateManager.ReadCommands<ReduceAssetCommand>(user, brokerId).ToArray();
-			var assets              = await FillTrades(user, brokerId, trades, currencyAccounts, addAssetCommands, reduceAssetCommands);
-			EnrichAssetsFromState(broker.Inventory, assets);
-			await FillDividends(user, brokerId, dividendTransfers, currencyAccounts, incomeAccountCommands, assets);
-			await FillCoupons(user, brokerId, couponTransfers, currencyAccounts, incomeAccountCommands, trades, assets);
-			await FillRedemptions(user, brokerId, redemptionTransfers, currencyAccounts, incomeAccountCommands, trades, assets);
+			var assetIds            = await FillTrades(user, brokerId, trades, currencyAccounts, addAssetCommands, reduceAssetCommands);
+			EnrichAssetsFromState(broker.Inventory, assetIds);
+			await FillDividends(user, brokerId, dividendTransfers, currencyAccounts, incomeAccountCommands, assetIds);
+			await FillCoupons(user, brokerId, couponTransfers, currencyAccounts, incomeAccountCommands, trades, assetIds, broker.Inventory);
+			await FillRedemptions(user, brokerId, redemptionTransfers, currencyAccounts, incomeAccountCommands, trades, assetIds, broker.Inventory);
 			var assetTransfers = _transferParser.ReadAssetTransfers(report);
-			await FillAssetTransfers(user, brokerId, assetTransfers, assets, addAssetCommands, reduceAssetCommands);
+			await FillAssetTransfers(user, brokerId, assetTransfers, assetIds, addAssetCommands, reduceAssetCommands);
 			await _stateManager.Push();
 		}
 
@@ -170,13 +170,13 @@ namespace InvestmentReporting.Import.AlphaDirect {
 			UserId user, BrokerId brokerId, IReadOnlyCollection<Transfer> couponTransfers,
 			Dictionary<CurrencyCode, AccountId> currencyAccounts,
 			Dictionary<AccountId, IReadOnlyCollection<AddIncomeCommand>> incomeAccountCommands,
-			IReadOnlyCollection<Trade> trades, Dictionary<string, AssetId> assets) {
+			IReadOnlyCollection<Trade> trades, Dictionary<string, AssetId> assetIds, IReadOnlyCollection<ReadOnlyAsset> assets) {
 			foreach ( var couponTransfer in couponTransfers ) {
 				var accountId = currencyAccounts[new(couponTransfer.Currency)];
 				if ( IsAlreadyPresent(couponTransfer.Date, couponTransfer.Amount, incomeAccountCommands[accountId]) ) {
 					continue;
 				}
-				var asset = _couponParser.DetectAssetFromTransfer(couponTransfer.Comment, trades, assets);
+				var asset = _couponParser.DetectAssetFromTransfer(couponTransfer.Comment, trades, assetIds, assets);
 				await AddIncomeUseCase.Handle(
 					couponTransfer.Date, user, brokerId, accountId, couponTransfer.Amount,
 					IncomeCategory.Coupon, asset);
@@ -187,13 +187,13 @@ namespace InvestmentReporting.Import.AlphaDirect {
 			UserId user, BrokerId brokerId, IReadOnlyCollection<Transfer> redemptionTransfers,
 			Dictionary<CurrencyCode, AccountId> currencyAccounts,
 			Dictionary<AccountId, IReadOnlyCollection<AddIncomeCommand>> incomeAccountCommands,
-			IReadOnlyCollection<Trade> trades, Dictionary<string, AssetId> assets) {
+			IReadOnlyCollection<Trade> trades, Dictionary<string, AssetId> assetIds, IReadOnlyCollection<ReadOnlyAsset> assets) {
 			foreach ( var couponTransfer in redemptionTransfers ) {
 				var accountId = currencyAccounts[new(couponTransfer.Currency)];
 				if ( IsAlreadyPresent(couponTransfer.Date, couponTransfer.Amount, incomeAccountCommands[accountId]) ) {
 					continue;
 				}
-				var asset = _couponParser.DetectAssetFromTransfer(couponTransfer.Comment, trades, assets);
+				var asset = _couponParser.DetectAssetFromTransfer(couponTransfer.Comment, trades, assetIds, assets);
 				await AddIncomeUseCase.Handle(
 					couponTransfer.Date, user, brokerId, accountId, couponTransfer.Amount,
 					IncomeCategory.Coupon, asset);
